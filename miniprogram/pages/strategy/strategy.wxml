@@ -1,0 +1,7 @@
+<view class="container">
+  <view class="strategy-item" wx:for="{{strategies}}" wx:key="id">
+    <text class="name">{{item.name}}</text>
+    <text class="desc">{{item.description}}</text>
+  </view>
+  <view wx:if="{{strategies.length === 0}}" class="empty">暂无策略</view>
+</view>

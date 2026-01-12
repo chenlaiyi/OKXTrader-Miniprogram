@@ -1,0 +1,6 @@
+<view class="container">
+  <view class="market-item" wx:for="{{markets}}" wx:key="inst_id">
+    <text class="symbol">{{item.inst_id}}</text>
+    <text class="price">{{item.last}}</text>
+  </view>
+</view>

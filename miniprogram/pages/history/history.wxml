@@ -1,0 +1,9 @@
+<view class="container">
+  <view class="trade-item" wx:for="{{trades}}" wx:key="id">
+    <text class="symbol">{{item.inst_id}}</text>
+    <text class="pnl" style="color: {{item.is_profit ? '#00c853' : '#ff5252'}}">
+      {{item.pnl}}
+    </text>
+  </view>
+  <view wx:if="{{trades.length === 0}}" class="empty">暂无交易记录</view>
+</view>

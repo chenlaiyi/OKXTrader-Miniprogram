@@ -1,0 +1,8 @@
+<view class="container">
+  <view class="title">我的</view>
+  <view class="menu">
+    <view class="menu-item">策略管理</view>
+    <view class="menu-item">交易历史</view>
+    <view class="menu-item">账号设置</view>
+  </view>
+</view>

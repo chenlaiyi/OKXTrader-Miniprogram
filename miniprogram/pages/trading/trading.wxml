@@ -1,0 +1,36 @@
+<view class="container">
+  <view class="header">
+    <view class="symbol">{{currentSymbol}}</view>
+    <view class="price">{{currentPrice}}</view>
+  </view>
+
+  <view class="chart-placeholder">
+    <text class="text">K线图区域</text>
+    <text class="sub">（需集成echarts-for-weixin）</text>
+  </view>
+
+  <view class="actions">
+    <button class="btn-long" bindtap="executeTrade" data-side="long">
+      做多
+    </button>
+    <button class="btn-short" bindtap="executeTrade" data-side="short">
+      做空
+    </button>
+  </view>
+
+  <view class="section">
+    <view class="section-title">当前持仓</view>
+    <view wx:if="{{positions.length === 0}}" class="empty">暂无持仓</view>
+    <view class="position-item" wx:for="{{positions}}" wx:key="id">
+      <view class="pos-header">
+        <text class="symbol">{{item.symbol}}</text>
+        <text class="side long" wx:if="{{item.side === 'long'}}">做多</text>
+        <text class="side short" wx:else>做空</text>
+      </view>
+      <view class="pos-info">
+        <text>入场: {{item.entryPrice}}</text>
+        <text class="pnl">{{item.unrealizedPnl}}</text>
+      </view>
+    </view>
+  </view>
+</view>

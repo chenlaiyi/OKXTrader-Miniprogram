@@ -1,0 +1,104 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 顶部区域 -->
+  <view class="header">
+    <view class="title">OKXTrader</view>
+    <view class="subtitle">智能加密货币交易助手</view>
+  </view>
+
+  <!-- 行情概览卡片 -->
+  <view class="section">
+    <view class="section-title">📈 热门行情</view>
+    <scroll-view scroll-x class="market-scroll" enable-flex show-scrollbar="{{false}}">
+      <view class="market-card" wx:for="{{markets}}" wx:key="inst_id" bindtap="goToMarket" data-symbol="{{item.inst_id}}">
+        <view class="symbol">{{item.inst_id}}</view>
+        <view class="price" style="color: {{item.color}}">
+          {{item.price}}
+        </view>
+        <view class="change" style="color: {{item.color}}">
+          {{item.change}}
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 快速操作 -->
+  <view class="section">
+    <view class="section-title">⚡ 快速操作</view>
+    <view class="quick-actions">
+      <view class="action-item" bindtap="goToTrading">
+        <view class="action-icon">📊</view>
+        <view class="action-text">交易</view>
+      </view>
+      <view class="action-item" bindtap="goToMarket">
+        <view class="action-icon">📈</view>
+        <view class="action-text">行情</view>
+      </view>
+      <view class="action-item" bindtap="goToStrategy">
+        <view class="action-icon">⚙️</view>
+        <view class="action-text">策略</view>
+      </view>
+      <view class="action-item" bindtap="goToAI">
+        <view class="action-icon">🤖</view>
+        <view class="action-text">AI分析</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI分析预览 -->
+  <view class="section" wx:if="{{aiAnalysis}}">
+    <view class="section-title">🤖 AI分析建议</view>
+    <view class="ai-card">
+      <view class="ai-header">
+        <view class="ai-signal {{aiAnalysis.signal_type === 'long' ? 'long' : 'short'}}">
+          {{aiAnalysis.signal_type === 'long' ? '📈 做多建议' : '📉 做空建议'}}
+        </view>
+        <view class="ai-confidence">置信度 {{aiAnalysis.confidence}}%</view>
+      </view>
+      <view class="ai-reasoning">{{aiAnalysis.reasoning}}</view>
+      <view class="ai-footer">
+        <view class="time">{{formatTime(aiAnalysis.timestamp)}}</view>
+        <view class="detail-link" bindtap="goToAI">查看详情 →</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 持仓概览 -->
+  <view class="section" wx:if="{{positions.length > 0}}">
+    <view class="section-title">💼 当前持仓</view>
+    <view class="position-list">
+      <view class="position-item" wx:for="{{positions}}" wx:key="id" bindtap="viewPosition" data-id="{{item.id}}">
+        <view class="pos-header">
+          <view class="pos-symbol">{{item.symbol}}</view>
+          <view class="pos-side {{item.side}}">{{item.side === 'long' ? '做多' : '做空'}}</view>
+        </view>
+        <view class="pos-info">
+          <view class="pos-price">入场: {{item.entryPrice}}</view>
+          <view class="pos-pnl" style="color: {{item.unrealizedPnl >= 0 ? '#00c853' : '#ff5252'}}">
+            {{item.unrealizedPnl >= 0 ? '+' : ''}}{{item.unrealizedPnl}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 自动交易状态 -->
+  <view class="section">
+    <view class="section-title">🔄 自动交易</view>
+    <view class="auto-trade-card">
+      <view class="auto-info">
+        <view class="auto-status {{autoTradingEnabled ? 'enabled' : 'disabled'}}">
+          {{autoTradingEnabled ? '✅ 已启用' : '❌ 已禁用'}}
+        </view>
+        <view class="auto-desc">AI策略自动执行交易</view>
+      </view>
+      <switch checked="{{autoTradingEnabled}}" bindchange="toggleAutoTrading" color="#667eea"/>
+    </view>
+  </view>
+
+  <!-- 底部说明 -->
+  <view class="footer">
+    <view class="footer-text">OKXTrader小程序 v1.0.0</view>
+    <view class="footer-text">数据来源于OKX公开API</view>
+  </view>
+</view>

@@ -1,0 +1,56 @@
+<view class="container">
+  <view class="header">
+    <text class="title">🧪 API测试页面</text>
+    <text class="subtitle">验证所有API接口是否正常</text>
+  </view>
+
+  <view class="info">
+    <text class="info-text">API地址: https://ly.ddg.org.cn/api</text>
+    <text class="info-text">合法域名: ✅ 已配置</text>
+  </view>
+
+  <view class="actions">
+    <button class="btn-test" bindtap="runAllTests" disabled="{{loading}}">
+      {{loading ? '测试中...' : '🔄 重新测试'}}
+    </button>
+  </view>
+
+  <view class="results">
+    <view class="section-title">测试结果 ({{testResults.length}})</view>
+
+    <view class="test-item" wx:for="{{testResults}}" wx:key="name">
+      <view class="test-header">
+        <text class="test-name">{{item.name}}</text>
+        <text class="test-status {{item.status}}">
+          {{item.status === 'success' ? '✅ 成功' : '❌ 失败'}}
+        </text>
+      </view>
+
+      <view class="test-details" wx:if="{{item.status === 'success'}}">
+        <text class="test-duration">{{item.duration}}</text>
+        <text class="test-data" wx:if="{{item.data}}">
+          数据: {{item.data ? (item.data.length + '条' : '成功')}}
+        </text>
+      </view>
+
+      <view class="test-error" wx:else>
+        <text class="error-text">错误: {{item.error}}</text>
+      </view>
+    </view>
+
+    <view class="empty" wx:if="{{testResults.length === 0 && !loading}}">
+      <text>点击上方按钮开始测试</text>
+    </view>
+
+    <view class="loading" wx:if="{{loading}}">
+      <text>正在测试API接口...</text>
+    </view>
+  </view>
+
+  <view class="tips">
+    <view class="tip-title">💡 提示</view>
+    <text class="tip-text">• 下拉可刷新测试</text>
+    <text class="tip-text">• 查看Console查看详细日志</text>
+    <text class="tip-text">• 所有测试应在2秒内完成</text>
+  </view>
+</view>

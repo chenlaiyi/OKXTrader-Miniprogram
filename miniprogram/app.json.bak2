@@ -1,0 +1,50 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/trading/trading",
+    "pages/market/market",
+    "pages/ai/ai",
+    "pages/strategy/strategy",
+    "pages/strategy-edit/strategy-edit",
+    "pages/account/account",
+    "pages/chat/chat",
+    "pages/history/history"
+  ],
+  "tabBar": {
+    "color": "#9e9e9e",
+    "selectedColor": "#667eea",
+    "backgroundColor": "#1a1a1a",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/trading/trading",
+        "text": "交易"
+      },
+      {
+        "pagePath": "pages/market/market",
+        "text": "行情"
+      },
+      {
+        "pagePath": "pages/ai/ai",
+        "text": "AI分析"
+      },
+      {
+        "pagePath": "pages/account/account",
+        "text": "我的"
+      }
+    ]
+  },
+  "window": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "OKXTrader",
+    "navigationBarBackgroundColor": "#1a1a1a",
+    "backgroundColor": "#1a1a1a"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
