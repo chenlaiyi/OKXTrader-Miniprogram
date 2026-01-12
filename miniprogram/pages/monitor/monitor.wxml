@@ -32,7 +32,7 @@
         </view>
         <view class="stat-item">
           <text class="stat-label">胜率</text>
-          <text class="stat-value">{{tradingStats.winRate.toFixed(1)}}%</text>
+          <text class="stat-value">{{formattedWinRate}}%</text>
         </view>
       </view>
 
@@ -44,7 +44,7 @@
         </view>
         <view class="config-item">
           <text class="config-label">最小置信度</text>
-          <text class="config-value">{{(tradingConfig.minConfidence * 100).toFixed(0)}}%</text>
+          <text class="config-value">{{formattedMinConfidence}}%</text>
         </view>
         <view class="config-item">
           <text class="config-label">最大持仓</text>
@@ -78,7 +78,7 @@
             {{latestAnalysis.signal_type}}
           </text>
           <text class="analysis-confidence">
-            置信度: {{(latestAnalysis.confidence * 100).toFixed(0)}}%
+            置信度: {{formattedLatestConfidence}}%
           </text>
         </view>
         <view class="analysis-content">
@@ -94,7 +94,7 @@
           <view class="history-signal" style="color: {{getSignalColor(item.signal_type)}}">
             {{item.signal_type}}
           </view>
-          <view class="history-confidence">{{(item.confidence * 100).toFixed(0)}}%</view>
+          <view class="history-confidence">{{item.confidenceDisplay}}%</view>
         </view>
       </view>
     </view>
@@ -128,7 +128,7 @@
             <view class="position-detail">
               <text class="detail-label">未实现盈亏</text>
               <text class="detail-value" style="color: {{getPnlColor(item.unrealizedPnl)}}">
-                {{formatPercent((item.unrealizedPnl / item.entryPrice) * 100)}}
+                {{item.pnlDisplay}}
               </text>
             </view>
           </view>
