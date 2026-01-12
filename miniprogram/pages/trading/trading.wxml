@@ -1,200 +1,122 @@
 <!--pages/trading/trading.wxml-->
 <view class="container">
-  <!-- 价格信息头部 -->
-  <view class="price-header">
-    <view class="symbol-info">
-      <view class="symbol">{{currentSymbol}}</view>
-      <view class="symbol-name">{{symbolName || 'BTC/USDT'}}</view>
-    </view>
-    <view class="price-info">
-      <view class="price {{priceTrend}}">{{currentPrice}}</view>
-      <view class="price-change {{priceTrend}}">
-        <text class="change-icon">{{priceTrend === 'up' ? '▲' : priceTrend === 'down' ? '▼' : '−'}}</text>
-        <text class="change-value">{{priceChange}}</text>
-        <text class="change-percent">({{priceChangePercent}}%)</text>
-      </view>
-    </view>
-  </view>
-
-  <!-- 24h统计 -->
-  <view class="stats-bar">
-    <view class="stat-item">
-      <text class="stat-label">24h高</text>
-      <text class="stat-value">{{high24h}}</text>
-    </view>
-    <view class="stat-item">
-      <text class="stat-label">24h低</text>
-      <text class="stat-value">{{low24h}}</text>
-    </view>
-    <view class="stat-item">
-      <text class="stat-label">24h量</text>
-      <text class="stat-value">{{volume24h}}</text>
-    </view>
-  </view>
-
-  <!-- K线图区域 -->
-  <view class="chart-section">
-    <view class="chart-header">
-      <view class="chart-title">K线图</view>
-      <view class="timeframe-selector">
-        <view class="timeframe-item {{timeframe === '15m' ? 'active' : ''}}" bindtap="switchTimeframe" data-tf="15m">15m</view>
-        <view class="timeframe-item {{timeframe === '1H' ? 'active' : ''}}" bindtap="switchTimeframe" data-tf="1H">1H</view>
-        <view class="timeframe-item {{timeframe === '4H' ? 'active' : ''}}" bindtap="switchTimeframe" data-tf="4H">4H</view>
-        <view class="timeframe-item {{timeframe === '1D' ? 'active' : ''}}" bindtap="switchTimeframe" data-tf="1D">1D</view>
-      </view>
-    </view>
-    <view class="chart-container">
-      <view class="chart-placeholder">
-        <view class="placeholder-icon">📊</view>
-        <view class="placeholder-text">K线图表</view>
-        <view class="placeholder-hint">（需集成 echarts-for-weixin）</view>
-      </view>
-    </view>
-  </view>
-
-  <!-- 交易操作区 -->
-  <view class="trade-section">
-    <view class="trade-header">
-      <view class="trade-title">快速交易</view>
-      <view class="trade-hint">AI策略建议：{{aiSuggestion || '暂无建议'}}</view>
-    </view>
-
-    <!-- 交易类型选择 -->
-    <view class="trade-type-selector">
-      <view class="trade-type-item {{tradeType === 'market' ? 'active' : ''}}" bindtap="switchTradeType" data-type="market">
-        <text class="type-text">市价单</text>
-      </view>
-      <view class="trade-type-item {{tradeType === 'limit' ? 'active' : ''}}" bindtap="switchTradeType" data-type="limit">
-        <text class="type-text">限价单</text>
-      </view>
-    </view>
-
-    <!-- 限价单价格输入（仅限价单显示） -->
-    <view class="price-input-wrapper" wx:if="{{tradeType === 'limit'}}">
-      <text class="input-label">委托价格</text>
-      <input class="price-input" type="digit" placeholder="输入价格" value="{{limitPrice}}" bindinput="onLimitPriceInput"/>
-    </view>
-
-    <!-- 数量输入 -->
-    <view class="amount-input-wrapper">
-      <view class="amount-header">
-        <text class="input-label">交易数量</text>
-        <text class="amount-hint">可用: {{availableBalance}} USDT</text>
-      </view>
-      <view class="amount-input-row">
-        <input class="amount-input" type="digit" placeholder="输入数量" value="{{tradeAmount}}" bindinput="onAmountInput"/>
-        <text class="amount-suffix">USDT</text>
-      </view>
-      <view class="amount-presets">
-        <view class="preset-item" bindtap="setAmountPercent" data-percent="25">25%</view>
-        <view class="preset-item" bindtap="setAmountPercent" data-percent="50">50%</view>
-        <view class="preset-item" bindtap="setAmountPercent" data-percent="75">75%</view>
-        <view class="preset-item" bindtap="setAmountPercent" data-percent="100">100%</view>
-      </view>
-    </view>
-
-    <!-- 交易按钮 -->
-    <view class="trade-buttons">
-      <button class="trade-btn buy-btn" bindtap="executeTrade" data-side="long">
-        <view class="btn-icon">📈</view>
-        <view class="btn-content">
-          <text class="btn-text">买入做多</text>
-          <text class="btn-hint">{{currentPrice}}</text>
+  <!-- 当前交易对信息 -->
+  <view class="pair-info">
+    <view class="pair-header">
+      <text class="pair-title">{{currentSymbol}}</text>
+      <view class="price-section">
+        <text class="current-price {{priceTrend}}">{{currentPrice}}</text>
+        <view class="price-change">
+          <text class="change-value {{priceTrend}}">{{priceChange}}</text>
+          <text class="change-percent {{priceTrend}}">({{priceChangePercent}}%)</text>
         </view>
-      </button>
-      <button class="trade-btn sell-btn" bindtap="executeTrade" data-side="short">
-        <view class="btn-icon">📉</view>
-        <view class="btn-content">
-          <text class="btn-text">卖出做空</text>
-          <text class="btn-hint">{{currentPrice}}</text>
-        </view>
+      </view>
+    </view>
+
+    <view class="divider"></view>
+
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-label">24h 最高</text>
+        <text class="stat-value">{{high24h}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">24h 最低</text>
+        <text class="stat-value">{{low24h}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">24h 成交量</text>
+        <text class="stat-value">{{volume24h}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 技术指标 -->
+  <view class="indicators-section">
+    <view class="section-header">
+      <text class="section-title">技术指标</text>
+      <button class="refresh-btn" bindtap="refreshIndicators">
+        <text class="refresh-icon">↻</text>
       </button>
     </view>
-  </view>
 
-  <!-- 当前持仓 -->
-  <view class="positions-section">
-    <view class="section-header">
-      <view class="section-icon">💼</view>
-      <view class="section-title">当前持仓</view>
-      <view class="position-count">{{positions.length}}</view>
-    </view>
-
-    <view wx:if="{{positions.length === 0}}" class="empty-state">
-      <view class="empty-icon">📭</view>
-      <view class="empty-text">暂无持仓</view>
-      <view class="empty-hint">开仓后持仓将显示在这里</view>
-    </view>
-
-    <view class="position-list">
-      <view class="position-item" wx:for="{{positions}}" wx:key="id" bindtap="showPositionDetail" data-id="{{item.id}}">
-        <view class="pos-header">
-          <view class="pos-symbol">{{item.symbol}}</view>
-          <view class="pos-side {{item.side}}">
-            <text class="side-icon">{{item.side === 'long' ? '📈' : '📉'}}</text>
-            <text class="side-text">{{item.side === 'long' ? '做多' : '做空'}}</text>
+    <view class="indicator-card">
+      <view class="indicator-header">
+        <text class="indicator-title">趋势</text>
+      </view>
+      <view class="indicator-body">
+        <view class="ma-grid">
+          <view class="ma-item">
+            <text class="ma-label">MA</text>
+            <text class="ma-value {{maTrend}}">{{maValue}}</text>
           </view>
         </view>
+      </view>
+    </view>
 
-        <view class="pos-body">
-          <view class="pos-row">
-            <view class="pos-info-group">
-              <text class="pos-label">入场价</text>
-              <text class="pos-value">{{item.entryPrice}}</text>
-            </view>
-            <view class="pos-info-group">
-              <text class="pos-label">当前价</text>
-              <text class="pos-value">{{item.currentPrice || '--'}}</text>
-            </view>
+    <view class="indicator-card">
+      <view class="indicator-header">
+        <text class="indicator-title">动量</text>
+      </view>
+      <view class="indicator-body">
+        <view class="rsi-row">
+          <text class="rsi-label">RSI</text>
+          <view class="rsi-bar">
+            <view class="rsi-fill" style="width: {{rsiValue}}%"></view>
           </view>
-
-          <view class="pos-divider"></view>
-
-          <view class="pos-row">
-            <view class="pos-info-group">
-              <text class="pos-label">数量</text>
-              <text class="pos-value">{{item.quantity}}</text>
-            </view>
-            <view class="pos-info-group">
-              <text class="pos-label">未实现盈亏</text>
-              <text class="pos-value {{item.pnlClass}}">{{item.pnlDisplay}}</text>
-            </view>
-          </view>
+          <text class="rsi-value">{{rsiValue}}</text>
         </view>
+      </view>
+    </view>
 
-        <view class="pos-footer">
-          <view class="pos-time">入场时间: {{item.entryTime}}</view>
-          <view class="pos-actions">
-            <button class="pos-action-btn close-btn" catchtap="closePosition" data-id="{{item.id}}">平仓</button>
+    <view class="indicator-card">
+      <view class="indicator-header">
+        <text class="indicator-title">波动</text>
+      </view>
+      <view class="indicator-body">
+        <view class="bb-row">
+          <view class="bb-item">
+            <text class="bb-label">上轨</text>
+            <text class="bb-value">{{bbUpper}}</text>
+          </view>
+          <view class="bb-item">
+            <text class="bb-label">中轨</text>
+            <text class="bb-value">{{bbMiddle}}</text>
+          </view>
+          <view class="bb-item">
+            <text class="bb-label">下轨</text>
+            <text class="bb-value">{{bbLower}}</text>
           </view>
         </view>
       </view>
     </view>
   </view>
 
-  <!-- 交易记录 -->
-  <view class="history-section">
+  <!-- AI分析 -->
+  <view class="ai-section">
     <view class="section-header">
-      <view class="section-icon">📜</view>
-      <view class="section-title">最近成交</view>
-      <view class="section-more" bindtap="goToHistory">更多 →</view>
+      <text class="section-title">AI 分析</text>
     </view>
 
-    <view wx:if="{{recentTrades.length === 0}}" class="empty-state">
-      <view class="empty-text">暂无成交记录</view>
-    </view>
-
-    <view class="trade-list">
-      <view class="trade-item" wx:for="{{recentTrades}}" wx:key="id">
-        <view class="trade-left">
-          <view class="trade-symbol">{{item.symbol}}</view>
-          <view class="trade-time">{{item.time}}</view>
+    <view class="ai-card" wx:if="{{latestAnalysis}}">
+      <view class="ai-header">
+        <view class="signal-badge {{latestAnalysis.signal_type}}">
+          <text class="signal-text">{{latestAnalysis.signal_type === 'long' ? '做多' : latestAnalysis.signal_type === 'short' ? '做空' : '观望'}}</text>
         </view>
-        <view class="trade-right">
-          <view class="trade-side {{item.side}}">{{item.side === 'long' ? '做多' : '做空'}}</view>
-          <view class="trade-pnl {{item.profit ? 'profit' : 'loss'}}">{{item.pnl}}</view>
+        <view class="confidence-badge">
+          <text class="confidence-text">置信度 {{latestAnalysis.confidence}}%</text>
         </view>
       </view>
+
+      <view class="divider"></view>
+
+      <view class="ai-body">
+        <text class="ai-reasoning">{{latestAnalysis.reasoning}}</text>
+      </view>
+    </view>
+
+    <view class="ai-empty" wx:else>
+      <text class="empty-text">暂无AI分析</text>
     </view>
   </view>
 </view>

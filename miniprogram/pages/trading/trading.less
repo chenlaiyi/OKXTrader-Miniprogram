@@ -3,716 +3,325 @@
 
 .container {
   min-height: 100vh;
-  background: @bg-page;
-  padding-bottom: 40rpx;
+  background: @bg-primary;
+  padding: @padding-page;
 }
 
-/* ==================== 价格信息头部 ==================== */
-.price-header {
+/* ==================== 交易对信息 ==================== */
+.pair-info {
   background: @bg-secondary;
-  padding: @spacing-lg @spacing-md @spacing-md;
-  border-bottom: 1rpx solid @border-color;
+  border-radius: @radius-md;
+  padding: @padding-card;
+  margin-bottom: @spacing-lg;
 }
 
-.symbol-info {
-  text-align: center;
+.pair-header {
   margin-bottom: @spacing-md;
 }
 
-.symbol {
-  font-size: @font-size-h3;
+.pair-title {
+  font-size: @font-size-title2;
   font-weight: @font-weight-bold;
   color: @text-primary;
-  margin-bottom: 4rpx;
 }
 
-.symbol-name {
-  font-size: @font-size-caption;
-  color: @text-secondary;
+.price-section {
+  display: flex;
+  align-items: center;
+  gap: @spacing-md;
+  margin-top: @spacing-sm;
 }
 
-.price-info {
-  text-align: center;
-}
-
-.price {
-  font-size: 64rpx;
+.current-price {
+  font-size: 56rpx;
   font-weight: @font-weight-bold;
-  color: @text-primary;
-  line-height: 1;
-  margin-bottom: @spacing-sm;
-  transition: color @transition-fast @ease-out;
+  font-family: monospace;
 
-  &.up {
-    color: @success-color;
-    animation: price-flash 0.3s @ease-out;
+  &.green {
+    color: @color-green;
   }
 
-  &.down {
-    color: @danger-color;
-    animation: price-flash 0.3s @ease-out;
-  }
-
-  &.neutral {
-    color: @text-primary;
+  &.red {
+    color: @color-red;
   }
 }
 
 .price-change {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: @spacing-xs;
-  font-size: @font-size-body;
-
-  &.up {
-    color: @success-color;
-  }
-
-  &.down {
-    color: @danger-color;
-  }
-
-  &.neutral {
-    color: @text-secondary;
-  }
+  flex-direction: column;
+  gap: 2rpx;
 }
 
-.change-icon {
-  font-size: @font-size-small;
-}
-
-.change-value {
-  font-weight: @font-weight-semibold;
-}
-
+.change-value,
 .change-percent {
-  font-size: @font-size-caption;
-  opacity: 0.8;
+  font-size: @font-size-footnote;
+  font-family: monospace;
+
+  &.green {
+    color: @color-green;
+  }
+
+  &.red {
+    color: @color-red;
+  }
 }
 
-/* ==================== 24h统计栏 ==================== */
-.stats-bar {
+.stats-grid {
   display: flex;
-  justify-content: space-around;
-  background: @bg-tertiary;
-  padding: @spacing-md 0;
-  margin: 0 @spacing-md @spacing-md;
-  border-radius: @radius-md;
+  gap: @spacing-lg;
 }
 
 .stat-item {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: @spacing-xs;
+  gap: 4rpx;
 }
 
 .stat-label {
-  font-size: @font-size-small;
-  color: @text-tertiary;
+  font-size: @font-size-caption2;
+  color: @text-secondary;
 }
 
 .stat-value {
   font-size: @font-size-body;
-  font-weight: @font-weight-semibold;
+  font-family: monospace;
   color: @text-primary;
 }
 
-/* ==================== K线图区域 ==================== */
-.chart-section {
-  margin: 0 @spacing-md @spacing-md;
+/* ==================== 技术指标 ==================== */
+.indicators-section {
   background: @bg-secondary;
-  border-radius: @radius-lg;
-  overflow: hidden;
-  box-shadow: @shadow-md;
+  border-radius: @radius-md;
+  padding: @padding-card;
+  margin-bottom: @spacing-lg;
 }
 
-.chart-header {
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: @spacing-sm @spacing-md;
-  border-bottom: 1rpx solid @divider-color;
+  margin-bottom: @spacing-md;
 }
 
-.chart-title {
-  font-size: @font-size-body;
+.section-title {
+  font-size: @font-size-headline;
   font-weight: @font-weight-semibold;
   color: @text-primary;
 }
 
-.timeframe-selector {
-  display: flex;
-  gap: @spacing-xs;
-}
-
-.timeframe-item {
-  padding: @spacing-xs @spacing-sm;
-  border-radius: @radius-sm;
-  font-size: @font-size-small;
-  color: @text-secondary;
-  background: @bg-tertiary;
-  transition: all @transition-fast @ease-out;
-
-  &.active {
-    background: @primary-color;
-    color: #ffffff;
-    font-weight: @font-weight-semibold;
-  }
-
-  &:not(.active):active {
-    opacity: 0.7;
-  }
-}
-
-.chart-container {
-  padding: @spacing-md;
-}
-
-.chart-placeholder {
-  height: 500rpx;
-  background: @bg-tertiary;
-  border-radius: @radius-md;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: @spacing-sm;
-}
-
-.placeholder-icon {
-  font-size: 80rpx;
-  opacity: 0.3;
-}
-
-.placeholder-text {
-  font-size: @font-size-body;
-  color: @text-secondary;
-}
-
-.placeholder-hint {
-  font-size: @font-size-small;
-  color: @text-tertiary;
-}
-
-/* ==================== 交易操作区 ==================== */
-.trade-section {
-  margin: 0 @spacing-md @spacing-md;
-  background: @bg-secondary;
-  border-radius: @radius-lg;
-  padding: @spacing-md;
-  box-shadow: @shadow-md;
-}
-
-.trade-header {
-  margin-bottom: @spacing-md;
-}
-
-.trade-title {
-  font-size: @font-size-h3;
-  font-weight: @font-weight-semibold;
-  color: @text-primary;
-  margin-bottom: @spacing-xs;
-}
-
-.trade-hint {
-  font-size: @font-size-caption;
-  color: @text-tertiary;
-}
-
-/* 交易类型选择器 */
-.trade-type-selector {
-  display: flex;
-  gap: @spacing-sm;
-  margin-bottom: @spacing-md;
-  background: @bg-tertiary;
-  padding: 4rpx;
-  border-radius: @radius-md;
-}
-
-.trade-type-item {
-  flex: 1;
-  height: 64rpx;
+.refresh-btn {
+  width: 32rpx;
+  height: 32rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: @radius-sm;
-  transition: all @transition-fast @ease-out;
-
-  &.active {
-    background: @bg-elevated;
-    box-shadow: @shadow-sm;
-
-    .type-text {
-      color: @text-primary;
-      font-weight: @font-weight-semibold;
-    }
-  }
-
-  &:not(.active):active {
-    opacity: 0.7;
-  }
-}
-
-.type-text {
-  font-size: @font-size-body;
-  color: @text-secondary;
-}
-
-/* 输入框区域 */
-.price-input-wrapper,
-.amount-input-wrapper {
-  margin-bottom: @spacing-md;
-}
-
-.input-label {
-  display: block;
-  font-size: @font-size-caption;
-  color: @text-secondary;
-  margin-bottom: @spacing-xs;
-}
-
-.price-input,
-.amount-input {
-  width: 100%;
-  height: 80rpx;
-  background: @bg-tertiary;
-  border: 2rpx solid @border-color;
-  border-radius: @radius-md;
-  padding: 0 @spacing-md;
-  font-size: @font-size-h4;
-  color: @text-primary;
-  box-sizing: border-box;
-  transition: border-color @transition-fast @ease-out;
-
-  &:focus {
-    border-color: @primary-color;
-  }
-}
-
-.amount-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: @spacing-xs;
-}
-
-.amount-hint {
-  font-size: @font-size-small;
-  color: @text-tertiary;
-}
-
-.amount-input-row {
-  display: flex;
-  align-items: center;
-  background: @bg-tertiary;
-  border: 2rpx solid @border-color;
-  border-radius: @radius-md;
-  padding: 0 @spacing-md;
-  transition: border-color @transition-fast @ease-out;
-
-  &:focus-within {
-    border-color: @primary-color;
-  }
-}
-
-.amount-input {
-  flex: 1;
-  height: 80rpx;
-  border: none;
   background: transparent;
-  padding: 0;
-  font-size: @font-size-h4;
-  color: @text-primary;
-
-  &:focus {
-    border-color: transparent;
-  }
-}
-
-.amount-suffix {
-  font-size: @font-size-body;
-  color: @text-secondary;
-  margin-left: @spacing-sm;
-}
-
-.amount-presets {
-  display: flex;
-  gap: @spacing-sm;
-  margin-top: @spacing-sm;
-}
-
-.preset-item {
-  flex: 1;
-  height: 56rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: @bg-tertiary;
-  border: 1rpx solid @border-color;
-  border-radius: @radius-sm;
-  font-size: @font-size-caption;
-  color: @text-secondary;
-  transition: all @transition-fast @ease-out;
-
-  &:active {
-    background: @bg-elevated;
-    border-color: @primary-color;
-    color: @primary-color;
-  }
-}
-
-/* 交易按钮 */
-.trade-buttons {
-  display: flex;
-  gap: @spacing-md;
-}
-
-.trade-btn {
-  flex: 1;
-  height: 120rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: @radius-lg;
   border: none;
   padding: 0;
-  position: relative;
-  overflow: hidden;
 
   &::after {
     border: none;
   }
+}
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.1);
-    opacity: 0;
-    transition: opacity @transition-fast @ease-out;
+.refresh-icon {
+  font-size: 28rpx;
+  color: @color-blue;
+}
+
+.indicator-card {
+  background: @bg-tertiary;
+  border-radius: @radius-sm;
+  padding: @spacing-md;
+  margin-bottom: @spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.indicator-header {
+  margin-bottom: @spacing-sm;
+}
+
+.indicator-title {
+  font-size: @font-size-caption1;
+  font-weight: @font-weight-medium;
+  color: @text-secondary;
+}
+
+.indicator-body {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-sm;
+}
+
+/* MA 指标 */
+.ma-grid {
+  display: flex;
+  gap: @spacing-md;
+}
+
+.ma-item {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ma-label {
+  font-size: @font-size-body;
+  color: @text-secondary;
+}
+
+.ma-value {
+  font-size: @font-size-body;
+  font-family: monospace;
+  font-weight: @font-weight-medium;
+
+  &.green {
+    color: @color-green;
   }
 
-  &:active::before {
-    opacity: 1;
+  &.red {
+    color: @color-red;
   }
 }
 
-.buy-btn {
-  background: @gradient-success;
-  box-shadow: 0 4rpx 16rpx rgba(0, 200, 83, 0.3);
+/* RSI 指标 */
+.rsi-row {
+  display: flex;
+  align-items: center;
+  gap: @spacing-sm;
 }
 
-.sell-btn {
-  background: @gradient-danger;
-  box-shadow: 0 4rpx 16rpx rgba(255, 82, 82, 0.3);
+.rsi-label {
+  font-size: @font-size-body;
+  color: @text-secondary;
+  width: 60rpx;
 }
 
-.btn-icon {
-  font-size: 36rpx;
-  margin-bottom: 4rpx;
+.rsi-bar {
+  flex: 1;
+  height: 8rpx;
+  background: @bg-elevated;
+  border-radius: @radius-sm;
+  overflow: hidden;
 }
 
-.btn-content {
+.rsi-fill {
+  height: 100%;
+  background: @color-blue;
+  border-radius: @radius-sm;
+  transition: width 0.3s;
+}
+
+.rsi-value {
+  font-size: @font-size-body;
+  font-family: monospace;
+  color: @text-primary;
+  width: 60rpx;
+  text-align: right;
+}
+
+/* 布林带指标 */
+.bb-row {
+  display: flex;
+  justify-content: space-around;
+}
+
+.bb-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4rpx;
 }
 
-.btn-text {
+.bb-label {
+  font-size: @font-size-caption2;
+  color: @text-secondary;
+}
+
+.bb-value {
   font-size: @font-size-body;
-  font-weight: @font-weight-bold;
-  color: #ffffff;
-}
-
-.btn-hint {
-  font-size: @font-size-small;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-/* ==================== 持仓区域 ==================== */
-.positions-section,
-.history-section {
-  margin: 0 @spacing-md @spacing-md;
-  background: @bg-secondary;
-  border-radius: @radius-lg;
-  padding: @spacing-md;
-  box-shadow: @shadow-md;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: @spacing-md;
-}
-
-.section-icon {
-  font-size: 36rpx;
-  margin-right: @spacing-sm;
-}
-
-.section-title {
-  flex: 1;
-  font-size: @font-size-h3;
-  font-weight: @font-weight-semibold;
+  font-family: monospace;
   color: @text-primary;
 }
 
-.position-count {
-  width: 40rpx;
-  height: 40rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: @primary-bg;
-  border-radius: @radius-round;
-  font-size: @font-size-small;
-  font-weight: @font-weight-semibold;
-  color: @primary-color;
+/* ==================== AI分析 ==================== */
+.ai-section {
+  background: @bg-secondary;
+  border-radius: @radius-md;
+  padding: @padding-card;
 }
 
-.section-more {
-  font-size: @font-size-caption;
-  color: @primary-color;
-  padding: @spacing-xs @spacing-sm;
+.ai-card {
+  background: @bg-tertiary;
   border-radius: @radius-sm;
-  background: @primary-bg;
+  padding: @spacing-md;
 }
 
-/* 空状态 */
-.empty-state {
-  text-align: center;
-  padding: @spacing-xl 0;
-}
-
-.empty-icon {
-  font-size: 80rpx;
-  opacity: 0.3;
+.ai-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: @spacing-sm;
+}
+
+.signal-badge {
+  padding: 4rpx 8rpx;
+  border-radius: @radius-sm;
+  font-size: @font-size-caption1;
+  font-weight: @font-weight-medium;
+
+  &.long {
+    background: @color-green-bg;
+    color: @color-green;
+  }
+
+  &.short {
+    background: @color-red-bg;
+    color: @color-red;
+  }
+
+  &.neutral {
+    background: @color-orange-bg;
+    color: @color-orange;
+  }
+}
+
+.signal-text {
+  font-size: @font-size-caption1;
+}
+
+.confidence-badge {
+  padding: 4rpx 8rpx;
+  background: @color-blue-bg;
+  border-radius: @radius-sm;
+}
+
+.confidence-text {
+  font-size: @font-size-caption1;
+  color: @color-blue;
+}
+
+.ai-body {
+  margin-top: @spacing-sm;
+}
+
+.ai-reasoning {
+  font-size: @font-size-body;
+  color: @text-secondary;
+  line-height: @line-height-normal;
+}
+
+.ai-empty {
+  padding: @spacing-xl 0;
+  text-align: center;
 }
 
 .empty-text {
   font-size: @font-size-body;
   color: @text-secondary;
-  margin-bottom: @spacing-xs;
-}
-
-.empty-hint {
-  font-size: @font-size-small;
-  color: @text-tertiary;
-}
-
-/* 持仓列表 */
-.position-list {
-  display: flex;
-  flex-direction: column;
-  gap: @spacing-sm;
-}
-
-.position-item {
-  background: @bg-tertiary;
-  border-radius: @radius-md;
-  padding: @spacing-md;
-  border: 1rpx solid @border-light;
-  transition: all @transition-normal @ease-out;
-
-  &:active {
-    transform: translateX(8rpx);
-    border-color: @primary-color;
-  }
-}
-
-.pos-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: @spacing-sm;
-}
-
-.pos-symbol {
-  font-size: @font-size-h4;
-  font-weight: @font-weight-semibold;
-  color: @text-primary;
-}
-
-.pos-side {
-  display: inline-flex;
-  align-items: center;
-  gap: 4rpx;
-  padding: 4rpx 12rpx;
-  border-radius: @radius-round;
-  font-size: @font-size-small;
-  font-weight: @font-weight-semibold;
-
-  &.long {
-    background: @success-bg;
-    color: @success-color;
-  }
-
-  &.short {
-    background: @danger-bg;
-    color: @danger-color;
-  }
-}
-
-.side-icon {
-  font-size: 20rpx;
-}
-
-.pos-body {
-  margin-bottom: @spacing-sm;
-}
-
-.pos-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: @spacing-xs;
-}
-
-.pos-info-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4rpx;
-}
-
-.pos-label {
-  font-size: @font-size-small;
-  color: @text-tertiary;
-}
-
-.pos-value {
-  font-size: @font-size-body;
-  font-weight: @font-weight-medium;
-  color: @text-primary;
-
-  &.profit {
-    color: @success-color;
-  }
-
-  &.loss {
-    color: @danger-color;
-  }
-}
-
-.pos-divider {
-  height: 1rpx;
-  background: @divider-color;
-  margin: @spacing-sm 0;
-}
-
-.pos-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: @spacing-sm;
-  border-top: 1rpx solid @divider-color;
-}
-
-.pos-time {
-  font-size: @font-size-small;
-  color: @text-tertiary;
-}
-
-.pos-actions {
-  display: flex;
-  gap: @spacing-sm;
-}
-
-.pos-action-btn {
-  padding: @spacing-xs @spacing-md;
-  border-radius: @radius-sm;
-  font-size: @font-size-caption;
-  font-weight: @font-weight-medium;
-  border: none;
-  transition: all @transition-fast @ease-out;
-
-  &::after {
-    border: none;
-  }
-
-  &.close-btn {
-    background: @danger-bg;
-    color: @danger-color;
-
-    &:active {
-      opacity: 0.7;
-    }
-  }
-}
-
-/* ==================== 交易记录 ==================== */
-.trade-list {
-  display: flex;
-  flex-direction: column;
-  gap: @spacing-sm;
-}
-
-.trade-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: @bg-tertiary;
-  border-radius: @radius-md;
-  padding: @spacing-sm @spacing-md;
-  border: 1rpx solid @border-light;
-}
-
-.trade-left {
-  display: flex;
-  flex-direction: column;
-  gap: 4rpx;
-}
-
-.trade-symbol {
-  font-size: @font-size-body;
-  font-weight: @font-weight-medium;
-  color: @text-primary;
-}
-
-.trade-time {
-  font-size: @font-size-small;
-  color: @text-tertiary;
-}
-
-.trade-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4rpx;
-}
-
-.trade-side {
-  padding: 4rpx 12rpx;
-  border-radius: @radius-round;
-  font-size: @font-size-small;
-  font-weight: @font-weight-semibold;
-
-  &.long {
-    background: @success-bg;
-    color: @success-color;
-  }
-
-  &.short {
-    background: @danger-bg;
-    color: @danger-color;
-  }
-}
-
-.trade-pnl {
-  font-size: @font-size-body;
-  font-weight: @font-weight-semibold;
-
-  &.profit {
-    color: @success-color;
-  }
-
-  &.loss {
-    color: @danger-color;
-  }
 }
