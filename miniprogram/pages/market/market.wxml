@@ -1,140 +1,49 @@
 <!--pages/market/market.wxml-->
 <view class="container">
-  <!-- 搜索栏 -->
-  <view class="search-bar">
-    <view class="search-input-wrapper">
-      <text class="search-icon">🔍</text>
-      <input
-        class="search-input"
-        type="text"
-        placeholder="搜索交易对"
-        value="{{searchKeyword}}"
-        bindinput="onSearchInput"
-        placeholder-class="search-placeholder"
-      />
-      <text class="clear-icon" wx:if="{{searchKeyword}}" bindtap="clearSearch">✕</text>
-    </view>
-  </view>
-
-  <!-- 分类标签 -->
-  <view class="category-tabs">
-    <view
-      class="tab-item {{activeCategory === 'all' ? 'active' : ''}}"
-      bindtap="switchCategory"
-      data-category="all"
-    >
-      <text class="tab-text">全部</text>
-    </view>
-    <view
-      class="tab-item {{activeCategory === 'spot' ? 'active' : ''}}"
-      bindtap="switchCategory"
-      data-category="spot"
-    >
-      <text class="tab-text">现货</text>
-    </view>
-    <view
-      class="tab-item {{activeCategory === 'swap' ? 'active' : ''}}"
-      bindtap="switchCategory"
-      data-category="swap"
-    >
-      <text class="tab-text">合约</text>
-    </view>
-  </view>
-
-  <!-- 排序栏 -->
-  <view class="sort-bar">
-    <view class="sort-item" bindtap="sortMarkets" data-sort="name">
-      <text class="sort-text">名称</text>
-      <view class="sort-icon-wrapper">
-        <text class="sort-arrow {{sortField === 'name' && sortOrder === 'asc' ? 'active' : ''}}">▲</text>
-        <text class="sort-arrow {{sortField === 'name' && sortOrder === 'desc' ? 'active' : ''}}">▼</text>
-      </view>
-    </view>
-    <view class="sort-item" bindtap="sortMarkets" data-sort="price">
-      <text class="sort-text">价格</text>
-      <view class="sort-icon-wrapper">
-        <text class="sort-arrow {{sortField === 'price' && sortOrder === 'asc' ? 'active' : ''}}">▲</text>
-        <text class="sort-arrow {{sortField === 'price' && sortOrder === 'desc' ? 'active' : ''}}">▼</text>
-      </view>
-    </view>
-    <view class="sort-item" bindtap="sortMarkets" data-sort="change">
-      <text class="sort-text">涨跌幅</text>
-      <view class="sort-icon-wrapper">
-        <text class="sort-arrow {{sortField === 'change' && sortOrder === 'asc' ? 'active' : ''}}">▲</text>
-        <text class="sort-arrow {{sortField === 'change' && sortOrder === 'desc' ? 'active' : ''}}">▼</text>
-      </view>
-    </view>
-    <view class="sort-item" bindtap="sortMarkets" data-sort="volume">
-      <text class="sort-text">成交量</text>
-      <view class="sort-icon-wrapper">
-        <text class="sort-arrow {{sortField === 'volume' && sortOrder === 'asc' ? 'active' : ''}}">▲</text>
-        <text class="sort-arrow {{sortField === 'volume' && sortOrder === 'desc' ? 'active' : ''}}">▼</text>
-      </view>
-    </view>
+  <!-- 标题栏 -->
+  <view class="header">
+    <text class="title">行情</text>
+    <button class="refresh-btn" bindtap="onRefresh">
+      <text class="refresh-icon">↻</text>
+    </button>
   </view>
 
   <!-- 行情列表 -->
-  <scroll-view
-    class="market-list"
-    scroll-y
-    refresher-enabled
-    refresher-triggered="{{refreshing}}"
-    bindrefresherrefresh="onRefresh"
-  >
-    <!-- 空状态 -->
-    <view wx:if="{{filteredMarkets.length === 0}}" class="empty-state">
-      <view class="empty-icon">📊</view>
-      <view class="empty-text">{{searchKeyword ? '未找到相关交易对' : '暂无行情数据'}}</view>
-      <view class="empty-hint" wx:if="{{searchKeyword}}">尝试搜索其他币种</view>
+  <view class="market-section">
+    <!-- 列表头 -->
+    <view class="list-header">
+      <text class="header-col">交易对</text>
+      <text class="header-col">最新价</text>
+      <text class="header-col">24h涨跌</text>
     </view>
 
-    <!-- 行情卡片列表 -->
-    <view class="market-card-list">
+    <view class="divider"></view>
+
+    <!-- 行情列表 -->
+    <scroll-view class="market-list" scroll-y refresher-enabled refresher-triggered="{{refreshing}}" bindrefresherrefresh="onRefresh">
       <view
-        class="market-card"
+        class="market-row {{item.instId === selectedPair ? 'selected' : ''}}"
         wx:for="{{filteredMarkets}}"
-        wx:key="inst_id"
-        bindtap="selectMarket"
-        data-symbol="{{item.inst_id}}"
+        wx:key="instId"
+        bindtap="selectPair"
+        data-pair="{{item}}"
       >
-        <view class="card-left">
-          <view class="coin-info">
-            <text class="coin-symbol">{{item.inst_id}}</text>
-            <text class="coin-name">{{item.name || 'BTC'}}</text>
-          </view>
-          <view class="coin-volume">
-            <text class="volume-label">24h量</text>
-            <text class="volume-value">{{item.volume24h || '--'}}</text>
-          </view>
+        <view class="row-col pair-name">
+          <text class="pair-ccy">{{item.baseCcy}}</text>
+          <text class="quote-ccy">{{item.quoteCcy}}</text>
         </view>
-
-        <view class="card-center">
-          <view class="price-info">
-            <text class="price {{item.trend}}">{{item.price}}</text>
-          </view>
-          <view class="price-change {{item.trend}}">
-            <text class="change-icon">{{item.trend === 'up' ? '▲' : item.trend === 'down' ? '▼' : '−'}}</text>
-            <text class="change-value">{{item.change}}</text>
-          </view>
+        <view class="row-col price">
+          <text class="price-text">{{item.last || '--'}}</text>
         </view>
-
-        <view class="card-right">
-          <view class="quick-actions">
-            <button class="action-btn buy-btn" catchtap="quickTrade" data-symbol="{{item.inst_id}}" data-side="long">
-              买入
-            </button>
-            <button class="action-btn sell-btn" catchtap="quickTrade" data-symbol="{{item.inst_id}}" data-side="short">
-              卖出
-            </button>
-          </view>
+        <view class="row-col change">
+          <text class="change-text {{item.changeClass}}">{{item.changeDisplay || '--'}}</text>
         </view>
       </view>
-    </view>
-  </scroll-view>
+    </scroll-view>
+  </view>
 
-  <!-- 底部提示 -->
-  <view class="footer-hint">
-    <text class="hint-text">数据来源于 OKX 公开 API</text>
-    <text class="hint-time">更新时间: {{updateTime}}</text>
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{filteredMarkets.length === 0}}">
+    <text class="empty-text">暂无行情数据</text>
   </view>
 </view>
