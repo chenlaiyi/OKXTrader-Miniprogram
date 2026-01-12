@@ -29,7 +29,8 @@ Page({
     formattedWinRate: '0',
     formattedMinConfidence: '0',
     formattedLatestConfidence: '0',
-    formattedHistoryConfidence: []
+    formattedHistoryConfidence: [],
+    formattedBalance: '0.00'
   },
 
   onLoad() {
@@ -86,6 +87,7 @@ Page({
         ...item,
         confidenceDisplay: (item.confidence * 100).toFixed(0)
       }))
+      const formattedBalance = balance && balance.total_equity ? balance.total_equity.toFixed(2) : '0.00'
 
       this.setData({
         autoTradingEnabled: tradingStats.isRunning,
@@ -107,7 +109,8 @@ Page({
         formattedWinRate,
         formattedMinConfidence,
         formattedLatestConfidence,
-        formattedHistoryConfidence
+        formattedHistoryConfidence,
+        formattedBalance
       })
     } catch (error) {
       console.error('加载数据失败:', error)

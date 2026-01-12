@@ -150,7 +150,7 @@
     <view class="card-body">
       <view class="balance-display">
         <text class="balance-label">总权益</text>
-        <text class="balance-value">{{formatMoney(balance?.total_equity || 0)}} USDT</text>
+        <text class="balance-value">{{formattedBalance}} USDT</text>
       </view>
     </view>
   </view>
