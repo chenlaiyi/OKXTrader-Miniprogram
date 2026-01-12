@@ -1,157 +1,89 @@
 <!--pages/index/index.wxml-->
 <view class="container">
-  <!-- 顶部区域 -->
+  <!-- 标题栏 -->
   <view class="header">
-    <view class="header-content">
-      <view class="title">OKly</view>
-      <view class="subtitle">智能加密货币交易系统</view>
-    </view>
+    <text class="title">OKly</text>
+    <text class="subtitle">v1.0.0</text>
   </view>
 
-  <!-- 账号信息卡片 -->
-  <view class="account-card">
-    <view class="account-header">
-      <view class="account-icon">👤</view>
-      <view class="account-info">
-        <view class="account-name">{{currentAccount.name || '模拟账号'}}</view>
-        <view class="account-type">{{currentAccount.isSimulation ? '模拟交易' : '实盘交易'}}</view>
-      </view>
+  <!-- 行情列表 -->
+  <view class="market-section">
+    <!-- 列表头 -->
+    <view class="list-header">
+      <text class="header-col">交易对</text>
+      <text class="header-col">最新价</text>
+      <text class="header-col">24h涨跌</text>
     </view>
-    <view class="account-actions">
-      <view class="action-btn" bindtap="goToAccount">
-        <text>管理账号</text>
-      </view>
-    </view>
-  </view>
 
-  <!-- 行情概览卡片 -->
-  <view class="section">
-    <view class="section-header">
-      <view class="section-icon">📈</view>
-      <view class="section-title">热门行情</view>
-      <view class="section-more" bindtap="goToMarket">更多 →</view>
-    </view>
-    <scroll-view scroll-x class="market-scroll" enable-flex show-scrollbar="{{false}}">
-      <view class="market-card" wx:for="{{markets}}" wx:key="inst_id" bindtap="selectMarket" data-symbol="{{item.inst_id}}">
-        <view class="market-symbol">{{item.inst_id}}</view>
-        <view class="market-price {{item.trend}}">{{item.price}}</view>
-        <view class="market-change {{item.trend}}">{{item.change}}</view>
+    <view class="divider"></view>
+
+    <!-- 行情列表 -->
+    <scroll-view class="market-list" scroll-y>
+      <view
+        class="market-row {{item.instId === selectedPair ? 'selected' : ''}}"
+        wx:for="{{markets}}"
+        wx:key="instId"
+        bindtap="selectPair"
+        data-pair="{{item}}"
+      >
+        <view class="row-col pair-name">
+          <text class="pair-ccy">{{item.baseCcy}}</text>
+          <text class="quote-ccy">{{item.quoteCcy}}</text>
+        </view>
+        <view class="row-col price">
+          <text class="price-text">{{item.last || '--'}}</text>
+        </view>
+        <view class="row-col change">
+          <text class="change-text {{item.changeClass}}">{{item.changeDisplay || '--'}}</text>
+        </view>
       </view>
     </scroll-view>
   </view>
 
-  <!-- 快速操作 -->
-  <view class="section">
-    <view class="section-header">
-      <view class="section-icon">⚡</view>
-      <view class="section-title">快速操作</view>
+  <!-- 当前选中交易对 -->
+  <view class="pair-detail" wx:if="{{selectedPair}}">
+    <view class="pair-info">
+      <text class="pair-title">{{selectedPair.baseCcy}}/{{selectedPair.quoteCcy}}</text>
+      <view class="price-section">
+        <text class="current-price {{tickerChangeClass}}">{{currentPrice}}</text>
+        <view class="price-change">
+          <text class="change-value {{tickerChangeClass}}">{{priceChange}}</text>
+          <text class="change-percent {{tickerChangeClass}}">{{priceChangePercent}}%</text>
+        </view>
+      </view>
     </view>
-    <view class="quick-actions">
-      <view class="action-item" bindtap="goToTrading">
-        <view class="action-icon-wrapper trading">
-          <text class="action-icon">💱</text>
-        </view>
-        <view class="action-text">交易</view>
+
+    <view class="divider"></view>
+
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-label">24h 最高</text>
+        <text class="stat-value">{{high24h}}</text>
       </view>
-      <view class="action-item" bindtap="goToMarket">
-        <view class="action-icon-wrapper market">
-          <text class="action-icon">📊</text>
-        </view>
-        <view class="action-text">行情</view>
+      <view class="stat-item">
+        <text class="stat-label">24h 最低</text>
+        <text class="stat-value">{{low24h}}</text>
       </view>
-      <view class="action-item" bindtap="goToMonitor">
-        <view class="action-icon-wrapper monitor">
-          <text class="action-icon">🎯</text>
-        </view>
-        <view class="action-text">监控</view>
-      </view>
-      <view class="action-item" bindtap="goToAI">
-        <view class="action-icon-wrapper ai">
-          <text class="action-icon">🤖</text>
-        </view>
-        <view class="action-text">AI分析</view>
+      <view class="stat-item">
+        <text class="stat-label">24h 成交量</text>
+        <text class="stat-value">{{volume24h}}</text>
       </view>
     </view>
   </view>
 
-  <!-- AI分析预览 -->
-  <view class="section" wx:if="{{aiAnalysis}}">
+  <!-- 账号信息 -->
+  <view class="account-section">
     <view class="section-header">
-      <view class="section-icon">🤖</view>
-      <view class="section-title">AI分析建议</view>
-      <view class="section-more" bindtap="goToAI">详情 →</view>
-    </view>
-    <view class="ai-card">
-      <view class="ai-header">
-        <view class="ai-signal-badge {{aiAnalysis.signal_type}}">
-          <text class="signal-icon">{{aiAnalysis.signal_type === 'long' ? '📈' : '📉'}}</text>
-          <text class="signal-text">{{aiAnalysis.signal_type === 'long' ? '做多建议' : '做空建议'}}</text>
-        </view>
-        <view class="ai-confidence">
-          <text class="confidence-label">置信度</text>
-          <text class="confidence-value">{{aiAnalysis.confidence}}%</text>
-        </view>
-      </view>
-      <view class="ai-content">
-        <view class="ai-reasoning">{{aiAnalysis.reasoning}}</view>
-      </view>
-      <view class="ai-footer">
-        <view class="ai-time">
-          <text class="time-icon">🕐</text>
-          <text>{{formatTime(aiAnalysis.timestamp)}}</text>
-        </view>
+      <text class="section-title">账号</text>
+      <view class="status-badge {{isConnected ? 'connected' : ''}}">
+        <view class="status-dot"></view>
+        <text class="status-text">{{statusMessage}}</text>
       </view>
     </view>
-  </view>
 
-  <!-- 持仓概览 -->
-  <view class="section" wx:if="{{positions.length > 0}}">
-    <view class="section-header">
-      <view class="section-icon">💼</view>
-      <view class="section-title">当前持仓</view>
-      <view class="section-more" bindtap="goToHistory">详情 →</view>
+    <view class="account-info">
+      <text class="account-name">{{currentAccount.name || '未选择'}}</text>
+      <text class="account-type">{{isDemo ? '模拟盘' : '实盘'}}</text>
     </view>
-    <view class="position-list">
-      <view class="position-item" wx:for="{{positions}}" wx:key="id" bindtap="viewPosition" data-id="{{item.id}}">
-        <view class="pos-header">
-          <view class="pos-symbol">{{item.symbol}}</view>
-          <view class="pos-side {{item.side}}">{{item.side === 'long' ? '做多' : '做空'}}</view>
-        </view>
-        <view class="pos-body">
-          <view class="pos-row">
-            <text class="pos-label">入场价</text>
-            <text class="pos-value">{{item.entryPrice}}</text>
-          </view>
-          <view class="pos-row">
-            <text class="pos-label">未实现盈亏</text>
-            <text class="pos-value {{item.pnlClass}}">{{item.pnlDisplay}}</text>
-          </view>
-        </view>
-      </view>
-    </view>
-  </view>
-
-  <!-- 自动交易状态 -->
-  <view class="section">
-    <view class="section-header">
-      <view class="section-icon">🔄</view>
-      <view class="section-title">自动交易</view>
-    </view>
-    <view class="auto-trade-card">
-      <view class="auto-info">
-        <view class="auto-status-badge {{autoTradingEnabled ? 'enabled' : 'disabled'}}">
-          <text class="status-icon">{{autoTradingEnabled ? '✅' : '❌'}}</text>
-          <text class="status-text">{{autoTradingEnabled ? '已启用' : '已禁用'}}</text>
-        </view>
-        <view class="auto-desc">AI策略自动执行交易</view>
-      </view>
-      <switch checked="{{autoTradingEnabled}}" bindchange="toggleAutoTrading" color="#667eea" class="auto-switch"/>
-    </view>
-  </view>
-
-  <!-- 底部说明 -->
-  <view class="footer">
-    <view class="footer-text">OKly v1.0.0</view>
-    <view class="footer-text">数据来源于 OKX 公开 API</view>
   </view>
 </view>

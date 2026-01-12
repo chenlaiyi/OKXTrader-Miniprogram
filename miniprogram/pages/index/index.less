@@ -3,552 +3,272 @@
 
 .container {
   min-height: 100vh;
-  background: @bg-page;
-  padding-bottom: 40rpx;
+  background: @bg-primary;
+  padding: @padding-page;
 }
 
-/* ==================== 顶部区域 ==================== */
+/* ==================== 标题栏 ==================== */
 .header {
-  background: @gradient-primary;
-  padding: 60rpx @spacing-lg @spacing-xl;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-
-  // 添加光晕效果
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    animation: header-glow 8s linear infinite;
-  }
-}
-
-@keyframes header-glow {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.header-content {
-  position: relative;
-  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: @spacing-sm;
+  padding: @spacing-md 0;
 }
 
 .title {
-  font-size: @font-size-h1;
+  font-size: @font-size-title1;
   font-weight: @font-weight-bold;
   color: @text-primary;
-  margin-bottom: @spacing-xs;
-  letter-spacing: 2rpx;
 }
 
 .subtitle {
-  font-size: @font-size-body;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: @font-weight-medium;
+  font-size: @font-size-caption1;
+  color: @color-green;
 }
 
-/* ==================== 账号信息卡片 ==================== */
-.account-card {
-  margin: -40rpx @spacing-md @spacing-md;
+/* ==================== 行情列表 ==================== */
+.market-section {
   background: @bg-secondary;
-  border-radius: @radius-lg;
+  border-radius: @radius-md;
+  overflow: hidden;
+  margin-bottom: @spacing-lg;
+}
+
+.list-header {
+  display: flex;
   padding: @spacing-md;
-  box-shadow: @shadow-lg;
-  position: relative;
-  z-index: 2;
-  animation: slide-up @transition-normal @ease-out;
+  background: @bg-tertiary;
 }
 
-.account-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: @spacing-md;
-}
-
-.account-icon {
-  width: 80rpx;
-  height: 80rpx;
-  background: @gradient-primary;
-  border-radius: @radius-round;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40rpx;
-  margin-right: @spacing-md;
-}
-
-.account-info {
-  flex: 1;
-}
-
-.account-name {
-  font-size: @font-size-h4;
-  font-weight: @font-weight-semibold;
-  color: @text-primary;
-  margin-bottom: 4rpx;
-}
-
-.account-type {
-  font-size: @font-size-caption;
+.header-col {
+  font-size: @font-size-footnote;
   color: @text-secondary;
 }
 
-.account-actions {
-  display: flex;
-  gap: @spacing-sm;
+.header-col:nth-child(1) {
+  width: 30%;
 }
 
-.action-btn {
-  flex: 1;
-  height: 64rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: @primary-color;
-  color: #ffffff;
-  border-radius: @radius-md;
-  font-size: @font-size-body;
-  font-weight: @font-weight-medium;
-  transition: all @transition-fast @ease-out;
+.header-col:nth-child(2) {
+  width: 35%;
+  text-align: right;
+}
 
-  &:active {
-    opacity: 0.8;
-    transform: scale(0.98);
+.header-col:nth-child(3) {
+  width: 35%;
+  text-align: right;
+}
+
+.market-list {
+  max-height: 600rpx;
+}
+
+.market-row {
+  display: flex;
+  padding: @spacing-md;
+  transition: background 0.15s;
+
+  &.selected {
+    background: @color-blue-bg;
   }
 }
 
-/* ==================== 区块通用样式 ==================== */
-.section {
-  margin: @spacing-md;
+.row-col {
+  display: flex;
+  align-items: center;
+}
+
+.row-col:nth-child(1) {
+  width: 30%;
+}
+
+.row-col:nth-child(2) {
+  width: 35%;
+  justify-content: flex-end;
+}
+
+.row-col:nth-child(3) {
+  width: 35%;
+  justify-content: flex-end;
+}
+
+.pair-name {
+  flex-direction: column;
+  gap: 2rpx;
+}
+
+.pair-ccy {
+  font-size: @font-size-body;
+  font-weight: @font-weight-medium;
+  color: @text-primary;
+}
+
+.quote-ccy {
+  font-size: @font-size-caption2;
+  color: @text-secondary;
+}
+
+.price-text {
+  font-size: @font-size-body;
+  color: @text-primary;
+}
+
+.change-text {
+  font-size: @font-size-footnote;
+  font-weight: @font-weight-medium;
+
+  &.green {
+    color: @color-green;
+  }
+
+  &.red {
+    color: @color-red;
+  }
+}
+
+/* ==================== 交易对详情 ==================== */
+.pair-detail {
   background: @bg-secondary;
-  border-radius: @radius-lg;
-  padding: @spacing-md;
-  box-shadow: @shadow-md;
-  animation: fade-in @transition-normal @ease-out;
+  border-radius: @radius-md;
+  padding: @padding-card;
+  margin-bottom: @spacing-lg;
+}
+
+.pair-info {
+  margin-bottom: @spacing-md;
+}
+
+.pair-title {
+  font-size: @font-size-title2;
+  font-weight: @font-weight-bold;
+  color: @text-primary;
+}
+
+.price-section {
+  display: flex;
+  align-items: center;
+  gap: @spacing-md;
+  margin-top: @spacing-sm;
+}
+
+.current-price {
+  font-size: 56rpx;
+  font-weight: @font-weight-bold;
+  font-family: monospace;
+
+  &.green {
+    color: @color-green;
+  }
+
+  &.red {
+    color: @color-red;
+  }
+}
+
+.price-change {
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
+}
+
+.change-value,
+.change-percent {
+  font-size: @font-size-footnote;
+  font-family: monospace;
+
+  &.green {
+    color: @color-green;
+  }
+
+  &.red {
+    color: @color-red;
+  }
+}
+
+.stats-grid {
+  display: flex;
+  gap: @spacing-lg;
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.stat-label {
+  font-size: @font-size-caption2;
+  color: @text-secondary;
+}
+
+.stat-value {
+  font-size: @font-size-body;
+  font-family: monospace;
+  color: @text-primary;
+}
+
+/* ==================== 账号信息 ==================== */
+.account-section {
+  background: @bg-secondary;
+  border-radius: @radius-md;
+  padding: @padding-card;
 }
 
 .section-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: @spacing-md;
 }
 
-.section-icon {
-  font-size: 36rpx;
-  margin-right: @spacing-sm;
-}
-
 .section-title {
-  flex: 1;
-  font-size: @font-size-h3;
+  font-size: @font-size-headline;
   font-weight: @font-weight-semibold;
   color: @text-primary;
 }
 
-.section-more {
-  font-size: @font-size-caption;
-  color: @primary-color;
-  padding: @spacing-xs @spacing-sm;
-  border-radius: @radius-sm;
-  background: @primary-bg;
-  transition: all @transition-fast @ease-out;
-
-  &:active {
-    opacity: 0.7;
-  }
-}
-
-/* ==================== 行情卡片 ==================== */
-.market-scroll {
-  white-space: nowrap;
-  display: flex;
-}
-
-.market-card {
-  display: inline-block;
-  width: 220rpx;
-  background: @bg-tertiary;
-  border-radius: @radius-md;
-  padding: @spacing-sm;
-  margin-right: @spacing-sm;
-  text-align: center;
-  transition: all @transition-normal @ease-out;
-  box-shadow: @shadow-sm;
-
-  &:last-child {
-    margin-right: 0;
-  }
-
-  &:active {
-    transform: scale(0.95);
-    opacity: 0.9;
-  }
-}
-
-.market-symbol {
-  font-size: @font-size-caption;
-  color: @text-secondary;
-  font-weight: @font-weight-medium;
-  margin-bottom: @spacing-xs;
-  text-transform: uppercase;
-}
-
-.market-price {
-  font-size: @font-size-h4;
-  font-weight: @font-weight-bold;
-  margin-bottom: @spacing-xs;
-  transition: color @transition-fast @ease-out;
-
-  &.up {
-    color: @success-color;
-    animation: price-flash 0.3s @ease-out;
-  }
-
-  &.down {
-    color: @danger-color;
-    animation: price-flash 0.3s @ease-out;
-  }
-
-  &.neutral {
-    color: @text-primary;
-  }
-}
-
-@keyframes price-flash {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.market-change {
-  font-size: @font-size-small;
-  padding: 4rpx 12rpx;
-  border-radius: @radius-round;
-  font-weight: @font-weight-semibold;
-
-  &.up {
-    background: @success-bg;
-    color: @success-color;
-  }
-
-  &.down {
-    background: @danger-bg;
-    color: @danger-color;
-  }
-
-  &.neutral {
-    background: @bg-elevated;
-    color: @text-secondary;
-  }
-}
-
-/* ==================== 快速操作 ==================== */
-.quick-actions {
-  display: flex;
-  justify-content: space-around;
-  padding: @spacing-xs 0;
-}
-
-.action-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: @spacing-sm;
-  transition: all @transition-normal @ease-out;
-
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-.action-icon-wrapper {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: @radius-lg;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: @spacing-sm;
-  box-shadow: @shadow-sm;
-  transition: all @transition-normal @ease-out;
-
-  &.trading {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-
-  &.market {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  }
-
-  &.monitor {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  }
-
-  &.ai {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  }
-}
-
-.action-icon {
-  font-size: 48rpx;
-}
-
-.action-text {
-  font-size: @font-size-caption;
-  color: @text-secondary;
-  font-weight: @font-weight-medium;
-}
-
-/* ==================== AI分析卡片 ==================== */
-.ai-card {
-  background: @gradient-card;
-  border-radius: @radius-md;
-  padding: @spacing-md;
-  box-shadow: @shadow-sm;
-  border: 1rpx solid @border-light;
-}
-
-.ai-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: @spacing-sm;
-}
-
-.ai-signal-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: @spacing-xs @spacing-sm;
-  border-radius: @radius-round;
-  font-size: @font-size-small;
-  font-weight: @font-weight-semibold;
-
-  &.long {
-    background: @success-bg;
-    color: @success-color;
-    box-shadow: @shadow-glow-success;
-  }
-
-  &.short {
-    background: @danger-bg;
-    color: @danger-color;
-    box-shadow: @shadow-glow-danger;
-  }
-
-  .signal-icon {
-    margin-right: 4rpx;
-  }
-}
-
-.ai-confidence {
+.status-badge {
   display: flex;
   align-items: center;
   gap: @spacing-xs;
-  padding: @spacing-xs @spacing-sm;
-  background: @primary-bg;
-  border-radius: @radius-round;
+  padding: 4rpx 8rpx;
+  border-radius: @radius-sm;
+  background: @color-red-bg;
 }
 
-.confidence-label {
-  font-size: @font-size-small;
+.status-badge.connected {
+  background: @color-green-bg;
+}
+
+.status-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: @color-red;
+}
+
+.status-badge.connected .status-dot {
+  background: @color-green;
+}
+
+.status-text {
+  font-size: @font-size-caption2;
   color: @text-secondary;
 }
 
-.confidence-value {
-  font-size: @font-size-caption;
-  font-weight: @font-weight-bold;
-  color: @primary-color;
+.account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
 }
 
-.ai-content {
-  margin-bottom: @spacing-sm;
-}
-
-.ai-reasoning {
+.account-name {
   font-size: @font-size-body;
   color: @text-primary;
-  line-height: @line-height-normal;
-  padding: @spacing-sm;
-  background: @bg-tertiary;
-  border-radius: @radius-sm;
-  border-left: 4rpx solid @primary-color;
 }
 
-.ai-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: @spacing-sm;
-  border-top: 1rpx solid @divider-color;
-}
-
-.ai-time {
-  display: flex;
-  align-items: center;
-  gap: @spacing-xs;
-  font-size: @font-size-small;
-  color: @text-tertiary;
-}
-
-.time-icon {
-  font-size: 20rpx;
-}
-
-/* ==================== 持仓列表 ==================== */
-.position-list {
-  display: flex;
-  flex-direction: column;
-  gap: @spacing-sm;
-}
-
-.position-item {
-  background: @bg-tertiary;
-  border-radius: @radius-md;
-  padding: @spacing-md;
-  border: 1rpx solid @border-light;
-  transition: all @transition-normal @ease-out;
-
-  &:active {
-    transform: translateX(8rpx);
-    border-color: @primary-color;
-  }
-}
-
-.pos-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: @spacing-sm;
-}
-
-.pos-symbol {
-  font-size: @font-size-h4;
-  font-weight: @font-weight-semibold;
-  color: @text-primary;
-}
-
-.pos-side {
-  padding: 4rpx 12rpx;
-  border-radius: @radius-round;
-  font-size: @font-size-small;
-  font-weight: @font-weight-semibold;
-
-  &.long {
-    background: @success-bg;
-    color: @success-color;
-  }
-
-  &.short {
-    background: @danger-bg;
-    color: @danger-color;
-  }
-}
-
-.pos-body {
-  display: flex;
-  flex-direction: column;
-  gap: @spacing-xs;
-}
-
-.pos-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.pos-label {
-  font-size: @font-size-caption;
+.account-type {
+  font-size: @font-size-caption1;
   color: @text-secondary;
-}
-
-.pos-value {
-  font-size: @font-size-body;
-  font-weight: @font-weight-medium;
-  color: @text-primary;
-
-  &.profit {
-    color: @success-color;
-  }
-
-  &.loss {
-    color: @danger-color;
-  }
-}
-
-/* ==================== 自动交易卡片 ==================== */
-.auto-trade-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: @bg-tertiary;
-  border-radius: @radius-md;
-  padding: @spacing-md;
-  border: 1rpx solid @border-light;
-}
-
-.auto-info {
-  flex: 1;
-}
-
-.auto-status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: @spacing-xs;
-  padding: @spacing-xs @spacing-sm;
-  border-radius: @radius-round;
-  font-size: @font-size-caption;
-  font-weight: @font-weight-semibold;
-  margin-bottom: @spacing-xs;
-
-  &.enabled {
-    background: @success-bg;
-    color: @success-color;
-  }
-
-  &.disabled {
-    background: @bg-elevated;
-    color: @text-tertiary;
-  }
-
-  .status-icon {
-    font-size: 20rpx;
-  }
-}
-
-.auto-desc {
-  font-size: @font-size-caption;
-  color: @text-secondary;
-}
-
-.auto-switch {
-  transform: scale(0.9);
-}
-
-/* ==================== 底部说明 ==================== */
-.footer {
-  text-align: center;
-  padding: @spacing-xl 0;
-  margin-top: @spacing-lg;
-}
-
-.footer-text {
-  font-size: @font-size-small;
-  color: @text-tertiary;
-  margin-bottom: @spacing-xs;
-  opacity: 0.8;
 }

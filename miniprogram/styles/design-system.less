@@ -1,203 +1,134 @@
 /*
  * OKly 设计系统 - Design Tokens
- * 专业加密货币交易系统视觉规范
+ * 参照 iOS/macOS 端的简洁专业设计风格
  */
 
 /* ==================== 颜色系统 ==================== */
 
-/* 品牌色 */
-@primary-color: #667eea;
-@primary-light: #8b9eef;
-@primary-dark: #4c63d2;
-@primary-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-
-/* 功能色 */
-@success-color: #00c853;
-@success-light: #00e676;
-@success-bg: rgba(0, 200, 83, 0.1);
-
-@danger-color: #ff5252;
-@danger-light: #ff1744;
-@danger-bg: rgba(255, 82, 82, 0.1);
-
-@warning-color: #ffc107;
-@warning-light: #ffca28;
-@warning-bg: rgba(255, 193, 7, 0.1);
-
-@info-color: #2196f3;
-@info-light: #42a5f5;
-@info-bg: rgba(33, 150, 243, 0.1);
+/* 功能色 - 语义化颜色 */
+@color-green: #34c759;         /* 涨/盈利/连接/成功 */
+@color-red: #ff3b30;           /* 跌/亏损/断开/失败 */
+@color-blue: #007aff;          /* 主功能/链接 */
+@color-orange: #ff9500;        /* 警告/模拟盘/激进策略 */
+@color-purple: #af52de;        /* AI相关 */
 
 /* 中性色 */
-@bg-page: #0a0a0a;
-@bg-primary: #1a1a1a;
-@bg-secondary: #2a2a2a;
-@bg-tertiary: #363636;
-@bg-elevated: #404040;
+@bg-primary: #000000;          /* 主背景 */
+@bg-secondary: #1c1c1e;        /* 次级背景/卡片 */
+@bg-tertiary: #2c2c2e;         /* 三级背景/输入框 */
+@bg-elevated: #48484a;         /* 抬升背景/选中 */
 
-@border-color: #404040;
-@border-light: #505050;
-@divider-color: #2a2a2a;
+@text-primary: #ffffff;        /* 主文字 */
+@text-secondary: #8e8e93;      /* 次级文字 */
+@text-tertiary: #48484a;       /* 三级文字 */
+@text-disabled: #3a3a3c;       /* 禁用文字 */
 
-@text-primary: #ffffff;
-@text-secondary: #b0b0b0;
-@text-tertiary: #808080;
-@text-disabled: #606060;
-@text-placeholder: #505050;
+@border-color: #38383a;        /* 边框 */
+@divider-color: #38383a;       /* 分隔线 */
 
-/* 渐变 */
-@gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-@gradient-success: linear-gradient(135deg, #00c853 0%, #00e676 100%);
-@gradient-danger: linear-gradient(135deg, #ff5252 0%, #ff1744 100%);
-@gradient-card: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+/* 透明度变体 */
+@color-green-bg: rgba(52, 199, 89, 0.1);
+@color-red-bg: rgba(255, 59, 48, 0.1);
+@color-blue-bg: rgba(0, 122, 255, 0.1);
+@color-orange-bg: rgba(255, 149, 0, 0.1);
+@color-purple-bg: rgba(175, 82, 222, 0.1);
 
 /* ==================== 字体系统 ==================== */
 
-@font-size-h1: 48rpx;
-@font-size-h2: 40rpx;
-@font-size-h3: 36rpx;
-@font-size-h4: 32rpx;
-@font-size-body: 28rpx;
-@font-size-caption: 24rpx;
-@font-size-small: 20rpx;
-@font-size-mini: 16rpx;
+/* 字号 - 参照 iOS 字体层级 */
+@font-size-large-title: 34rpx;   /* .largeTitle - 大标题 */
+@font-size-title1: 32rpx;         /* .title1 - 主标题 */
+@font-size-title2: 28rpx;         /* .title2 - 次级标题 */
+@font-size-title3: 26rpx;         /* .title3 - 三级标题 */
+@font-size-headline: 24rpx;       /* .headline - 重要文本 */
+@font-size-body: 22rpx;           /* .body - 正文 */
+@font-size-callout: 20rpx;        /* .callout - 说明 */
+@font-size-subheadline: 20rpx;    /* .subheadline - 次要信息 */
+@font-size-footnote: 18rpx;       /* .footnote - 脚注 */
+@font-size-caption1: 18rpx;       /* .caption1 - 说明文字 */
+@font-size-caption2: 16rpx;       /* .caption2 - 极小字 */
 
-@font-weight-normal: 400;
+/* 字重 */
+@font-weight-regular: 400;
 @font-weight-medium: 500;
 @font-weight-semibold: 600;
 @font-weight-bold: 700;
 
+/* 行高 */
 @line-height-tight: 1.2;
-@line-height-normal: 1.5;
-@line-height-loose: 1.8;
+@line-height-normal: 1.4;
+@line-height-loose: 1.6;
 
 /* ==================== 间距系统 ==================== */
 
-@spacing-xs: 8rpx;
-@spacing-sm: 16rpx;
-@spacing-md: 24rpx;
-@spacing-lg: 32rpx;
-@spacing-xl: 40rpx;
-@spacing-xxl: 48rpx;
+/* 参照 iOS 间距规范 (8pt grid) */
+@spacing-xs: 4rpx;    /* 2pt */
+@spacing-sm: 8rpx;    /* 4pt */
+@spacing-md: 12rpx;   /* 6pt */
+@spacing-lg: 16rpx;   /* 8pt */
+@spacing-xl: 20rpx;   /* 10pt */
+@spacing-xxl: 24rpx;  /* 12pt */
+
+/* 页面边距 */
+@padding-page: 16rpx;  /* 页面内边距 */
+@padding-card: 12rpx;  /* 卡片内边距 */
 
 /* ==================== 圆角系统 ==================== */
 
-@radius-xs: 4rpx;
-@radius-sm: 8rpx;
-@radius-md: 12rpx;
-@radius-lg: 16rpx;
-@radius-xl: 20rpx;
-@radius-xxl: 24rpx;
-@radius-round: 50%;
+/* 参照 iOS 圆角规范 */
+@radius-sm: 4rpx;    /* 小圆角 - 按钮/标签 */
+@radius-md: 8rpx;    /* 中等圆角 - 卡片 */
+@radius-lg: 12rpx;   /* 大圆角 - 大卡片 */
+@radius-xl: 16rpx;   /* 超大圆角 */
 
-/* ==================== 阴影系统 ==================== */
-
-@shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
-@shadow-md: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
-@shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.2);
-@shadow-xl: 0 12rpx 32rpx rgba(0, 0, 0, 0.25);
-
-/* 卡片发光效果 */
-@shadow-glow-success: 0 0 20rpx rgba(0, 200, 83, 0.3);
-@shadow-glow-danger: 0 0 20rpx rgba(255, 82, 82, 0.3);
-@shadow-glow-primary: 0 0 20rpx rgba(102, 126, 234, 0.3);
-
-/* ==================== 动画系统 ==================== */
-
-@transition-fast: 0.15s;
-@transition-normal: 0.3s;
-@transition-slow: 0.5s;
-
-@ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-@ease-out: cubic-bezier(0, 0, 0.2, 1);
-@ease-in: cubic-bezier(0.4, 0, 1, 1);
-@ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-/* ==================== Z-index层级 ==================== */
-
-@z-dropdown: 1000;
-@z-sticky: 1020;
-@z-fixed: 1030;
-@z-modal-backdrop: 1040;
-@z-modal: 1050;
-@z-popover: 1060;
-@z-tooltip: 1070;
-
-/* ==================== 通用类 ==================== */
+/* ==================== 通用样式类 ==================== */
 
 /* 文本颜色 */
 .text-primary { color: @text-primary; }
 .text-secondary { color: @text-secondary; }
-.text-tertiary { color: @text-tertiary; }
-.text-success { color: @success-color; }
-.text-danger { color: @danger-color; }
-.text-warning { color: @warning-color; }
-.text-info { color: @info-color; }
-.text-primary { color: @primary-color; }
+.text-green { color: @color-green; }
+.text-red { color: @color-red; }
+.text-blue { color: @color-blue; }
+.text-orange { color: @color-orange; }
+.text-purple { color: @color-purple; }
 
 /* 背景色 */
-.bg-page { background-color: @bg-page; }
 .bg-primary { background-color: @bg-primary; }
 .bg-secondary { background-color: @bg-secondary; }
 .bg-tertiary { background-color: @bg-tertiary; }
 
-/* 间距 */
-.p-xs { padding: @spacing-xs; }
-.p-sm { padding: @spacing-sm; }
-.p-md { padding: @spacing-md; }
-.p-lg { padding: @spacing-lg; }
-.p-xl { padding: @spacing-xl; }
+/* 背景色带透明度 */
+.bg-green { background-color: @color-green-bg; }
+.bg-red { background-color: @color-red-bg; }
+.bg-blue { background-color: @color-blue-bg; }
+.bg-orange { background-color: @color-orange-bg; }
+.bg-purple { background-color: @color-purple-bg; }
 
-.m-xs { margin: @spacing-xs; }
-.m-sm { margin: @spacing-sm; }
-.m-md { margin: @spacing-md; }
-.m-lg { margin: @spacing-lg; }
-.m-xl { margin: @spacing-xl; }
+/* ==================== 卡片样式 ==================== */
 
-/* 圆角 */
-.rounded-sm { border-radius: @radius-sm; }
-.rounded-md { border-radius: @radius-md; }
-.rounded-lg { border-radius: @radius-lg; }
-.rounded-xl { border-radius: @radius-xl; }
-.rounded-full { border-radius: @radius-round; }
-
-/* ==================== 组件样式 ==================== */
-
-/* 卡片 */
 .card {
   background: @bg-secondary;
-  border-radius: @radius-lg;
-  padding: @spacing-md;
-  box-shadow: @shadow-md;
-  position: relative;
-  overflow: hidden;
+  border-radius: @radius-md;
+  padding: @padding-card;
 }
 
-.card-gradient {
-  background: @gradient-card;
+.card-compact {
+  background: @bg-secondary;
+  border-radius: @radius-sm;
+  padding: @spacing-sm;
 }
 
-.card-clickable {
-  transition: all @transition-normal @ease-out;
-}
+/* ==================== 按钮样式 ==================== */
 
-.card-clickable:active {
-  transform: scale(0.98);
-  opacity: 0.9;
-}
-
-/* 按钮 */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: @spacing-sm @spacing-lg;
-  border-radius: @radius-md;
+  border-radius: @radius-sm;
   font-size: @font-size-body;
   font-weight: @font-weight-medium;
-  transition: all @transition-normal @ease-out;
-  position: relative;
-  overflow: hidden;
+  transition: opacity 0.15s;
 }
 
 .btn::after {
@@ -205,250 +136,82 @@
 }
 
 .btn-primary {
-  background: @gradient-primary;
+  background: @color-blue;
   color: #ffffff;
-  box-shadow: @shadow-md;
-}
 
-.btn-primary:active {
-  opacity: 0.9;
-  transform: scale(0.98);
-}
-
-.btn-success {
-  background: @gradient-success;
-  color: #ffffff;
-}
-
-.btn-danger {
-  background: @gradient-danger;
-  color: #ffffff;
-}
-
-.btn-outline {
-  background: transparent;
-  border: 2rpx solid @border-color;
-  color: @text-primary;
-}
-
-.btn-sm {
-  padding: @spacing-xs @spacing-md;
-  font-size: @font-size-caption;
-}
-
-.btn-lg {
-  padding: @spacing-md @spacing-xl;
-  font-size: @font-size-h4;
-}
-
-/* 徽章 */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: @spacing-xs @spacing-sm;
-  border-radius: @radius-round;
-  font-size: @font-size-small;
-  font-weight: @font-weight-medium;
-}
-
-.badge-primary {
-  background: @primary-bg;
-  color: #ffffff;
-}
-
-.badge-success {
-  background: @success-bg;
-  color: @success-color;
-}
-
-.badge-danger {
-  background: @danger-bg;
-  color: @danger-color;
-}
-
-/* 标签 */
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4rpx 12rpx;
-  border-radius: @radius-sm;
-  font-size: @font-size-small;
-  background: @bg-tertiary;
-  color: @text-secondary;
-}
-
-.tag-up {
-  background: @success-bg;
-  color: @success-color;
-}
-
-.tag-down {
-  background: @danger-bg;
-  color: @danger-color;
-}
-
-/* 分割线 */
-.divider {
-  height: 1rpx;
-  background: @divider-color;
-  margin: @spacing-md 0;
-}
-
-/* ==================== 加载状态 ==================== */
-
-/* 骨架屏 */
-.skeleton {
-  background: @bg-tertiary;
-  border-radius: @radius-md;
-  position: relative;
-  overflow: hidden;
-}
-
-.skeleton::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.05),
-    transparent
-  );
-  animation: skeleton-loading 1.5s ease-in-out infinite;
-}
-
-@keyframes skeleton-loading {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* 加载中 */
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: @spacing-xl;
-}
-
-.spinner {
-  width: 40rpx;
-  height: 40rpx;
-  border: 4rpx solid @border-color;
-  border-top-color: @primary-color;
-  border-radius: @radius-round;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ==================== 动画效果 ==================== */
-
-/* 淡入 */
-.fade-in {
-  animation: fadeIn @transition-normal @ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* 上滑进入 */
-.slide-up {
-  animation: slideUp @transition-normal @ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(100rpx);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* 缩放 */
-.scale-in {
-  animation: scaleIn @transition-normal @ease-spring;
-}
-
-@keyframes scaleIn {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* 脉冲 */
-.pulse {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
+  &:active {
     opacity: 0.7;
   }
 }
 
-/* 闪烁 */
-.blink {
-  animation: blink 1s ease-in-out infinite;
-}
+.btn-green {
+  background: @color-green;
+  color: #ffffff;
 
-@keyframes blink {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
+  &:active {
+    opacity: 0.7;
   }
 }
 
-/* ==================== 价格显示 ==================== */
+.btn-red {
+  background: @color-red;
+  color: #ffffff;
 
-.price-up {
-  color: @success-color;
+  &:active {
+    opacity: 0.7;
+  }
 }
 
-.price-down {
-  color: @danger-color;
+.btn-outline {
+  background: transparent;
+  border: 1rpx solid @border-color;
+  color: @color-blue;
+
+  &:active {
+    background: @color-blue-bg;
+  }
 }
 
-.price-neutral {
-  color: @text-secondary;
+/* ==================== 徽章样式 ==================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 8rpx;
+  border-radius: @radius-sm;
+  font-size: @font-size-caption2;
+  font-weight: @font-weight-medium;
 }
 
-/* 趋势箭头 */
-.trend-up::before {
-  content: '▲';
-  margin-right: 4rpx;
+.badge-green {
+  background: @color-green-bg;
+  color: @color-green;
 }
 
-.trend-down::before {
-  content: '▼';
-  margin-right: 4rpx;
+.badge-red {
+  background: @color-red-bg;
+  color: @color-red;
+}
+
+.badge-orange {
+  background: @color-orange-bg;
+  color: @color-orange;
+}
+
+.badge-blue {
+  background: @color-blue-bg;
+  color: @color-blue;
+}
+
+.badge-purple {
+  background: @color-purple-bg;
+  color: @color-purple;
+}
+
+/* ==================== 分隔线 ==================== */
+
+.divider {
+  height: 1rpx;
+  background: @divider-color;
+  margin: @spacing-md 0;
 }
