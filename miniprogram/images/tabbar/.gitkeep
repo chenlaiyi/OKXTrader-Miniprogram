@@ -2,11 +2,21 @@
 
 此目录用于存放底部导航栏的图标文件。
 
-需要的图标：
-- home.png, home-active.png
-- trade.png, trade-active.png
-- market.png, market-active.png
-- ai.png, ai-active.png
-- monitor.png, monitor-active.png
+需要的图标（4个Tab）：
+- market.png, market-active.png - 行情
+- trading.png, trading-active.png - 交易
+- ai.png, ai-active.png - AI分析
+- account.png, account-active.png - 我的
 
-详细说明请查看 ../README.md
+图标规格：
+- 尺寸：81x81px
+- 颜色：
+  - 未选中：#8e8e93 (iOS系统灰色)
+  - 选中：#007aff (iOS系统蓝色)
+- 格式：PNG，透明背景
+
+Tab顺序参考iOS端设计：
+1. 行情 - 对应macOS端的左侧行情列表
+2. 交易 - 对应macOS端的中间交易面板
+3. AI - 对应macOS端的右侧AI分析面板
+4. 我的 - 账号信息和设置

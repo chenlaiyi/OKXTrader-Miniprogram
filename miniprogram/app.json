@@ -13,23 +13,11 @@
     "pages/test/test"
   ],
   "tabBar": {
-    "color": "#9e9e9e",
-    "selectedColor": "#667eea",
-    "backgroundColor": "#1a1a1a",
+    "color": "#8e8e93",
+    "selectedColor": "#007aff",
+    "backgroundColor": "#1c1c1e",
     "borderStyle": "black",
     "list": [
-      {
-        "pagePath": "pages/index/index",
-        "text": "首页",
-        "iconPath": "images/tabbar/home.png",
-        "selectedIconPath": "images/tabbar/home-active.png"
-      },
-      {
-        "pagePath": "pages/trading/trading",
-        "text": "交易",
-        "iconPath": "images/tabbar/trade.png",
-        "selectedIconPath": "images/tabbar/trade-active.png"
-      },
       {
         "pagePath": "pages/market/market",
         "text": "行情",
@@ -37,24 +25,30 @@
         "selectedIconPath": "images/tabbar/market-active.png"
       },
       {
+        "pagePath": "pages/trading/trading",
+        "text": "交易",
+        "iconPath": "images/tabbar/trading.png",
+        "selectedIconPath": "images/tabbar/trading-active.png"
+      },
+      {
         "pagePath": "pages/ai/ai",
-        "text": "AI分析",
+        "text": "AI",
         "iconPath": "images/tabbar/ai.png",
         "selectedIconPath": "images/tabbar/ai-active.png"
       },
       {
-        "pagePath": "pages/monitor/monitor",
-        "text": "监控",
-        "iconPath": "images/tabbar/monitor.png",
-        "selectedIconPath": "images/tabbar/monitor-active.png"
+        "pagePath": "pages/index/index",
+        "text": "我的",
+        "iconPath": "images/tabbar/account.png",
+        "selectedIconPath": "images/tabbar/account-active.png"
       }
     ]
   },
   "window": {
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "OKly",
-    "navigationBarBackgroundColor": "#1a1a1a",
-    "backgroundColor": "#1a1a1a"
+    "navigationBarBackgroundColor": "#000000",
+    "backgroundColor": "#000000"
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
