@@ -1,0 +1,12 @@
+# TabBar 图标目录
+
+此目录用于存放底部导航栏的图标文件。
+
+需要的图标：
+- home.png, home-active.png
+- trade.png, trade-active.png
+- market.png, market-active.png
+- ai.png, ai-active.png
+- monitor.png, monitor-active.png
+
+详细说明请查看 ../README.md

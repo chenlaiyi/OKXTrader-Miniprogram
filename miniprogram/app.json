@@ -20,23 +20,33 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "首页"
+        "text": "首页",
+        "iconPath": "images/tabbar/home.png",
+        "selectedIconPath": "images/tabbar/home-active.png"
       },
       {
         "pagePath": "pages/trading/trading",
-        "text": "交易"
+        "text": "交易",
+        "iconPath": "images/tabbar/trade.png",
+        "selectedIconPath": "images/tabbar/trade-active.png"
       },
       {
         "pagePath": "pages/market/market",
-        "text": "行情"
+        "text": "行情",
+        "iconPath": "images/tabbar/market.png",
+        "selectedIconPath": "images/tabbar/market-active.png"
       },
       {
         "pagePath": "pages/ai/ai",
-        "text": "AI分析"
+        "text": "AI分析",
+        "iconPath": "images/tabbar/ai.png",
+        "selectedIconPath": "images/tabbar/ai-active.png"
       },
       {
         "pagePath": "pages/monitor/monitor",
-        "text": "监控"
+        "text": "监控",
+        "iconPath": "images/tabbar/monitor.png",
+        "selectedIconPath": "images/tabbar/monitor-active.png"
       }
     ]
   },
