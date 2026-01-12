@@ -29,7 +29,7 @@
       <view class="test-details" wx:if="{{item.status === 'success'}}">
         <text class="test-duration">{{item.duration}}</text>
         <text class="test-data" wx:if="{{item.data}}">
-          数据: {{item.data ? (item.data.length + '条' : '成功')}}
+          数据: {{item.data ? (item.data.length + '条') : '成功'}}
         </text>
       </view>
 
