@@ -1,7 +1,171 @@
+<!--pages/ai/ai.wxml-->
 <view class="container">
-  <view class="analysis-card" wx:if="{{analysis}}">
-    <view class="title">AI分析</view>
-    <view class="content">{{analysis.reasoning}}</view>
-    <view class="confidence">置信度: {{analysis.confidence}}%</view>
+  <!-- 顶部选择器 -->
+  <view class="symbol-selector">
+    <view class="selector-label">分析对象</view>
+    <picker class="symbol-picker" mode="selector" range="{{symbols}}" value="{{selectedIndex}}" bindchange="onSymbolChange">
+      <view class="picker-display">
+        <text class="symbol-text">{{currentSymbol}}</text>
+        <text class="picker-arrow">▼</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 最新分析卡片 -->
+  <view class="analysis-card" wx:if="{{latestAnalysis}}">
+    <!-- 信号标识 -->
+    <view class="signal-header">
+      <view class="signal-badge {{latestAnalysis.signal_type}}">
+        <text class="signal-icon">{{latestAnalysis.signal_type === 'long' ? '📈' : latestAnalysis.signal_type === 'short' ? '📉' : '⏸'}}</text>
+        <view class="signal-info">
+          <text class="signal-text">{{latestAnalysis.signal_type === 'long' ? '做多信号' : latestAnalysis.signal_type === 'short' ? '做空信号' : '观望信号'}}</text>
+          <text class="signal-strength">强度: {{latestAnalysis.strength || '中等'}}</text>
+        </view>
+      </view>
+
+      <view class="confidence-wrapper">
+        <text class="confidence-label">AI置信度</text>
+        <view class="confidence-value">
+          <text class="confidence-number">{{latestAnalysis.confidence_display || '85'}}</text>
+          <text class="confidence-percent">%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 置信度进度条 -->
+    <view class="confidence-bar-wrapper">
+      <view class="bar-bg">
+        <view class="bar-fill" style="width: {{latestAnalysis.confidence_display || 85}}%"></view>
+      </view>
+      <view class="bar-labels">
+        <text class="bar-label">低</text>
+        <text class="bar-label">中</text>
+        <text class="bar-label">高</text>
+      </view>
+    </view>
+
+    <!-- 价格建议 -->
+    <view class="price-suggestions" wx:if="{{latestAnalysis.suggested_price || latestAnalysis.stop_loss || latestAnalysis.take_profit}}">
+      <view class="price-item" wx:if="{{latestAnalysis.suggested_price}}">
+        <text class="price-label">建议入场价</text>
+        <text class="price-value">{{latestAnalysis.suggested_price}}</text>
+      </view>
+      <view class="price-item" wx:if="{{latestAnalysis.stop_loss}}">
+        <text class="price-label">止损价格</text>
+        <text class="price-value loss">{{latestAnalysis.stop_loss}}</text>
+      </view>
+      <view class="price-item" wx:if="{{latestAnalysis.take_profit}}">
+        <text class="price-label">止盈价格</text>
+        <text class="price-value profit">{{latestAnalysis.take_profit}}</text>
+      </view>
+    </view>
+
+    <!-- 分析理由 -->
+    <view class="reasoning-section">
+      <view class="section-title">
+        <text class="title-icon">💡</text>
+        <text class="title-text">分析理由</text>
+      </view>
+      <view class="reasoning-content">{{latestAnalysis.reasoning}}</view>
+    </view>
+
+    <!-- 持仓分析 -->
+    <view class="position-analysis" wx:if="{{latestAnalysis.position_analysis}}">
+      <view class="section-title">
+        <text class="title-icon">📊</text>
+        <text class="title-text">持仓分析</text>
+      </view>
+      <view class="analysis-content">{{latestAnalysis.position_analysis}}</view>
+    </view>
+
+    <!-- 风险提示 -->
+    <view class="risks-section" wx:if="{{latestAnalysis.risks && latestAnalysis.risks.length > 0}}">
+      <view class="section-title">
+        <text class="title-icon">⚠️</text>
+        <text class="title-text">风险提示</text>
+      </view>
+      <view class="risks-list">
+        <view class="risk-item" wx:for="{{latestAnalysis.risks}}" wx:key="index">
+          <text class="risk-bullet">•</text>
+          <text class="risk-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部信息 -->
+    <view class="analysis-footer">
+      <view class="timestamp">
+        <text class="time-icon">🕐</text>
+        <text class="time-text">{{formatTime(latestAnalysis.timestamp)}}</text>
+      </view>
+      <button class="action-btn" bindtap="applyAnalysis">应用此策略</button>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:else>
+    <view class="empty-icon">🤖</view>
+    <view class="empty-text">暂无AI分析</view>
+    <view class="empty-hint">请先选择交易对并等待AI分析</view>
+  </view>
+
+  <!-- 技术指标 -->
+  <view class="indicators-section">
+    <view class="section-header">
+      <view class="header-icon">📈</view>
+      <view class="header-title">技术指标</view>
+    </view>
+
+    <view class="indicators-grid">
+      <view class="indicator-item">
+        <text class="indicator-label">RSI</text>
+        <text class="indicator-value {{indicators.rsi_level || 'neutral'}}">{{indicators.ri || '--'}}</text>
+      </view>
+      <view class="indicator-item">
+        <text class="indicator-label">MACD</text>
+        <text class="indicator-value {{indicators.macd_signal || 'neutral'}}">{{indicators.macd || '--'}}</text>
+      </view>
+      <view class="indicator-item">
+        <text class="indicator-label">MA</text>
+        <text class="indicator-value {{indicators.ma_trend || 'neutral'}}">{{indicators.ma || '--'}}</text>
+      </view>
+      <view class="indicator-item">
+        <text class="indicator-label">布林带</text>
+        <text class="indicator-value {{indicators.bb_position || 'neutral'}}">{{indicators.bollinger || '--'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史分析 -->
+  <view class="history-section">
+    <view class="section-header">
+      <view class="header-icon">📜</view>
+      <view class="header-title">历史分析</view>
+      <view class="header-count">{{analysisHistory.length}}</view>
+    </view>
+
+    <scroll-view class="history-list" scroll-y>
+      <view wx:if="{{analysisHistory.length === 0}}" class="history-empty">
+        <text class="empty-text">暂无历史记录</text>
+      </view>
+
+      <view class="history-item" wx:for="{{analysisHistory}}" wx:key="id" bindtap="viewHistoryDetail" data-id="{{item.id}}">
+        <view class="history-left">
+          <view class="history-symbol">{{item.symbol}}</view>
+          <view class="history-time">{{formatTime(item.timestamp)}}</view>
+        </view>
+        <view class="history-right">
+          <view class="history-signal {{item.signal_type}}">
+            <text class="signal-mini">{{item.signal_type === 'long' ? '多' : item.signal_type === 'short' ? '空' : '观'}}</text>
+          </view>
+          <view class="history-confidence">{{item.confidence}}%</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 底部提示 -->
+  <view class="footer-hint">
+    <text class="hint-text">AI分析仅供参考，投资需谨慎</text>
   </view>
 </view>
