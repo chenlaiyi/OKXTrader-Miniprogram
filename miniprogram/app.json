@@ -4,6 +4,7 @@
     "pages/trading/trading",
     "pages/market/market",
     "pages/ai/ai",
+    "pages/monitor/monitor",
     "pages/strategy/strategy",
     "pages/strategy-edit/strategy-edit",
     "pages/account/account",
@@ -34,8 +35,8 @@
         "text": "AI分析"
       },
       {
-        "pagePath": "pages/account/account",
-        "text": "我的"
+        "pagePath": "pages/monitor/monitor",
+        "text": "监控"
       }
     ]
   },

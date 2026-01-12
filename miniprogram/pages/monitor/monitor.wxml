@@ -1,0 +1,170 @@
+<!--pages/monitor/monitor.wxml-->
+<view class="container">
+  <!-- 状态栏 -->
+  <view class="status-bar">
+    <view class="time">{{currentTime}}</view>
+    <view class="account-badge {{currentAccount.isSimulation ? 'simulation' : 'real'}}">
+      {{currentAccount.displayName}}
+    </view>
+  </view>
+
+  <!-- 自动交易控制 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">自动交易</text>
+      <switch checked="{{autoTradingEnabled}}" bindchange="toggleAutoTrading" color="#667eea"/>
+    </view>
+
+    <view class="card-body">
+      <!-- 交易统计 -->
+      <view class="stats-grid">
+        <view class="stat-item">
+          <text class="stat-label">总交易</text>
+          <text class="stat-value">{{tradingStats.totalTrades}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">盈利</text>
+          <text class="stat-value text-success">{{tradingStats.winTrades}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">亏损</text>
+          <text class="stat-value text-danger">{{tradingStats.lossTrades}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">胜率</text>
+          <text class="stat-value">{{tradingStats.winRate.toFixed(1)}}%</text>
+        </view>
+      </view>
+
+      <!-- 交易配置 -->
+      <view class="config-section">
+        <view class="config-item">
+          <text class="config-label">交易对</text>
+          <text class="config-value">{{tradingConfig.symbol}}</text>
+        </view>
+        <view class="config-item">
+          <text class="config-label">最小置信度</text>
+          <text class="config-value">{{(tradingConfig.minConfidence * 100).toFixed(0)}}%</text>
+        </view>
+        <view class="config-item">
+          <text class="config-label">最大持仓</text>
+          <text class="config-value">{{tradingConfig.maxPositions}}</text>
+        </view>
+        <view class="config-item">
+          <text class="config-label">止损</text>
+          <text class="config-value">{{tradingConfig.stopLossPercent}}%</text>
+        </view>
+        <view class="config-item">
+          <text class="config-label">止盈</text>
+          <text class="config-value">{{tradingConfig.takeProfitPercent}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI分析控制 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">AI分析</text>
+      <switch checked="{{aiAnalysisEnabled}}" bindchange="toggleAIAnalysis" color="#667eea"/>
+    </view>
+
+    <view class="card-body">
+      <!-- 最新分析 -->
+      <view class="latest-analysis" wx:if="{{latestAnalysis}}">
+        <view class="analysis-header">
+          <text class="analysis-symbol">{{latestAnalysis.inst_id}}</text>
+          <text class="analysis-signal" style="color: {{getSignalColor(latestAnalysis.signal_type)}}">
+            {{latestAnalysis.signal_type}}
+          </text>
+          <text class="analysis-confidence">
+            置信度: {{(latestAnalysis.confidence * 100).toFixed(0)}}%
+          </text>
+        </view>
+        <view class="analysis-content">
+          <text class="analysis-reasoning">{{latestAnalysis.reasoning}}</text>
+        </view>
+      </view>
+
+      <!-- 分析历史 -->
+      <view class="analysis-history">
+        <text class="section-title">分析历史</text>
+        <view class="history-item" wx:for="{{analysisHistory}}" wx:key="id" bindtap="viewAnalysisDetail" data-analysis="{{item}}">
+          <view class="history-time">{{formatTime(item.timestamp)}}</view>
+          <view class="history-signal" style="color: {{getSignalColor(item.signal_type)}}">
+            {{item.signal_type}}
+          </view>
+          <view class="history-confidence">{{(item.confidence * 100).toFixed(0)}}%</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 当前持仓 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">当前持仓</text>
+      <text class="card-extra">{{positions.length}} 个</text>
+    </view>
+
+    <view class="card-body">
+      <view class="position-list">
+        <view class="position-item" wx:for="{{positions}}" wx:key="id">
+          <view class="position-header">
+            <text class="position-symbol">{{item.symbol}}</text>
+            <text class="position-side {{item.side === 'long' ? 'long' : 'short'}}">
+              {{item.side === 'long' ? '多' : '空'}}
+            </text>
+          </view>
+          <view class="position-details">
+            <view class="position-detail">
+              <text class="detail-label">持仓量</text>
+              <text class="detail-value">{{item.size}}</text>
+            </view>
+            <view class="position-detail">
+              <text class="detail-label">入场价</text>
+              <text class="detail-value">{{formatMoney(item.entryPrice)}}</text>
+            </view>
+            <view class="position-detail">
+              <text class="detail-label">未实现盈亏</text>
+              <text class="detail-value" style="color: {{getPnlColor(item.unrealizedPnl)}}">
+                {{formatPercent((item.unrealizedPnl / item.entryPrice) * 100)}}
+              </text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-state" wx:if="{{positions.length === 0}}">
+        <text class="empty-text">暂无持仓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 账户余额 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">账户余额</text>
+    </view>
+
+    <view class="card-body">
+      <view class="balance-display">
+        <text class="balance-label">总权益</text>
+        <text class="balance-value">{{formatMoney(balance?.total_equity || 0)}} USDT</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="actions">
+    <button class="action-btn" bindtap="triggerAnalysis">手动分析</button>
+    <button class="action-btn" bindtap="checkPositions">检查持仓</button>
+  </view>
+
+  <!-- 导航 -->
+  <view class="navigation">
+    <button class="nav-btn" bindtap="goToAccount">账号管理</button>
+    <button class="nav-btn" bindtap="goToStrategy">策略管理</button>
+    <button class="nav-btn" bindtap="goToAI">AI分析</button>
+  </view>
+</view>

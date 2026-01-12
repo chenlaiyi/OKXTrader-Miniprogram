@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "交易监控",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#1a1a1a",
+  "backgroundTextStyle": "light"
+}

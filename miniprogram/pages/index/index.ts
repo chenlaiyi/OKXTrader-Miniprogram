@@ -116,6 +116,10 @@ Page({
     wx.switchTab({ url: '/pages/ai/ai' })
   },
 
+  goToMonitor() {
+    wx.switchTab({ url: '/pages/monitor/monitor' })
+  },
+
   goToStrategy() {
     wx.navigateTo({ url: '/pages/strategy/strategy' })
   },

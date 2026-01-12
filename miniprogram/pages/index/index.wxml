@@ -34,9 +34,9 @@
         <view class="action-icon">📈</view>
         <view class="action-text">行情</view>
       </view>
-      <view class="action-item" bindtap="goToStrategy">
-        <view class="action-icon">⚙️</view>
-        <view class="action-text">策略</view>
+      <view class="action-item" bindtap="goToMonitor">
+        <view class="action-icon">🎯</view>
+        <view class="action-text">监控</view>
       </view>
       <view class="action-item" bindtap="goToAI">
         <view class="action-icon">🤖</view>

@@ -1,8 +1,174 @@
+<!--pages/account/account.wxml-->
 <view class="container">
-  <view class="title">我的</view>
-  <view class="menu">
-    <view class="menu-item">策略管理</view>
-    <view class="menu-item">交易历史</view>
-    <view class="menu-item">账号设置</view>
+  <!-- 统计卡片 -->
+  <view class="stats-card">
+    <view class="stat-item">
+      <text class="stat-value">{{accountStats.total}}</text>
+      <text class="stat-label">总账号</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{accountStats.real}}</text>
+      <text class="stat-label">真实账号</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{accountStats.simulated}}</text>
+      <text class="stat-label">模拟账号</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{accountStats.validated}}</text>
+      <text class="stat-label">已验证</text>
+    </view>
+  </view>
+
+  <!-- 账号列表 -->
+  <view class="account-list">
+    <view class="section-title">我的账号</view>
+
+    <view class="account-item {{index === currentAccountIndex ? 'active' : ''}}"
+          wx:for="{{accounts}}"
+          wx:key="id"
+          bindtap="switchAccount"
+          data-index="{{index}}">
+      <view class="account-header">
+        <view class="account-info">
+          <view class="account-name">
+            <text wx:if="{{item.isSimulation}}">🎯</text>
+            {{item.name}}
+            <text class="badge {{item.is_default ? 'default' : ''}}" wx:if="{{item.is_default}}">
+              默认
+            </text>
+          </view>
+          <view class="account-id">{{item.id}}</view>
+        </view>
+        <view class="account-status">
+          <view class="status-dot {{index === currentAccountIndex ? 'active' : ''}}"></view>
+          <text class="status-text">{{index === currentAccountIndex ? '当前账号' : ''}}</text>
+        </view>
+      </view>
+
+      <view class="account-details">
+        <view class="detail-item">
+          <text class="detail-label">API Key</text>
+          <text class="detail-value">{{item.apiKey ? item.apiKey.substring(0, 8) + '...' : '无'}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">验证状态</text>
+          <text class="detail-value {{item.is_validated ? 'valid' : 'invalid'}}">
+            {{item.is_validated ? '已验证' : '未验证'}}
+          </text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">类型</text>
+          <text class="detail-value {{item.isSimulation ? 'simulation' : 'real'}}">
+            {{item.isSimulation ? '模拟账号' : '真实账号'}}
+          </text>
+        </view>
+      </view>
+
+      <view class="account-actions">
+        <button class="action-btn" size="mini" bindtap="setDefaultAccount" data-index="{{index}}" wx:if="{{!item.is_default}}">
+          设为默认
+        </button>
+        <button class="action-btn" size="mini" bindtap="validateAccount" data-index="{{index}}" wx:if="{{!item.isSimulation && !item.is_validated}}">
+          验证
+        </button>
+        <button class="action-btn" size="mini" bindtap="showEditModal" data-index="{{index}}">
+          编辑
+        </button>
+        <button class="action-btn danger" size="mini" bindtap="deleteAccount" data-index="{{index}}" wx:if="{{accounts.length > 1}}">
+          删除
+        </button>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{accounts.length === 0}}">
+      <text class="empty-text">暂无账号</text>
+    </view>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="add-button">
+    <button class="btn-primary" bindtap="showAddModal">+ 添加账号</button>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="features">
+    <button class="feature-btn" bindtap="goToMonitor">
+      <text class="feature-icon">🎯</text>
+      <text class="feature-text">交易监控</text>
+    </button>
+    <button class="feature-btn" bindtap="goToStrategy">
+      <text class="feature-icon">⚙️</text>
+      <text class="feature-text">策略管理</text>
+    </button>
+  </view>
+</view>
+
+<!-- 模态框 -->
+<view class="modal-mask" wx:if="{{showModal}}" bindtap="closeModal">
+  <view class="modal-content" catchtap="">
+    <view class="modal-header">
+      <text class="modal-title">{{modalMode === 'add' ? '添加账号' : '编辑账号'}}</text>
+      <text class="modal-close" bindtap="closeModal">✕</text>
+    </view>
+
+    <view class="modal-body">
+      <view class="form-item">
+        <text class="form-label">账号名称 *</text>
+        <input class="form-input"
+               placeholder="请输入账号名称"
+               value="{{formData.name}}"
+               bindinput="onInputChange"
+               data-field="name"/>
+      </view>
+
+      <view class="form-item">
+        <view class="form-row">
+          <view class="form-row-left">
+            <text class="form-label">模拟账号</text>
+            <switch checked="{{formData.isSimulation}}"
+                    bindchange="onSimulationChange"
+                    color="#667eea"/>
+          </view>
+          <text class="form-hint">模拟账号无需API密钥</text>
+        </view>
+      </view>
+
+      <view class="form-group" wx:if="{{!formData.isSimulation}}">
+        <text class="form-group-title">API配置</text>
+
+        <view class="form-item">
+          <text class="form-label">API Key *</text>
+          <input class="form-input"
+                 placeholder="请输入API Key"
+                 value="{{formData.apiKey}}"
+                 bindinput="onInputChange"
+                 data-field="apiKey"/>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">Secret Key *</text>
+          <input class="form-input"
+                 placeholder="请输入Secret Key"
+                 value="{{formData.secretKey}}"
+                 bindinput="onInputChange"
+                 data-field="secretKey"/>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">Passphrase *</text>
+          <input class="form-input"
+                 placeholder="请输入Passphrase"
+                 value="{{formData.passphrase}}"
+                 bindinput="onInputChange"
+                 data-field="passphrase"/>
+        </view>
+      </view>
+    </view>
+
+    <view class="modal-footer">
+      <button class="modal-btn cancel" bindtap="closeModal">取消</button>
+      <button class="modal-btn confirm" bindtap="saveAccount">保存</button>
+    </view>
   </view>
 </view>

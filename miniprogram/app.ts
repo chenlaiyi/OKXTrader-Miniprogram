@@ -1,5 +1,8 @@
 // app.ts
 import { CONFIG } from './utils/config'
+import { accountService } from './services/account'
+import { autoTradingEngine } from './services/auto-trading'
+import { aiAnalysisService } from './services/ai-analysis'
 
 App<IAppOption>({
   globalData: {
@@ -12,8 +15,29 @@ App<IAppOption>({
     console.log('OKXTrader小程序启动')
     console.log('API地址:', CONFIG.API_BASE)
 
+    // 初始化服务
+    this.initServices()
+
     // 检查更新
     this.checkUpdate()
+  },
+
+  // 初始化服务
+  initServices() {
+    // 初始化账号服务
+    accountService.loadAccounts()
+    console.log('✅ 账号服务已初始化')
+
+    // 初始化自动交易引擎
+    autoTradingEngine.init()
+    console.log('✅ 自动交易引擎已初始化')
+
+    // 初始化AI分析服务
+    aiAnalysisService.init()
+    console.log('✅ AI分析服务已初始化')
+
+    console.log('当前账号:', accountService.getCurrentAccount().displayName)
+    console.log('模拟模式:', accountService.isSimulationMode())
   },
 
   onShow() {
