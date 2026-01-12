@@ -1,3 +1,28 @@
+# 📢 仓库迁移通知
+
+> **本仓库已迁移到统一的 OKly 全平台智能交易系统**
+>
+> **新仓库地址**: [https://github.com/chenlaiyi/OKly](https://github.com/chenlaiyi/OKly)
+>
+> OKly 是一个功能完整的加密货币自动交易系统，集成了 **macOS**、**Web** 和 **微信小程序** 三大平台。
+>
+> **为什么要迁移？**
+> - 🎯 统一管理所有平台代码
+> - 📦 使用 git submodules 实现模块化
+> - 🚀 更好的项目结构和文档
+> - 🔄 便于多端协同开发
+>
+> **如何访问小程序端代码？**
+> ```bash
+> # 克隆新的统一仓库（包含所有平台）
+> git clone --recurse-submodules https://github.com/chenlaiyi/OKly.git
+> cd OKly/miniprogram
+> ```
+>
+> **本仓库将仅作为历史存档保留，后续开发将在 OKly 仓库进行。**
+
+---
+
 # OKXTrader 小程序端开发方案
 
 ## 📋 项目概述
