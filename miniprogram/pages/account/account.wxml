@@ -1,110 +1,158 @@
 <!--pages/account/account.wxml-->
 <view class="container">
-  <!-- 统计卡片 -->
-  <view class="stats-card">
-    <view class="stat-item">
-      <text class="stat-value">{{accountStats.total}}</text>
-      <text class="stat-label">总账号</text>
-    </view>
-    <view class="stat-item">
-      <text class="stat-value">{{accountStats.real}}</text>
-      <text class="stat-label">真实账号</text>
-    </view>
-    <view class="stat-item">
-      <text class="stat-value">{{accountStats.simulated}}</text>
-      <text class="stat-label">模拟账号</text>
-    </view>
-    <view class="stat-item">
-      <text class="stat-value">{{accountStats.validated}}</text>
-      <text class="stat-label">已验证</text>
-    </view>
-  </view>
-
-  <!-- 账号列表 -->
-  <view class="account-list">
-    <view class="section-title">我的账号</view>
-
-    <view class="account-item {{index === currentAccountIndex ? 'active' : ''}}"
-          wx:for="{{accounts}}"
-          wx:key="id"
-          bindtap="switchAccount"
-          data-index="{{index}}">
-      <view class="account-header">
-        <view class="account-info">
-          <view class="account-name">
-            <text wx:if="{{item.isSimulation}}">🎯</text>
-            {{item.name}}
-            <text class="badge {{item.is_default ? 'default' : ''}}" wx:if="{{item.is_default}}">
-              默认
+  <scroll-view class="content-scroll" scroll-y>
+    <!-- 账号选择卡片 (iOS风格) -->
+    <view class="account-select-card">
+      <view class="card-header">
+        <text class="card-title">当前账号</text>
+      </view>
+      <picker mode="selector" range="{{accountNames}}" value="{{currentAccountIndex}}" bindchange="onAccountChange">
+        <view class="account-picker">
+          <view class="picker-content">
+            <text class="account-name">{{currentAccount.name || '未选择'}}</text>
+            <text class="account-badge {{currentAccount.isSimulation ? 'simulation' : 'real'}}">
+              {{currentAccount.isSimulation ? '模拟盘' : '实盘'}}
             </text>
           </view>
-          <view class="account-id">{{item.id}}</view>
+          <text class="picker-arrow">›</text>
         </view>
-        <view class="account-status">
-          <view class="status-dot {{index === currentAccountIndex ? 'active' : ''}}"></view>
-          <text class="status-text">{{index === currentAccountIndex ? '当前账号' : ''}}</text>
-        </view>
-      </view>
+      </picker>
+    </view>
 
-      <view class="account-details">
-        <view class="detail-item">
-          <text class="detail-label">API Key</text>
-          <text class="detail-value">{{item.apiKey ? item.apiKey.substring(0, 8) + '...' : '无'}}</text>
-        </view>
-        <view class="detail-item">
-          <text class="detail-label">验证状态</text>
-          <text class="detail-value {{item.is_validated ? 'valid' : 'invalid'}}">
-            {{item.is_validated ? '已验证' : '未验证'}}
-          </text>
-        </view>
-        <view class="detail-item">
-          <text class="detail-label">类型</text>
-          <text class="detail-value {{item.isSimulation ? 'simulation' : 'real'}}">
-            {{item.isSimulation ? '模拟账号' : '真实账号'}}
-          </text>
-        </view>
+    <!-- 账户信息卡片 (iOS风格) -->
+    <view class="info-card">
+      <view class="info-row">
+        <text class="info-label">UID</text>
+        <text class="info-value">{{accountInfo.uid || '--'}}</text>
       </view>
-
-      <view class="account-actions">
-        <button class="action-btn" size="mini" bindtap="setDefaultAccount" data-index="{{index}}" wx:if="{{!item.is_default}}">
-          设为默认
-        </button>
-        <button class="action-btn" size="mini" bindtap="validateAccount" data-index="{{index}}" wx:if="{{!item.isSimulation && !item.is_validated}}">
-          验证
-        </button>
-        <button class="action-btn" size="mini" bindtap="showEditModal" data-index="{{index}}">
-          编辑
-        </button>
-        <button class="action-btn danger" size="mini" bindtap="deleteAccount" data-index="{{index}}" wx:if="{{accounts.length > 1}}">
-          删除
-        </button>
+      <view class="info-divider"></view>
+      <view class="info-row">
+        <text class="info-label">等级</text>
+        <text class="info-value">{{accountInfo.level || '--'}}</text>
+      </view>
+      <view class="info-divider"></view>
+      <view class="info-row highlight">
+        <text class="info-label">总资产</text>
+        <text class="info-value large">${{accountInfo.totalEquity || '0.00'}}</text>
       </view>
     </view>
 
-    <view class="empty-state" wx:if="{{accounts.length === 0}}">
-      <text class="empty-text">暂无账号</text>
+    <!-- 资产明细卡片 (iOS风格) -->
+    <view class="section-card">
+      <view class="section-header">
+        <text class="section-title">💰 资产明细</text>
+        <button class="refresh-mini-btn" bindtap="refreshAssets">
+          <text class="refresh-icon">↻</text>
+        </button>
+      </view>
+      <view wx:if="{{balances.length === 0}}" class="empty-row">
+        <text class="empty-text">暂无资产</text>
+      </view>
+      <view wx:else class="balance-list">
+        <view class="balance-item" wx:for="{{balances}}" wx:key="currency">
+          <view class="balance-left">
+            <view class="currency-icon">
+              <text class="currency-letter">{{item.currency[0]}}</text>
+            </view>
+            <text class="currency-name">{{item.currency}}</text>
+          </view>
+          <view class="balance-right">
+            <text class="balance-amount">{{item.totalDisplay}}</text>
+            <text class="balance-usd">≈ ${{item.usdValueDisplay}}</text>
+          </view>
+        </view>
+      </view>
     </view>
-  </view>
 
-  <!-- 添加按钮 -->
-  <view class="add-button">
-    <button class="btn-primary" bindtap="showAddModal">+ 添加账号</button>
-  </view>
+    <!-- 合约持仓卡片 (iOS风格) -->
+    <view class="section-card">
+      <view class="section-header">
+        <text class="section-title">📊 合约持仓</text>
+        <button class="refresh-mini-btn" bindtap="refreshPositions">
+          <text class="refresh-icon">↻</text>
+        </button>
+      </view>
+      <view wx:if="{{contractPositions.length === 0}}" class="empty-row">
+        <text class="empty-text">暂无合约持仓</text>
+      </view>
+      <view wx:else class="position-list">
+        <view class="position-card" wx:for="{{contractPositions}}" wx:key="posId">
+          <view class="position-main">
+            <view class="position-header">
+              <text class="position-symbol">{{item.instId}}</text>
+              <view class="position-tags">
+                <view class="direction-tag {{item.posSide}}">
+                  <text class="tag-text">{{item.posSide === 'long' ? '多' : '空'}}</text>
+                </view>
+                <text class="leverage-text">{{item.lever}}x</text>
+              </view>
+            </view>
+            <view class="position-details">
+              <text class="detail-text">数量: {{item.pos}}</text>
+              <text class="detail-text">均价: {{item.avgPxDisplay}}</text>
+            </view>
+          </view>
+          <view class="position-pnl {{item.uplNum >= 0 ? 'profit' : 'loss'}}">
+            <text class="pnl-value">{{item.uplNum >= 0 ? '+' : ''}}{{item.uplDisplay}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
 
-  <!-- 功能入口 -->
-  <view class="features">
-    <button class="feature-btn" bindtap="goToMonitor">
-      <text class="feature-icon">🎯</text>
-      <text class="feature-text">交易监控</text>
-    </button>
-    <button class="feature-btn" bindtap="goToStrategy">
-      <text class="feature-icon">⚙️</text>
-      <text class="feature-text">策略管理</text>
-    </button>
-  </view>
+    <!-- 最近交易卡片 (iOS风格) -->
+    <view class="section-card">
+      <view class="section-header">
+        <text class="section-title">📜 最近交易</text>
+        <button class="view-more-btn" bindtap="goToHistory">
+          <text class="view-more-text">查看更多</text>
+          <text class="view-more-arrow">›</text>
+        </button>
+      </view>
+      <view wx:if="{{recentTrades.length === 0}}" class="empty-row">
+        <text class="empty-text">暂无交易记录</text>
+      </view>
+      <view wx:else class="trade-list">
+        <view class="trade-item" wx:for="{{recentTrades}}" wx:key="id">
+          <view class="trade-main">
+            <view class="trade-header">
+              <text class="trade-symbol">{{item.symbol}}</text>
+              <view class="trade-tag {{item.operationClass}}">
+                <text class="trade-tag-text">{{item.operationLabel}}</text>
+              </view>
+            </view>
+            <text class="trade-time">{{item.time}}</text>
+          </view>
+          <view class="trade-pnl {{item.pnl >= 0 ? 'profit' : 'loss'}}" wx:if="{{item.pnl !== 0}}">
+            <text class="pnl-text">{{item.pnl >= 0 ? '+' : ''}}{{item.pnlDisplay}}</text>
+          </view>
+          <text class="trade-size" wx:else>{{item.sizeDisplay}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 功能入口 -->
+    <view class="features-grid">
+      <button class="feature-btn" bindtap="goToMonitor">
+        <text class="feature-icon">🎯</text>
+        <text class="feature-text">交易监控</text>
+      </button>
+      <button class="feature-btn" bindtap="goToStrategy">
+        <text class="feature-icon">⚙️</text>
+        <text class="feature-text">策略管理</text>
+      </button>
+    </view>
+
+    <!-- 刷新按钮 -->
+    <view class="refresh-section">
+      <button class="refresh-all-btn" bindtap="refreshAll" loading="{{isRefreshing}}">
+        <text class="btn-icon" wx:if="{{!isRefreshing}}">↻</text>
+        <text class="btn-text">{{isRefreshing ? '刷新中...' : '刷新账户信息'}}</text>
+      </button>
+    </view>
+  </scroll-view>
 </view>
 
-<!-- 模态框 -->
+<!-- 账号管理模态框 -->
 <view class="modal-mask" wx:if="{{showModal}}" bindtap="closeModal">
   <view class="modal-content" catchtap="">
     <view class="modal-header">
@@ -152,7 +200,8 @@
                  placeholder="请输入Secret Key"
                  value="{{formData.secretKey}}"
                  bindinput="onInputChange"
-                 data-field="secretKey"/>
+                 data-field="secretKey"
+                 password="true"/>
         </view>
 
         <view class="form-item">
@@ -161,7 +210,8 @@
                  placeholder="请输入Passphrase"
                  value="{{formData.passphrase}}"
                  bindinput="onInputChange"
-                 data-field="passphrase"/>
+                 data-field="passphrase"
+                 password="true"/>
         </view>
       </view>
     </view>

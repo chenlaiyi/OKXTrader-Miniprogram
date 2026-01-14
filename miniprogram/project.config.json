@@ -6,11 +6,11 @@
   },
   "setting": {
     "urlCheck": false,
-    "es6": true,
-    "enhance": true,
-    "postcss": true,
+    "es6": false,
+    "enhance": false,
+    "postcss": false,
     "preloadBackgroundData": false,
-    "minified": true,
+    "minified": false,
     "newFeature": false,
     "coverView": true,
     "nodeModules": false,
@@ -21,11 +21,11 @@
     "checkInvalidKey": true,
     "checkSiteMap": true,
     "uploadWithSourceMap": true,
-    "compileHotReLoad": true,
+    "compileHotReLoad": false,
     "lazyCodeLoading": false,
-    "useMultiFrameRuntime": true,
-    "useApiHook": true,
-    "useApiHostProcess": true,
+    "useMultiFrameRuntime": false,
+    "useApiHook": false,
+    "useApiHostProcess": false,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -34,18 +34,24 @@
     "enableEngineNative": false,
     "bundle": false,
     "useIsolateContext": true,
-    "useCompilerModule": true,
-    "userConfirmedUseCompilerModuleSwitch": true,
+    "useCompilerModule": false,
+    "userConfirmedUseCompilerModuleSwitch": false,
     "userConfirmedBundleSwitch": false,
     "packNpmManually": false,
     "packNpmRelationList": [],
-    "minifyWXSS": true,
-    "minifyWXML": true,
+    "minifyWXSS": false,
+    "minifyWXML": false,
     "showES6CompileOption": false,
-    "useCompilerPlugins": false
+    "useCompilerPlugins": false,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.32.3",
+  "libVersion": "3.13.2",
   "appid": "wxc54ef555c258bbf6",
   "projectname": "OKly",
   "condition": {},
@@ -54,11 +60,5 @@
     "tabSize": 2
   },
   "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {},
-  "tsconfigOptions": {
-    "compilerOptions": {
-      "allowJs": true,
-      "checkJs": false
-    }
-  }
+  "simulatorPluginLibVersion": {}
 }

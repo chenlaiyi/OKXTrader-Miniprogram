@@ -1,0 +1,352 @@
+/* pages/chat/chat.wxss */
+/* AI聊天页面 - iOS风格深色主题 */
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000000;
+}
+
+/* ==================== 消息滚动区 ==================== */
+.message-scroll {
+  flex: 1;
+  padding: 12rpx 16rpx;
+  overflow-y: scroll;
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  gap: 12rpx;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  opacity: 0.6;
+  margin-bottom: 8rpx;
+}
+
+.empty-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.empty-subtitle {
+  font-size: 20rpx;
+  color: #8e8e93;
+  text-align: center;
+}
+
+/* ==================== 消息列表 ==================== */
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  padding-bottom: 12rpx;
+}
+
+.message-item {
+  display: flex;
+  width: 100%;
+}
+
+.message-item.assistant {
+  justify-content: flex-start;
+}
+
+.message-item.user {
+  justify-content: flex-end;
+}
+
+.message-content {
+  display: flex;
+  max-width: 75%;
+  gap: 8rpx;
+}
+
+.message-content.assistant {
+  flex-direction: row;
+}
+
+.message-content.user {
+  flex-direction: row-reverse;
+}
+
+/* ==================== 消息内容容器 ==================== */
+.message-right,
+.message-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.message-right {
+  align-items: flex-start;
+}
+
+.message-left {
+  align-items: flex-end;
+}
+
+/* ==================== 头像 ==================== */
+.avatar {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.assistant-avatar {
+  background: linear-gradient(135deg, #007aff, #0051d5);
+}
+
+.user-avatar {
+  background: linear-gradient(135deg, #34c759, #28a745);
+}
+
+.avatar-icon {
+  font-size: 28rpx;
+}
+
+/* ==================== 气泡 ==================== */
+.bubble {
+  padding: 12rpx 16rpx;
+  border-radius: 16rpx;
+  max-width: 100%;
+}
+
+.assistant-bubble {
+  background: #2c2c2e;
+  border-top-left-radius: 4rpx;
+}
+
+.user-bubble {
+  background: #007aff;
+  border-top-right-radius: 4rpx;
+}
+
+.bubble-text {
+  font-size: 24rpx;
+  line-height: 1.5;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.assistant-bubble .bubble-text {
+  color: #ffffff;
+}
+
+.user-bubble .bubble-text {
+  color: #ffffff;
+}
+
+/* ==================== 执行结果卡片 ==================== */
+.execution-card {
+  background: rgba(52, 199, 89, 0.08);
+  border: 1rpx solid rgba(52, 199, 89, 0.2);
+  border-radius: 8rpx;
+  padding: 10rpx 12rpx;
+  margin-top: 6rpx;
+}
+
+.execution-header {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  margin-bottom: 6rpx;
+}
+
+.execution-icon {
+  font-size: 20rpx;
+  color: #34c759;
+  font-weight: 700;
+}
+
+.execution-title {
+  font-size: 18rpx;
+  font-weight: 600;
+  color: #34c759;
+}
+
+.result-content {
+  font-size: 20rpx;
+  color: #ffffff;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+/* ==================== 消息时间 ==================== */
+.message-time {
+  font-size: 18rpx;
+  color: #8e8e93;
+  padding: 0 4rpx;
+  margin-top: 2rpx;
+}
+
+/* ==================== 输入指示器 ==================== */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  padding: 12rpx;
+  gap: 8rpx;
+}
+
+.typing-dots {
+  display: flex;
+  gap: 8rpx;
+}
+
+.dot {
+  width: 12rpx;
+  height: 12rpx;
+  background: #8e8e93;
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.typing-text {
+  font-size: 18rpx;
+  color: #8e8e93;
+}
+
+/* ==================== 快捷指令 ==================== */
+.quick-commands {
+  background: #000000;
+  border-top: 1rpx solid #1c1c1e;
+  padding: 8rpx 0;
+  flex-shrink: 0;
+}
+
+.commands-scroll {
+  white-space: nowrap;
+  padding: 0 16rpx;
+}
+
+.command-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  background: #1c1c1e;
+  border: 1rpx solid #2c2c2e;
+  padding: 10rpx 16rpx;
+  border-radius: 20rpx;
+  margin-right: 8rpx;
+  transition: all 0.15s;
+}
+
+.command-chip:active {
+  background: #2c2c2e;
+  transform: scale(0.96);
+}
+
+.chip-icon {
+  font-size: 20rpx;
+}
+
+.chip-text {
+  font-size: 22rpx;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+/* ==================== 输入区域 ==================== */
+.input-area {
+  background: #000000;
+  border-top: 1rpx solid #1c1c1e;
+  padding: 8rpx 16rpx;
+  padding-bottom: calc(2rpx + env(safe-area-inset-bottom));
+  flex-shrink: 0;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  background: #1c1c1e;
+  border-radius: 24rpx;
+  padding: 6rpx;
+}
+
+.message-input {
+  flex: 1;
+  font-size: 24rpx;
+  color: #ffffff;
+  padding: 10rpx 14rpx;
+}
+
+.input-placeholder {
+  color: #8e8e93;
+}
+
+.send-btn {
+  width: 20rpx !important;
+  min-width: 20rpx !important;
+  max-width: 20rpx !important;
+  height: 40rpx !important;
+  border-radius: 10rpx;
+  background: #34c759;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.send-btn.active {
+  background: #28a745;
+}
+
+.send-btn[disabled] {
+  opacity: 0.4;
+}
+
+.send-btn::after {
+  border: none;
+}
+
+.send-icon {
+  font-size: 18rpx;
+  color: #ffffff;
+}
+
+.send-btn.active .send-icon {
+  color: #ffffff;
+}

@@ -1,66 +1,48 @@
 // pages/trading/trading.js
+const API = require('../../services/api.js');
+
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-
+    selectedTab: 0,
+    totalPnl: 0,
+    totalPnlDisplay: '0.00',
+    totalTradeCount: 0,
+    todayPnl: 0,
+    todayPnlDisplay: '0.00',
+    todayTradeCount: 0,
+    yesterdayPnl: 0,
+    yesterdayPnlDisplay: '0.00',
+    yesterdayTradeCount: 0,
+    weekPnl: 0,
+    weekPnlDisplay: '0.00',
+    weekTradeCount: 0,
+    refreshing: false,
+    fillHistory: [],
+    positions: []
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-
+  onLoad() {
+    this.loadData();
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
+  async loadData() {
+    // TODO: 从API加载交易数据
+    // 这里可以调用API获取真实的成交记录和持仓数据
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
+  switchTab(e) {
+    const tab = parseInt(e.currentTarget.dataset.tab);
+    this.setData({ selectedTab: tab });
   },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
-
+  onRefresh() {
+    this.setData({ refreshing: true });
+    this.loadData().then(() => {
+      this.setData({ refreshing: false });
+      wx.showToast({
+        title: '刷新成功',
+        icon: 'success'
+      });
+    });
   }
-})
+});

@@ -1,0 +1,12 @@
+/* components/candlestick-chart/candlestick-chart.wxss */
+
+.chart-container {
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.chart-canvas {
+  display: block;
+  width: 100%;
+}

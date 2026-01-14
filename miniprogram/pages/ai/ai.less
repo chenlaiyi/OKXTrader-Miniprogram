@@ -5,15 +5,17 @@
   min-height: 100vh;
   background: @bg-primary;
   padding: @padding-page;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ==================== 标题栏 ==================== */
-.header {
+/* ==================== AI 标题栏 ==================== */
+.ai-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: @spacing-md 0;
-  margin-bottom: @spacing-lg;
+  margin-bottom: @spacing-md;
 }
 
 .header-left {
@@ -26,9 +28,9 @@
   font-size: 28rpx;
 }
 
-.title {
-  font-size: @font-size-headline;
-  font-weight: @font-weight-semibold;
+.header-title {
+  font-size: @font-size-title2;
+  font-weight: @font-weight-bold;
   color: @text-primary;
 }
 
@@ -38,170 +40,474 @@
   gap: @spacing-sm;
 }
 
-.auto-switch {
-  transform: scale(0.8);
-}
-
-.switch-label {
-  font-size: @font-size-caption1;
-  color: @text-secondary;
-}
-
-/* ==================== 策略状态 ==================== */
-.strategy-section {
-  background: @color-purple-bg;
-  border: 1rpx solid @color-purple;
-  border-radius: @radius-md;
-  padding: @spacing-md;
-  margin-bottom: @spacing-lg;
-}
-
-.strategy-header {
+.settings-btn {
+  width: 48rpx;
+  height: 48rpx;
+  padding: 0;
+  background: @bg-tertiary;
+  border-radius: @radius-sm;
+  border: none;
   display: flex;
-  align-items: baseline;
-  gap: @spacing-xs;
-  margin-bottom: @spacing-sm;
+  align-items: center;
+  justify-content: center;
+
+  &::after {
+    border: none;
+  }
 }
 
-.strategy-title {
-  font-size: @font-size-body;
-  font-weight: @font-weight-semibold;
-  color: @color-purple;
+.settings-icon {
+  font-size: 24rpx;
 }
 
-.strategy-timeframe {
+/* ==================== 策略状态栏 (iOS v0.0.099风格) ==================== */
+.strategy-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: @spacing-md;
+  background: fade(@color-blue, 5%);
+  border: 1rpx solid fade(@color-blue, 20%);
+  border-radius: @radius-md;
+  margin-bottom: @spacing-md;
+}
+
+.strategy-left {
+  display: flex;
+  align-items: center;
+  gap: @spacing-sm;
+}
+
+.strategy-emoji {
+  font-size: 32rpx;
+}
+
+.strategy-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
+}
+
+.strategy-label {
   font-size: @font-size-caption2;
   color: @text-secondary;
 }
 
-.strategy-status {
+.strategy-name {
+  font-size: @font-size-body;
+  font-weight: @font-weight-bold;
+  color: @color-blue;
+}
+
+.strategy-right {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
-.status-label {
-  font-size: @font-size-caption1;
-  color: @text-secondary;
+.style-badge {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 6rpx 12rpx;
+  border-radius: @radius-sm;
+
+  &.aggressive {
+    background: fade(@color-orange, 15%);
+  }
+
+  &.conservative {
+    background: fade(@color-green, 15%);
+  }
 }
 
-.status-value {
-  font-size: @font-size-caption1;
-  font-weight: @font-weight-medium;
+.style-icon {
+  font-size: 16rpx;
+}
 
-  &.enabled {
+.style-text {
+  font-size: @font-size-caption2;
+
+  .aggressive & {
+    color: @color-orange;
+  }
+
+  .conservative & {
+    color: @color-green;
+  }
+}
+
+/* ==================== 核心参数卡片 (iOS v0.0.099风格) ==================== */
+.core-params-card {
+  background: @bg-secondary;
+  border-radius: @radius-md;
+  padding: @spacing-md;
+  margin-bottom: @spacing-md;
+}
+
+.params-title {
+  font-size: @font-size-caption1;
+  color: @text-secondary;
+  margin-bottom: @spacing-md;
+}
+
+.params-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: @spacing-sm;
+  margin-bottom: @spacing-md;
+}
+
+.param-item {
+  display: flex;
+  align-items: center;
+  gap: @spacing-sm;
+  padding: @spacing-sm;
+  border-radius: @radius-sm;
+
+  &.green {
+    background: fade(@color-green, 10%);
+  }
+
+  &.red {
+    background: fade(@color-red, 10%);
+  }
+
+  &.orange {
+    background: fade(@color-orange, 10%);
+  }
+
+  &.purple {
+    background: fade(@color-purple, 10%);
+  }
+}
+
+.param-icon {
+  font-size: 20rpx;
+  width: 32rpx;
+  text-align: center;
+
+  .green & {
     color: @color-green;
   }
 
-  &.disabled {
-    color: @text-tertiary;
+  .red & {
+    color: @color-red;
+  }
+
+  .orange & {
+    color: @color-orange;
+  }
+
+  .purple & {
+    color: @color-purple;
   }
 }
 
-/* ==================== 分析区域 ==================== */
-.analysis-section {
-  background: @bg-secondary;
-  border-radius: @radius-md;
-  padding: @padding-card;
-  margin-bottom: @spacing-lg;
+.param-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
 }
 
-.section-header {
+.param-label {
+  font-size: @font-size-caption2;
+  color: @text-secondary;
+}
+
+.param-value {
+  font-size: @font-size-body;
+  font-weight: @font-weight-bold;
+
+  .green & {
+    color: @color-green;
+  }
+
+  .red & {
+    color: @color-red;
+  }
+
+  .orange & {
+    color: @color-orange;
+  }
+
+  .purple & {
+    color: @color-purple;
+  }
+}
+
+.params-row {
+  display: flex;
+  align-items: center;
+  gap: @spacing-sm;
+}
+
+.row-icon {
+  font-size: 20rpx;
+  color: @color-blue;
+}
+
+.row-label {
+  font-size: @font-size-caption1;
+  color: @text-secondary;
+  flex: 1;
+}
+
+.row-value {
+  font-size: @font-size-body;
+  font-weight: @font-weight-semibold;
+  color: @text-primary;
+}
+
+/* ==================== 自动交易开关 ==================== */
+.auto-trade-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: @spacing-md;
+  background: @bg-secondary;
+  border-radius: @radius-md;
+  margin-bottom: @spacing-md;
+}
+
+.auto-trade-info {
+  display: flex;
+  align-items: center;
+  gap: @spacing-sm;
+}
+
+.auto-icon {
+  font-size: 24rpx;
+  color: @color-orange;
+}
+
+.auto-label {
+  font-size: @font-size-body;
+  font-weight: @font-weight-medium;
+  color: @text-primary;
+}
+
+/* ==================== 操作按钮 ==================== */
+.action-buttons {
+  display: flex;
+  gap: @spacing-sm;
+  margin-bottom: @spacing-md;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: @spacing-xs;
+  padding: @spacing-md 0;
+  border-radius: @radius-md;
+  font-size: @font-size-body;
+  font-weight: @font-weight-medium;
+  border: none;
+
+  &::after {
+    border: none;
+  }
+
+  &.primary {
+    background: @color-purple;
+    color: @text-primary;
+  }
+
+  &.success {
+    background: @color-green;
+    color: @text-primary;
+  }
+
+  &.danger {
+    background: @color-red;
+    color: @text-primary;
+  }
+
+  &[disabled] {
+    opacity: 0.6;
+  }
+}
+
+.btn-icon {
+  font-size: 20rpx;
+}
+
+.btn-text {
+  font-size: @font-size-body;
+}
+
+/* ==================== 内容滚动区 ==================== */
+.content-scroll {
+  flex: 1;
+}
+
+/* ==================== 分析结果 (iOS v0.0.099风格) ==================== */
+.analysis-result {
+  background: @bg-secondary;
+  border-radius: @radius-md;
+  padding: @spacing-md;
+  margin-bottom: @spacing-md;
+}
+
+.analysis-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: @spacing-md;
 }
 
-.section-title {
-  font-size: @font-size-headline;
+.analysis-title {
+  font-size: @font-size-body;
   font-weight: @font-weight-semibold;
   color: @text-primary;
 }
 
-.section-time,
-.section-count {
-  font-size: @font-size-caption1;
+.analysis-time {
+  font-size: @font-size-caption2;
   color: @text-secondary;
 }
 
-.analysis-card {
-  background: @bg-tertiary;
-  border-radius: @radius-sm;
-  padding: @spacing-md;
-}
-
-.analysis-signal {
+/* 双信号显示 (iOS风格) */
+.dual-signal-section {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: @spacing-sm;
+  margin-bottom: @spacing-md;
 }
 
-.signal-badge {
-  padding: 4rpx 8rpx;
-  border-radius: @radius-sm;
-  font-size: @font-size-body;
-  font-weight: @font-weight-medium;
+.signal-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
 
-  &.long {
-    background: @color-green-bg;
+.signal-divider {
+  width: 1rpx;
+  height: 60rpx;
+  background: @divider-color;
+  margin: 0 @spacing-md;
+}
+
+.signal-label {
+  font-size: @font-size-caption2;
+  color: @text-secondary;
+}
+
+.signal-value {
+  font-size: @font-size-headline;
+  font-weight: @font-weight-semibold;
+
+  &.green {
     color: @color-green;
   }
 
-  &.short {
-    background: @color-red-bg;
+  &.red {
     color: @color-red;
   }
 
-  &.neutral {
-    background: @color-orange-bg;
+  &.yellow {
     color: @color-orange;
   }
 }
 
-.signal-text {
-  font-size: @font-size-body;
+/* 置信度 */
+.confidence-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: @spacing-md;
 }
 
-.confidence-badge {
-  display: flex;
-  align-items: baseline;
-  gap: 2rpx;
-  padding: 4rpx 8rpx;
-  background: @color-blue-bg;
-  border-radius: @radius-sm;
+.confidence-label {
+  font-size: @font-size-caption1;
+  color: @text-secondary;
 }
 
 .confidence-value {
-  font-size: @font-size-title3;
+  font-size: @font-size-title2;
   font-weight: @font-weight-bold;
-  color: @color-blue;
+
+  &.high {
+    color: @color-green;
+  }
+
+  &.medium {
+    color: @color-orange;
+  }
 }
 
-.confidence-unit {
-  font-size: @font-size-caption1;
-  color: @color-blue;
+.divider {
+  height: 1rpx;
+  background: @divider-color;
+  margin: @spacing-md 0;
 }
 
-.analysis-reasoning,
-.analysis-risks {
-  margin-top: @spacing-sm;
+/* 价格建议 */
+.price-suggestions {
+  display: flex;
+  gap: @spacing-lg;
 }
 
-.reasoning-label,
-.risks-label {
-  display: block;
+.price-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.price-label {
+  font-size: @font-size-caption2;
+  color: @text-secondary;
+}
+
+.price-value {
+  font-size: @font-size-body;
+  font-family: monospace;
+  font-weight: @font-weight-medium;
+
+  &.blue {
+    color: @color-blue;
+  }
+
+  &.red {
+    color: @color-red;
+  }
+
+  &.green {
+    color: @color-green;
+  }
+}
+
+/* 分析理由 */
+.reasoning-section {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-xs;
+}
+
+.reasoning-title {
   font-size: @font-size-caption1;
   font-weight: @font-weight-medium;
   color: @text-secondary;
-  margin-bottom: @spacing-xs;
 }
 
 .reasoning-text {
   font-size: @font-size-body;
   color: @text-primary;
-  line-height: @line-height-normal;
+  line-height: 1.6;
+}
+
+/* 风险提示 */
+.risks-section {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-xs;
+}
+
+.risks-title {
+  font-size: @font-size-caption1;
+  font-weight: @font-weight-medium;
+  color: @color-orange;
 }
 
 .risks-list {
@@ -211,18 +517,33 @@
 }
 
 .risk-item {
-  padding: @spacing-xs 0;
+  display: flex;
+  gap: @spacing-xs;
+}
+
+.risk-dot {
+  color: @color-orange;
 }
 
 .risk-text {
+  flex: 1;
   font-size: @font-size-body;
-  color: @text-secondary;
-  line-height: @line-height-normal;
+  color: @color-orange;
+  line-height: 1.5;
 }
 
-.analysis-empty {
-  padding: @spacing-xl 0;
-  text-align: center;
+/* ==================== 空状态 ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: @spacing-md;
+  padding: 80rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  opacity: 0.3;
 }
 
 .empty-text {
@@ -230,80 +551,263 @@
   color: @text-secondary;
 }
 
-/* ==================== 历史分析 ==================== */
-.history-section {
-  background: @bg-secondary;
+/* ==================== 持仓区域 ==================== */
+.positions-section {
+  background: fade(@color-blue, 10%);
   border-radius: @radius-md;
-  padding: @padding-card;
+  padding: @spacing-sm;
+  margin-bottom: @spacing-md;
 }
 
-.history-list {
-  max-height: 600rpx;
-}
-
-.history-item {
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: @spacing-md 0;
-  border-bottom: 1rpx solid @divider-color;
+  padding: 0 @spacing-sm @spacing-sm;
+}
 
-  &:last-child {
-    border-bottom: none;
+.section-title {
+  font-size: @font-size-caption1;
+  font-weight: @font-weight-bold;
+  color: @color-blue;
+}
+
+.mini-btn {
+  width: 32rpx;
+  height: 32rpx;
+  padding: 0;
+  background: transparent;
+  border: none;
+
+  &::after {
+    border: none;
   }
 }
 
-.history-left {
+.mini-icon {
+  font-size: 24rpx;
+  color: @color-blue;
+}
+
+.position-list {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-xs;
+}
+
+.position-item {
+  display: flex;
+  align-items: center;
+  gap: @spacing-md;
+  padding: @spacing-sm;
+  background: @bg-secondary;
+  border-radius: @radius-sm;
+}
+
+.position-direction {
+  width: 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+
+  &.long {
+    color: @color-green;
+  }
+
+  &.short {
+    color: @color-red;
+  }
+}
+
+.direction-icon {
+  font-size: 24rpx;
+}
+
+.direction-text {
+  font-size: @font-size-caption2;
+}
+
+.position-info {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4rpx;
 }
 
-.history-symbol {
+.position-header {
+  display: flex;
+  align-items: center;
+  gap: @spacing-xs;
+}
+
+.position-symbol {
   font-size: @font-size-body;
   font-weight: @font-weight-medium;
   color: @text-primary;
 }
 
-.history-time {
+.position-leverage {
+  font-size: @font-size-caption2;
+  font-weight: @font-weight-bold;
+  color: @color-orange;
+  padding: 2rpx 6rpx;
+  background: fade(@color-orange, 15%);
+  border-radius: 4rpx;
+}
+
+.position-details {
+  display: flex;
+  gap: @spacing-md;
+}
+
+.position-detail {
   font-size: @font-size-caption2;
   color: @text-secondary;
 }
 
-.history-right {
+.position-pnl {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: @spacing-xs;
-}
+  gap: 2rpx;
 
-.history-signal {
-  padding: 4rpx 8rpx;
-  border-radius: @radius-sm;
-  font-size: @font-size-caption2;
-  font-weight: @font-weight-medium;
-
-  &.long {
-    background: @color-green-bg;
+  &.profit {
     color: @color-green;
   }
 
-  &.short {
-    background: @color-red-bg;
+  &.loss {
+    color: @color-red;
+  }
+}
+
+.pnl-amount {
+  font-size: @font-size-body;
+  font-weight: @font-weight-semibold;
+  font-family: monospace;
+}
+
+.pnl-percent {
+  font-size: @font-size-caption2;
+  font-family: monospace;
+}
+
+/* ==================== 历史记录 ==================== */
+.history-section {
+  background: @bg-secondary;
+  border-radius: @radius-md;
+  padding: @spacing-md;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: @spacing-sm;
+}
+
+.history-title {
+  font-size: @font-size-caption1;
+  font-weight: @font-weight-bold;
+  color: @text-secondary;
+}
+
+.history-count {
+  font-size: @font-size-caption2;
+  color: @text-secondary;
+}
+
+.history-stats-bar {
+  display: flex;
+  gap: @spacing-md;
+  padding: @spacing-xs 0;
+  margin-bottom: @spacing-sm;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.stat-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+
+  &.green {
+    background: @color-green;
+  }
+
+  &.red {
+    background: @color-red;
+  }
+
+  &.yellow {
+    background: @color-orange;
+  }
+}
+
+.stat-text {
+  font-size: @font-size-caption2;
+  color: @text-secondary;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-xs;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: @spacing-sm;
+  padding: @spacing-sm;
+  background: fade(@text-secondary, 5%);
+  border-radius: @radius-sm;
+}
+
+.history-time {
+  font-size: @font-size-caption2;
+  font-family: monospace;
+  color: @text-secondary;
+  width: 70rpx;
+}
+
+.history-symbol {
+  font-size: @font-size-caption1;
+  font-weight: @font-weight-medium;
+  color: @text-primary;
+  width: 70rpx;
+}
+
+.history-signal {
+  font-size: @font-size-caption2;
+  font-weight: @font-weight-medium;
+  flex: 1;
+
+  &.green {
+    color: @color-green;
+  }
+
+  &.red {
     color: @color-red;
   }
 
-  &.neutral {
-    background: @color-orange-bg;
+  &.yellow {
     color: @color-orange;
   }
 }
 
-.signal-mini {
+.history-confidence {
   font-size: @font-size-caption2;
+  color: @text-secondary;
+  width: 60rpx;
+  text-align: right;
 }
 
-.history-confidence {
-  font-size: @font-size-caption1;
-  color: @text-secondary;
+.history-arrow {
+  font-size: @font-size-headline;
+  color: @text-tertiary;
 }

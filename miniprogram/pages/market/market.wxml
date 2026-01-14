@@ -1,49 +1,115 @@
 <!--pages/market/market.wxml-->
 <view class="container">
-  <!-- 标题栏 -->
-  <view class="header">
-    <text class="title">行情</text>
-    <button class="refresh-btn" bindtap="onRefresh">
-      <text class="refresh-icon">↻</text>
-    </button>
+  <!-- 当前选中交易对详情卡片 (iOS风格) -->
+  <view class="pair-detail-card" wx:if="{{selectedPair && !loading}}">
+    <view class="pair-header">
+      <view class="pair-info">
+        <text class="pair-name">{{selectedPair.baseCcy || '--'}}</text>
+        <text class="pair-price {{priceChangeClass}}">{{currentPrice}}</text>
+      </view>
+      <view class="pair-change">
+        <text class="change-percent {{priceChangeClass}}">{{priceChangePercentDisplay}}</text>
+        <text class="change-amount {{priceChangeClass}}">{{priceChangeDisplay}}</text>
+      </view>
+    </view>
+    <view class="pair-stats">
+      <view class="stat-item">
+        <text class="stat-label">24h 最高</text>
+        <text class="stat-value">{{high24h}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">24h 最低</text>
+        <text class="stat-value">{{low24h}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">成交量</text>
+        <text class="stat-value">{{volume24h}}</text>
+      </view>
+    </view>
   </view>
 
-  <!-- 行情列表 -->
-  <view class="market-section">
-    <!-- 列表头 -->
-    <view class="list-header">
-      <text class="header-col">交易对</text>
-      <text class="header-col">最新价</text>
-      <text class="header-col">24h涨跌</text>
+  <!-- K线图区域 -->
+  <view class="chart-section" wx:if="{{!loading}}">
+    <!-- 时间周期选择器 -->
+    <view class="time-period-selector">
+      <view
+        class="period-item {{timePeriod === '1m' ? 'active' : ''}}"
+        bindtap="switchTimePeriod"
+        data-period="1m"
+      >1m</view>
+      <view
+        class="period-item {{timePeriod === '5m' ? 'active' : ''}}"
+        bindtap="switchTimePeriod"
+        data-period="5m"
+      >5m</view>
+      <view
+        class="period-item {{timePeriod === '15m' ? 'active' : ''}}"
+        bindtap="switchTimePeriod"
+        data-period="15m"
+      >15m</view>
+      <view
+        class="period-item {{timePeriod === '1H' ? 'active' : ''}}"
+        bindtap="switchTimePeriod"
+        data-period="1H"
+      >1H</view>
+      <view
+        class="period-item {{timePeriod === '4H' ? 'active' : ''}}"
+        bindtap="switchTimePeriod"
+        data-period="4H"
+      >4H</view>
+      <view
+        class="period-item {{timePeriod === '1D' ? 'active' : ''}}"
+        bindtap="switchTimePeriod"
+        data-period="1D"
+      >1D</view>
     </view>
 
-    <view class="divider"></view>
+    <!-- K线图组件 -->
+    <candlestick-chart
+      candles="{{candleData}}"
+      sar-data="{{sarData}}"
+      macd-data="{{macdData}}"
+      current-price="{{currentPrice}}"
+      height="500"
+    />
 
-    <!-- 行情列表 -->
-    <scroll-view class="market-list" scroll-y refresher-enabled refresher-triggered="{{refreshing}}" bindrefresherrefresh="onRefresh">
-      <view
-        class="market-row {{item.instId === selectedPair ? 'selected' : ''}}"
-        wx:for="{{filteredMarkets}}"
-        wx:key="instId"
-        bindtap="selectPair"
-        data-pair="{{item}}"
-      >
-        <view class="row-col pair-name">
-          <text class="pair-ccy">{{item.baseCcy}}</text>
-          <text class="quote-ccy">{{item.quoteCcy}}</text>
-        </view>
-        <view class="row-col price">
-          <text class="price-text">{{item.last || '--'}}</text>
-        </view>
-        <view class="row-col change">
-          <text class="change-text {{item.changeClass}}">{{item.changeDisplay || '--'}}</text>
-        </view>
+    <!-- 加载提示 -->
+    <view class="chart-loading" wx:if="{{loadingCandles}}">
+      <text>加载K线数据中...</text>
+    </view>
+  </view>
+
+  <!-- 分隔线 -->
+  <view class="divider"></view>
+
+  <!-- 行情列表 (iOS风格 - 无表头) -->
+  <view class="market-list" wx:if="{{!loading}}">
+    <view
+      class="market-row {{item.instId === selectedPair.instId ? 'selected' : ''}}"
+      wx:for="{{filteredMarkets}}"
+      wx:key="instId"
+      bindtap="selectPair"
+      data-pair="{{item}}"
+    >
+      <view class="pair-column">
+        <text class="pair-ccy">{{item.baseCcy}}</text>
+        <text class="quote-ccy">{{item.quoteCcy}}</text>
       </view>
-    </scroll-view>
+      <view class="pair-column-right">
+        <text class="price-text">{{item.last}}</text>
+        <text class="change-percent {{item.changeClass}}">{{item.changeDisplay}}</text>
+      </view>
+    </view>
   </view>
 
   <!-- 空状态 -->
-  <view class="empty-state" wx:if="{{filteredMarkets.length === 0}}">
+  <view class="empty-state" wx:if="{{filteredMarkets.length === 0 && !loading}}">
+    <text class="empty-icon">📊</text>
     <text class="empty-text">暂无行情数据</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="empty-state" wx:if="{{loading}}">
+    <text class="empty-text">加载行情数据中...</text>
   </view>
 </view>

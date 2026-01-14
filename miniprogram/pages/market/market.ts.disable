@@ -1,0 +1,139 @@
+import { apiService } from '../../services/api'
+
+interface MarketData {
+  instId: string
+  baseCcy: string
+  quoteCcy: string
+  last: string
+  high24h: string
+  low24h: string
+  vol24h: string
+  changeDisplay: string
+  changePercent: number
+  changeClass: string
+}
+
+Page({
+  data: {
+    // 行情列表
+    filteredMarkets: [] as MarketData[],
+    // 选中的交易对
+    selectedPair: null as MarketData | null,
+    // 当前价格信息
+    currentPrice: '--',
+    priceChange: '--',
+    priceChangePercent: '',
+    priceChangeClass: '',
+    high24h: '--',
+    low24h: '--',
+    volume24h: '--',
+    // 连接状态
+    isConnected: false,
+    // 刷新状态
+    refreshing: false
+  },
+
+  onLoad() {
+    this.loadMarkets()
+    this.checkConnection()
+  },
+
+  onShow() {
+    this.loadMarkets()
+  },
+
+  // 检查连接状态
+  checkConnection() {
+    // 模拟连接状态检查
+    const app = getApp()
+    const isConnected = app.globalData?.isConnected ?? true
+    this.setData({ isConnected })
+  },
+
+  // 加载行情数据
+  async loadMarkets() {
+    try {
+      console.log('📊 开始加载市场数据...')
+      const markets = await apiService.getMarkets('SPOT')
+      console.log('✅ 获取到市场数据:', markets.length)
+      
+      // 处理行情数据，添加涨跌幅显示
+      const filteredMarkets = markets.map((item: any) => {
+        const changePercent = parseFloat(item.changePercent || item.change24h || '0')
+        return {
+          ...item,
+          changePercent,
+          changeDisplay: (changePercent >= 0 ? '+' : '') + changePercent.toFixed(2) + '%',
+          changeClass: changePercent >= 0 ? 'green' : 'red'
+        }
+      })
+      
+      this.setData({ 
+        filteredMarkets,
+        isConnected: true 
+      })
+      
+      // 如果没有选中的交易对，默认选中第一个
+      if (!this.data.selectedPair && filteredMarkets.length > 0) {
+        this.selectPairByData(filteredMarkets[0])
+      } else if (this.data.selectedPair) {
+        // 更新已选中交易对的数据
+        const updatedPair = filteredMarkets.find(
+          (m: MarketData) => m.instId === this.data.selectedPair?.instId
+        )
+        if (updatedPair) {
+          this.selectPairByData(updatedPair)
+        }
+      }
+    } catch (error) {
+      console.error('加载行情失败:', error)
+      this.setData({ isConnected: false })
+      wx.showToast({ title: '加载失败', icon: 'none' })
+    }
+  },
+
+  // 选择交易对 (事件处理)
+  selectPair(e: any) {
+    const pair = e.currentTarget.dataset.pair
+    this.selectPairByData(pair)
+  },
+
+  // 选择交易对 (数据处理)
+  selectPairByData(pair: MarketData) {
+    const changePercent = pair.changePercent || 0
+    const priceChangeClass = changePercent >= 0 ? 'green' : 'red'
+    
+    // 格式化成交量
+    const vol = parseFloat(pair.vol24h || '0')
+    let volume24h = pair.vol24h
+    if (vol >= 1000000) {
+      volume24h = (vol / 1000000).toFixed(2) + 'M'
+    } else if (vol >= 1000) {
+      volume24h = (vol / 1000).toFixed(2) + 'K'
+    }
+    
+    this.setData({
+      selectedPair: pair,
+      currentPrice: pair.last || '--',
+      high24h: pair.high24h || '--',
+      low24h: pair.low24h || '--',
+      volume24h: volume24h,
+      priceChange: pair.changeDisplay || '--',
+      priceChangePercent: changePercent >= 0 ? '+' + changePercent.toFixed(2) : changePercent.toFixed(2),
+      priceChangeClass
+    })
+    
+    // 通知全局选中的交易对
+    const app = getApp()
+    if (app.globalData) {
+      app.globalData.selectedPair = pair
+    }
+  },
+
+  // 刷新行情
+  async onRefresh() {
+    this.setData({ refreshing: true })
+    await this.loadMarkets()
+    this.setData({ refreshing: false })
+  }
+})

@@ -1,0 +1,11 @@
+<!--pages/test-simple/test-simple.wxml-->
+<view class="container">
+  <view class="title">wx.request 测试页面</view>
+
+  <view class="result-box">
+    <text class="label">测试结果:</text>
+    <text class="result">{{result}}</text>
+  </view>
+
+  <button type="primary" bindtap="testWxRequest">重新测试</button>
+</view>

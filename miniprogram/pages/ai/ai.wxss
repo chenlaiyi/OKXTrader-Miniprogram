@@ -1,0 +1,813 @@
+/* pages/ai/ai.wxss */
+/* AI策略页面 - iOS风格深色主题 */
+
+.container {
+  min-height: 100vh;
+  background: #000000;
+  padding: 16rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================== AI 标题栏 ==================== */
+.ai-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 0;
+  margin-bottom: 12rpx;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.header-icon {
+  font-size: 28rpx;
+}
+
+.header-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.settings-btn {
+  width: 48rpx;
+  height: 48rpx;
+  padding: 0;
+  background: #2c2c2e;
+  border-radius: 4rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-btn::after {
+  border: none;
+}
+
+.settings-icon {
+  font-size: 24rpx;
+}
+
+/* ==================== 策略状态栏 (iOS v0.0.099风格) ==================== */
+.strategy-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx;
+  background: rgba(0, 122, 255, 0.05);
+  border: 1rpx solid rgba(0, 122, 255, 0.2);
+  border-radius: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.strategy-left {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.strategy-emoji {
+  font-size: 32rpx;
+}
+
+.strategy-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
+}
+
+.strategy-label {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.strategy-name {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #007aff;
+}
+
+.strategy-right {
+  display: flex;
+  align-items: center;
+}
+
+.style-badge {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 4rpx;
+}
+
+.style-badge.aggressive {
+  background: rgba(255, 149, 0, 0.15);
+}
+
+.style-badge.conservative {
+  background: rgba(52, 199, 89, 0.15);
+}
+
+.style-icon {
+  font-size: 16rpx;
+}
+
+.style-text {
+  font-size: 16rpx;
+}
+
+.style-badge.aggressive .style-text {
+  color: #ff9500;
+}
+
+.style-badge.conservative .style-text {
+  color: #34c759;
+}
+
+/* ==================== 核心参数卡片 (iOS v0.0.099风格) ==================== */
+.core-params-card {
+  background: #1c1c1e;
+  border-radius: 8rpx;
+  padding: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.params-title {
+  font-size: 18rpx;
+  color: #8e8e93;
+  margin-bottom: 12rpx;
+}
+
+.params-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.param-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx;
+  border-radius: 4rpx;
+}
+
+.param-item.green {
+  background: rgba(52, 199, 89, 0.1);
+}
+
+.param-item.red {
+  background: rgba(255, 59, 48, 0.1);
+}
+
+.param-item.orange {
+  background: rgba(255, 149, 0, 0.1);
+}
+
+.param-item.purple {
+  background: rgba(175, 82, 222, 0.1);
+}
+
+.param-icon {
+  font-size: 20rpx;
+  width: 32rpx;
+  text-align: center;
+}
+
+.param-item.green .param-icon {
+  color: #34c759;
+}
+
+.param-item.red .param-icon {
+  color: #ff3b30;
+}
+
+.param-item.orange .param-icon {
+  color: #ff9500;
+}
+
+.param-item.purple .param-icon {
+  color: #af52de;
+}
+
+.param-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
+}
+
+.param-label {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.param-value {
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.param-item.green .param-value {
+  color: #34c759;
+}
+
+.param-item.red .param-value {
+  color: #ff3b30;
+}
+
+.param-item.orange .param-value {
+  color: #ff9500;
+}
+
+.param-item.purple .param-value {
+  color: #af52de;
+}
+
+.params-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.row-icon {
+  font-size: 20rpx;
+  color: #007aff;
+}
+
+.row-label {
+  font-size: 18rpx;
+  color: #8e8e93;
+  flex: 1;
+}
+
+.row-value {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* ==================== 自动交易开关 ==================== */
+.auto-trade-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx;
+  background: #1c1c1e;
+  border-radius: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.auto-trade-info {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.auto-icon {
+  font-size: 24rpx;
+  color: #ff9500;
+}
+
+.auto-label {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+/* ==================== 操作按钮 ==================== */
+.action-buttons {
+  display: flex;
+  gap: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  padding: 12rpx 0;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  border: none;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.action-btn.primary {
+  background: #af52de;
+  color: #ffffff;
+}
+
+.action-btn.success {
+  background: #34c759;
+  color: #ffffff;
+}
+
+.action-btn.danger {
+  background: #ff3b30;
+  color: #ffffff;
+}
+
+.action-btn[disabled] {
+  opacity: 0.6;
+}
+
+.btn-icon {
+  font-size: 20rpx;
+}
+
+.btn-text {
+  font-size: 22rpx;
+}
+
+/* ==================== 内容滚动区 ==================== */
+.content-scroll {
+  flex: 1;
+}
+
+/* ==================== 分析结果 (iOS v0.0.099风格) ==================== */
+.analysis-result {
+  background: #1c1c1e;
+  border-radius: 8rpx;
+  padding: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.analysis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.analysis-title {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.analysis-time {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+/* 双信号显示 (iOS风格) */
+.dual-signal-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.signal-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.signal-divider {
+  width: 1rpx;
+  height: 60rpx;
+  background: #38383a;
+  margin: 0 12rpx;
+}
+
+.signal-label {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.signal-value {
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.signal-value.green {
+  color: #34c759;
+}
+
+.signal-value.red {
+  color: #ff3b30;
+}
+
+.signal-value.yellow {
+  color: #ff9500;
+}
+
+/* 置信度 */
+.confidence-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.confidence-label {
+  font-size: 18rpx;
+  color: #8e8e93;
+}
+
+.confidence-value {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.confidence-value.high {
+  color: #34c759;
+}
+
+.confidence-value.medium {
+  color: #ff9500;
+}
+
+.divider {
+  height: 1rpx;
+  background: #38383a;
+  margin: 12rpx 0;
+}
+
+/* 价格建议 */
+.price-suggestions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.price-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.price-label {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.price-value {
+  font-size: 22rpx;
+  font-family: monospace;
+  font-weight: 500;
+}
+
+.price-value.blue {
+  color: #007aff;
+}
+
+.price-value.red {
+  color: #ff3b30;
+}
+
+.price-value.green {
+  color: #34c759;
+}
+
+/* 分析理由 */
+.reasoning-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.reasoning-title {
+  font-size: 18rpx;
+  font-weight: 500;
+  color: #8e8e93;
+}
+
+.reasoning-text {
+  font-size: 22rpx;
+  color: #ffffff;
+  line-height: 1.6;
+}
+
+/* 风险提示 */
+.risks-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.risks-title {
+  font-size: 18rpx;
+  font-weight: 500;
+  color: #ff9500;
+}
+
+.risks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.risk-item {
+  display: flex;
+  gap: 8rpx;
+}
+
+.risk-dot {
+  color: #ff9500;
+}
+
+.risk-text {
+  flex: 1;
+  font-size: 22rpx;
+  color: #ff9500;
+  line-height: 1.5;
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 80rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  opacity: 0.3;
+}
+
+.empty-text {
+  font-size: 22rpx;
+  color: #8e8e93;
+}
+
+/* ==================== 持仓区域 ==================== */
+.positions-section {
+  background: rgba(0, 122, 255, 0.1);
+  border-radius: 8rpx;
+  padding: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8rpx 8rpx;
+}
+
+.section-title {
+  font-size: 18rpx;
+  font-weight: 700;
+  color: #007aff;
+}
+
+.mini-btn {
+  width: 32rpx;
+  height: 32rpx;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.mini-btn::after {
+  border: none;
+}
+
+.mini-icon {
+  font-size: 24rpx;
+  color: #007aff;
+}
+
+.position-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.position-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 8rpx;
+  background: #1c1c1e;
+  border-radius: 4rpx;
+}
+
+.position-direction {
+  width: 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.position-direction.long {
+  color: #34c759;
+}
+
+.position-direction.short {
+  color: #ff3b30;
+}
+
+.direction-icon {
+  font-size: 24rpx;
+}
+
+.direction-text {
+  font-size: 16rpx;
+}
+
+.position-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.position-header {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.position-symbol {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.position-leverage {
+  font-size: 16rpx;
+  font-weight: 700;
+  color: #ff9500;
+  padding: 2rpx 6rpx;
+  background: rgba(255, 149, 0, 0.15);
+  border-radius: 4rpx;
+}
+
+.position-details {
+  display: flex;
+  gap: 12rpx;
+}
+
+.position-detail {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.position-pnl {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2rpx;
+}
+
+.position-pnl.profit {
+  color: #34c759;
+}
+
+.position-pnl.loss {
+  color: #ff3b30;
+}
+
+.pnl-amount {
+  font-size: 22rpx;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.pnl-percent {
+  font-size: 16rpx;
+  font-family: monospace;
+}
+
+/* ==================== 历史记录 ==================== */
+.history-section {
+  background: #1c1c1e;
+  border-radius: 8rpx;
+  padding: 12rpx;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.history-title {
+  font-size: 18rpx;
+  font-weight: 700;
+  color: #8e8e93;
+}
+
+.history-count {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.history-stats-bar {
+  display: flex;
+  gap: 12rpx;
+  padding: 8rpx 0;
+  margin-bottom: 8rpx;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.stat-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+}
+
+.stat-dot.green {
+  background: #34c759;
+}
+
+.stat-dot.red {
+  background: #ff3b30;
+}
+
+.stat-dot.yellow {
+  background: #ff9500;
+}
+
+.stat-text {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx;
+  background: rgba(142, 142, 147, 0.05);
+  border-radius: 4rpx;
+}
+
+.history-time {
+  font-size: 16rpx;
+  font-family: monospace;
+  color: #8e8e93;
+  width: 70rpx;
+}
+
+.history-symbol {
+  font-size: 18rpx;
+  font-weight: 500;
+  color: #ffffff;
+  width: 70rpx;
+}
+
+.history-signal {
+  font-size: 16rpx;
+  font-weight: 500;
+  flex: 1;
+}
+
+.history-signal.green {
+  color: #34c759;
+}
+
+.history-signal.red {
+  color: #ff3b30;
+}
+
+.history-signal.yellow {
+  color: #ff9500;
+}
+
+.history-confidence {
+  font-size: 16rpx;
+  color: #8e8e93;
+  width: 60rpx;
+  text-align: right;
+}
+
+.history-arrow {
+  font-size: 24rpx;
+  color: #48484a;
+}

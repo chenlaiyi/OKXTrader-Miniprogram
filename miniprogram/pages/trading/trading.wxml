@@ -1,122 +1,122 @@
 <!--pages/trading/trading.wxml-->
 <view class="container">
-  <!-- 当前交易对信息 -->
-  <view class="pair-info">
-    <view class="pair-header">
-      <text class="pair-title">{{currentSymbol}}</text>
-      <view class="price-section">
-        <text class="current-price {{priceTrend}}">{{currentPrice}}</text>
-        <view class="price-change">
-          <text class="change-value {{priceTrend}}">{{priceChange}}</text>
-          <text class="change-percent {{priceTrend}}">({{priceChangePercent}}%)</text>
-        </view>
+  <!-- 盈亏统计卡片 (iOS风格) -->
+  <view class="pnl-stats-card">
+    <!-- 总盈亏 -->
+    <view class="total-pnl">
+      <view class="pnl-label-row">
+        <text class="pnl-label">总盈亏</text>
+        <text class="pnl-count">({{totalTradeCount}}笔)</text>
       </view>
+      <text class="pnl-value {{totalPnl >= 0 ? 'green' : 'red'}}">{{totalPnlDisplay}}</text>
     </view>
-
-    <view class="divider"></view>
-
-    <view class="stats-grid">
-      <view class="stat-item">
-        <text class="stat-label">24h 最高</text>
-        <text class="stat-value">{{high24h}}</text>
+    
+    <view class="pnl-divider"></view>
+    
+    <!-- 今日/昨日/本周盈亏 -->
+    <view class="pnl-details">
+      <view class="pnl-detail-item">
+        <view class="detail-label-row">
+          <text class="detail-label">今日</text>
+          <text class="detail-count">({{todayTradeCount}})</text>
+        </view>
+        <text class="detail-value {{todayPnl >= 0 ? 'green' : 'red'}}">{{todayPnlDisplay}}</text>
       </view>
-      <view class="stat-item">
-        <text class="stat-label">24h 最低</text>
-        <text class="stat-value">{{low24h}}</text>
+      <view class="pnl-detail-divider"></view>
+      <view class="pnl-detail-item">
+        <view class="detail-label-row">
+          <text class="detail-label">昨日</text>
+          <text class="detail-count">({{yesterdayTradeCount}})</text>
+        </view>
+        <text class="detail-value {{yesterdayPnl >= 0 ? 'green' : 'red'}}">{{yesterdayPnlDisplay}}</text>
       </view>
-      <view class="stat-item">
-        <text class="stat-label">24h 成交量</text>
-        <text class="stat-value">{{volume24h}}</text>
+      <view class="pnl-detail-divider"></view>
+      <view class="pnl-detail-item">
+        <view class="detail-label-row">
+          <text class="detail-label">本周</text>
+          <text class="detail-count">({{weekTradeCount}})</text>
+        </view>
+        <text class="detail-value {{weekPnl >= 0 ? 'green' : 'red'}}">{{weekPnlDisplay}}</text>
       </view>
     </view>
   </view>
 
-  <!-- 技术指标 -->
-  <view class="indicators-section">
-    <view class="section-header">
-      <text class="section-title">技术指标</text>
-      <button class="refresh-btn" bindtap="refreshIndicators">
-        <text class="refresh-icon">↻</text>
-      </button>
+  <!-- Tab切换 (iOS风格分段选择器) -->
+  <view class="tab-switcher">
+    <view class="tab-item {{selectedTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-tab="0">
+      <text class="tab-text">成交记录</text>
     </view>
-
-    <view class="indicator-card">
-      <view class="indicator-header">
-        <text class="indicator-title">趋势</text>
-      </view>
-      <view class="indicator-body">
-        <view class="ma-grid">
-          <view class="ma-item">
-            <text class="ma-label">MA</text>
-            <text class="ma-value {{maTrend}}">{{maValue}}</text>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <view class="indicator-card">
-      <view class="indicator-header">
-        <text class="indicator-title">动量</text>
-      </view>
-      <view class="indicator-body">
-        <view class="rsi-row">
-          <text class="rsi-label">RSI</text>
-          <view class="rsi-bar">
-            <view class="rsi-fill" style="width: {{rsiValue}}%"></view>
-          </view>
-          <text class="rsi-value">{{rsiValue}}</text>
-        </view>
-      </view>
-    </view>
-
-    <view class="indicator-card">
-      <view class="indicator-header">
-        <text class="indicator-title">波动</text>
-      </view>
-      <view class="indicator-body">
-        <view class="bb-row">
-          <view class="bb-item">
-            <text class="bb-label">上轨</text>
-            <text class="bb-value">{{bbUpper}}</text>
-          </view>
-          <view class="bb-item">
-            <text class="bb-label">中轨</text>
-            <text class="bb-value">{{bbMiddle}}</text>
-          </view>
-          <view class="bb-item">
-            <text class="bb-label">下轨</text>
-            <text class="bb-value">{{bbLower}}</text>
-          </view>
-        </view>
-      </view>
+    <view class="tab-item {{selectedTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-tab="1">
+      <text class="tab-text">当前持仓</text>
     </view>
   </view>
 
-  <!-- AI分析 -->
-  <view class="ai-section">
-    <view class="section-header">
-      <text class="section-title">AI 分析</text>
-    </view>
-
-    <view class="ai-card" wx:if="{{latestAnalysis}}">
-      <view class="ai-header">
-        <view class="signal-badge {{latestAnalysis.signal_type}}">
-          <text class="signal-text">{{latestAnalysis.signal_type === 'long' ? '做多' : latestAnalysis.signal_type === 'short' ? '做空' : '观望'}}</text>
+  <!-- 内容区域 -->
+  <scroll-view class="content-scroll" scroll-y refresher-enabled refresher-triggered="{{refreshing}}" bindrefresherrefresh="onRefresh">
+    <!-- 成交记录列表 -->
+    <view class="trade-list" wx:if="{{selectedTab === 0}}">
+      <view wx:if="{{fillHistory.length === 0}}" class="empty-state">
+        <text class="empty-icon">📋</text>
+        <text class="empty-text">暂无成交记录</text>
+      </view>
+      <view class="trade-item" wx:for="{{fillHistory}}" wx:key="id">
+        <view class="trade-left">
+          <view class="trade-header">
+            <text class="trade-symbol">{{item.symbol}}</text>
+            <view class="trade-tag {{item.operationClass}}">
+              <text class="tag-text">{{item.operationLabel}}</text>
+            </view>
+            <view class="trade-source-tag {{item.sourceClass}}">
+              <text class="source-text">{{item.source}}</text>
+            </view>
+            <text class="trade-leverage" wx:if="{{item.leverage}}">{{item.leverage}}x</text>
+          </view>
+          <text class="trade-time">{{item.time}}</text>
         </view>
-        <view class="confidence-badge">
-          <text class="confidence-text">置信度 {{latestAnalysis.confidence}}%</text>
+        <view class="trade-right">
+          <text class="trade-pnl {{item.pnl >= 0 ? 'profit' : 'loss'}}" wx:if="{{item.pnl !== 0}}">
+            {{item.pnl >= 0 ? '+' : ''}}{{item.pnlDisplay}}
+          </text>
+          <text class="trade-size" wx:else>{{item.sizeDisplay}}</text>
+          <text class="trade-fee">费:{{item.feeDisplay}}</text>
         </view>
       </view>
+    </view>
 
-      <view class="divider"></view>
-
-      <view class="ai-body">
-        <text class="ai-reasoning">{{latestAnalysis.reasoning}}</text>
+    <!-- 当前持仓列表 -->
+    <view class="position-list" wx:if="{{selectedTab === 1}}">
+      <view wx:if="{{positions.length === 0}}" class="empty-state">
+        <text class="empty-icon">📊</text>
+        <text class="empty-text">暂无持仓</text>
+      </view>
+      <view class="position-item" wx:for="{{positions}}" wx:key="posId">
+        <view class="position-left">
+          <view class="position-header">
+            <text class="position-symbol">{{item.instId}}</text>
+            <view class="position-direction {{item.posSide === 'long' ? 'long' : 'short'}}">
+              <text class="direction-text">{{item.posSide === 'long' ? '多' : '空'}}</text>
+            </view>
+            <text class="position-leverage">{{item.lever}}x</text>
+          </view>
+          <view class="position-details">
+            <text class="position-detail">数量: {{item.pos}}</text>
+            <text class="position-detail">均价: {{item.avgPx}}</text>
+          </view>
+        </view>
+        <view class="position-right">
+          <text class="position-pnl {{item.uplNum >= 0 ? 'profit' : 'loss'}}">
+            {{item.uplNum >= 0 ? '+' : ''}}{{item.uplDisplay}}
+          </text>
+        </view>
       </view>
     </view>
+  </scroll-view>
 
-    <view class="ai-empty" wx:else>
-      <text class="empty-text">暂无AI分析</text>
-    </view>
+  <!-- 刷新按钮 -->
+  <view class="refresh-footer">
+    <button class="refresh-btn" bindtap="onRefresh" loading="{{refreshing}}">
+      <text class="refresh-icon" wx:if="{{!refreshing}}">↻</text>
+      <text class="refresh-text">{{refreshing ? '刷新中...' : '刷新数据'}}</text>
+    </button>
   </view>
 </view>

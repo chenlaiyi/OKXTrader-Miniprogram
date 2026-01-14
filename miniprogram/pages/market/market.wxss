@@ -1,0 +1,241 @@
+/* pages/market/market.wxss */
+/* 行情页面 - iOS风格深色主题 */
+
+.container {
+  min-height: 100vh;
+  background: #000000;
+  padding: 16rpx;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ==================== 当前交易对详情卡片 ==================== */
+.pair-detail-card {
+  background: #1c1c1e;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.pair-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12rpx;
+}
+
+.pair-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.pair-name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.pair-price {
+  font-size: 56rpx;
+  font-weight: bold;
+  font-family: monospace;
+  color: #34c759;
+}
+
+.pair-price.red {
+  color: #ff3b30;
+}
+
+.pair-change {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4rpx;
+}
+
+.change-percent {
+  font-size: 24rpx;
+  font-weight: 600;
+  font-family: monospace;
+  color: #34c759;
+}
+
+.change-percent.red {
+  color: #ff3b30;
+}
+
+.change-amount {
+  font-size: 18rpx;
+  font-family: monospace;
+  color: #34c759;
+}
+
+.change-amount.red {
+  color: #ff3b30;
+}
+
+.pair-stats {
+  display: flex;
+  gap: 16rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx solid #38383a;
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.stat-label {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.stat-value {
+  font-size: 22rpx;
+  font-family: monospace;
+  color: #ffffff;
+}
+
+/* ==================== K线图区域 ==================== */
+.chart-section {
+  margin-bottom: 12rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 时间周期选择器 */
+.time-period-selector {
+  display: flex;
+  justify-content: space-around;
+  background: #1c1c1e;
+  border-radius: 8rpx;
+  padding: 8rpx;
+  margin-bottom: 12rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.period-item {
+  flex: 1;
+  text-align: center;
+  padding: 12rpx 0;
+  font-size: 22rpx;
+  color: #8e8e93;
+  border-radius: 6rpx;
+  transition: all 0.2s;
+}
+
+.period-item.active {
+  background: #007aff;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* K线图加载提示 */
+.chart-loading {
+  text-align: center;
+  padding: 20rpx;
+  font-size: 22rpx;
+  color: #8e8e93;
+}
+
+/* ==================== 分隔线 ==================== */
+.divider {
+  height: 1rpx;
+  background: #38383a;
+  margin: 12rpx 0;
+}
+
+/* ==================== 行情列表 ==================== */
+.market-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.market-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx;
+  transition: background 0.15s;
+  border-radius: 8rpx;
+}
+
+.market-row.selected {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.market-row:active {
+  background: #2c2c2e;
+}
+
+.pair-column {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.pair-column-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4rpx;
+}
+
+.pair-ccy {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.quote-ccy {
+  font-size: 18rpx;
+  color: #8e8e93;
+}
+
+.price-text {
+  font-size: 22rpx;
+  font-family: monospace;
+  color: #ffffff;
+}
+
+.change-percent {
+  font-size: 18rpx;
+  font-family: monospace;
+  font-weight: 500;
+  color: #34c759;
+}
+
+.change-percent.red {
+  color: #ff3b30;
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 24rpx;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 22rpx;
+  color: #8e8e93;
+}

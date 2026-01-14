@@ -1,1 +1,6 @@
-{ "navigationBarTitleText": "行情" }
+{
+  "navigationBarTitleText": "行情",
+  "usingComponents": {
+    "candlestick-chart": "../../components/candlestick-chart/candlestick-chart"
+  }
+}

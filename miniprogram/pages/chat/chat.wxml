@@ -1,4 +1,104 @@
-<view class="container">
-  <view class="title">AI聊天</view>
-  <view class="placeholder">聊天功能开发中...</view>
+<!--pages/chat/chat.wxml-->
+<view class="chat-container">
+  <!-- 聊天消息列表 -->
+  <scroll-view
+    class="message-scroll"
+    scroll-y
+    scroll-into-view="{{toView}}"
+    scroll-with-animation
+  >
+    <!-- 空状态提示 -->
+    <view class="empty-state" wx:if="{{messages.length === 0}}">
+      <text class="empty-icon">🧠</text>
+      <text class="empty-title">AI 交易助手</text>
+      <text class="empty-subtitle">我可以帮您查询余额、分析行情、执行交易</text>
+    </view>
+
+    <!-- 消息列表 -->
+    <view class="message-list">
+      <view
+        class="message-item {{item.role}}"
+        id="msg-{{index}}"
+        wx:for="{{messages}}"
+        wx:key="id"
+      >
+        <!-- AI 消息 -->
+        <view class="message-content assistant" wx:if="{{item.role === 'assistant'}}">
+          <view class="avatar assistant-avatar">
+            <text class="avatar-icon">🧠</text>
+          </view>
+          <view class="message-right">
+            <view class="bubble assistant-bubble">
+              <text class="bubble-text">{{item.content}}</text>
+            </view>
+            <!-- 执行结果卡片 -->
+            <view class="execution-card" wx:if="{{item.executionResult}}">
+              <view class="execution-header">
+                <text class="execution-icon">✓</text>
+                <text class="execution-title">执行结果</text>
+              </view>
+              <text class="result-content">{{item.executionResult}}</text>
+            </view>
+            <text class="message-time">{{item.time}}</text>
+          </view>
+        </view>
+
+        <!-- 用户消息 -->
+        <view class="message-content user" wx:else>
+          <view class="message-left">
+            <text class="message-time">{{item.time}}</text>
+            <view class="bubble user-bubble">
+              <text class="bubble-text">{{item.content}}</text>
+            </view>
+          </view>
+          <view class="avatar user-avatar">
+            <text class="avatar-icon">👤</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 处理中指示器 -->
+      <view class="typing-indicator" wx:if="{{isProcessing}}">
+        <view class="typing-dots">
+          <view class="dot"></view>
+          <view class="dot"></view>
+          <view class="dot"></view>
+        </view>
+        <text class="typing-text">AI 正在思考...</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 快捷指令栏 -->
+  <view class="quick-commands">
+    <scroll-view class="commands-scroll" scroll-x show-scrollbar="{{false}}">
+      <view class="command-chip" wx:for="{{quickCommands}}" wx:key="text" bindtap="useQuickCommand" data-command="{{item.text}}">
+        <text class="chip-icon">{{item.icon}}</text>
+        <text class="chip-text">{{item.text}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 输入区域 -->
+  <view class="input-area">
+    <view class="input-wrapper">
+      <input
+        class="message-input"
+        type="text"
+        placeholder="输入指令，如：买入 0.01 个 ETH..."
+        placeholder-class="input-placeholder"
+        value="{{inputText}}"
+        bindinput="onInputChange"
+        bindconfirm="sendMessage"
+        disabled="{{isProcessing}}"
+      />
+      <button
+        class="send-btn {{inputText && !isProcessing ? 'active' : ''}}"
+        bindtap="sendMessage"
+        disabled="{{!inputText || isProcessing}}"
+      >
+        <text class="send-icon">{{isProcessing ? '⏳' : '➤'}}</text>
+      </button>
+    </view>
+  </view>
 </view>

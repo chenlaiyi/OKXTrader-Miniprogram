@@ -1,16 +1,10 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/trading/trading",
     "pages/market/market",
+    "pages/trading/trading",
     "pages/ai/ai",
-    "pages/monitor/monitor",
-    "pages/strategy/strategy",
-    "pages/strategy-edit/strategy-edit",
-    "pages/account/account",
     "pages/chat/chat",
-    "pages/history/history",
-    "pages/test/test"
+    "pages/account/account"
   ],
   "tabBar": {
     "color": "#8e8e93",
@@ -32,13 +26,19 @@
       },
       {
         "pagePath": "pages/ai/ai",
-        "text": "AI",
+        "text": "AI分析",
         "iconPath": "images/tabbar/ai.png",
         "selectedIconPath": "images/tabbar/ai-active.png"
       },
       {
-        "pagePath": "pages/index/index",
-        "text": "我的",
+        "pagePath": "pages/chat/chat",
+        "text": "AI聊天",
+        "iconPath": "images/tabbar/chat.png",
+        "selectedIconPath": "images/tabbar/chat-active.png"
+      },
+      {
+        "pagePath": "pages/account/account",
+        "text": "账户",
         "iconPath": "images/tabbar/account.png",
         "selectedIconPath": "images/tabbar/account-active.png"
       }

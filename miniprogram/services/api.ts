@@ -5,32 +5,35 @@ import { MarketData, CandleData, Indicators, AIAnalysis, Position, StrategyConfi
 class ApiService {
   private baseUrl: string = CONFIG.API_BASE
 
-  // 通用请求方法
-  private async request<T>(url: string, options?: RequestInit): Promise<T> {
-    try {
-      const response = await fetch(`${this.baseUrl}${url}`, {
+  // 通用请求方法 - 使用微信小程序的wx.request
+  private request<T>(url: string, options?: { method?: string; data?: any }): Promise<T> {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: `${this.baseUrl}${url}`,
+        method: (options?.method as any) || 'GET',
+        data: options?.data,
         header: {
           'content-type': 'application/json',
         },
-        ...options
+        success: (res: any) => {
+          const result = res.data
+          if (result.success) {
+            resolve(result.data as T)
+          } else {
+            reject(new Error(result.error || '请求失败'))
+          }
+        },
+        fail: (error: any) => {
+          console.error('API请求失败:', error)
+          reject(error)
+        }
       })
-
-      const result = await response.json() as any
-
-      if (result.success) {
-        return result.data as T
-      } else {
-        throw new Error(result.error || '请求失败')
-      }
-    } catch (error: any) {
-      console.error('API请求失败:', error)
-      throw error
-    }
+    })
   }
 
   // 获取市场行情
-  async getMarkets(): Promise<MarketData[]> {
-    return this.request<MarketData[]>('/markets')
+  async getMarkets(instType: string = 'SPOT'): Promise<MarketData[]> {
+    return this.request<MarketData[]>(`/markets?instType=${instType}`)
   }
 
   // 获取K线数据
@@ -59,11 +62,26 @@ class ApiService {
     return this.request<any>('/account/balance')
   }
 
+  // 获取账户信息 (iOS风格)
+  async getAccountInfo(): Promise<any> {
+    return this.request<any>('/account/info')
+  }
+
+  // 获取资产余额列表
+  async getBalances(): Promise<any[]> {
+    return this.request<any[]>('/account/balances')
+  }
+
+  // 获取成交历史记录
+  async getFillHistory(): Promise<any[]> {
+    return this.request<any[]>('/fills')
+  }
+
   // 执行交易
   async executeTrade(symbol: string, side: 'long' | 'short', size: number): Promise<any> {
     return this.request<any>('/trade', {
       method: 'POST',
-      body: JSON.stringify({ symbol, side, size })
+      data: { symbol, side, size }
     })
   }
 
@@ -71,7 +89,7 @@ class ApiService {
   async closePosition(positionId: string): Promise<any> {
     return this.request<any>('/positions/close', {
       method: 'POST',
-      body: JSON.stringify({ positionId })
+      data: { positionId }
     })
   }
 
@@ -89,7 +107,7 @@ class ApiService {
   async createStrategy(strategy: StrategyConfig): Promise<{ id: string }> {
     return this.request<{ id: string }>('/strategy', {
       method: 'POST',
-      body: JSON.stringify(strategy)
+      data: strategy
     })
   }
 
@@ -97,7 +115,7 @@ class ApiService {
   async updateStrategy(id: string, strategy: Partial<StrategyConfig>): Promise<any> {
     return this.request<any>(`/strategy/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(strategy)
+      data: strategy
     })
   }
 
@@ -122,7 +140,15 @@ class ApiService {
   async addAccount(account: any): Promise<any> {
     return this.request<any>('/accounts', {
       method: 'POST',
-      body: JSON.stringify(account)
+      data: account
+    })
+  }
+
+  // 切换账号
+  async switchAccount(accountId: number): Promise<any> {
+    return this.request<any>('/accounts/switch', {
+      method: 'POST',
+      data: { accountId }
     })
   }
 
@@ -135,7 +161,7 @@ class ApiService {
   async sendChatMessage(message: string): Promise<{ response: string }> {
     return this.request<{ response: string }>('/chat/send', {
       method: 'POST',
-      body: JSON.stringify({ message })
+      data: { message }
     })
   }
 
@@ -148,7 +174,15 @@ class ApiService {
   async toggleAutoTrading(enabled: boolean): Promise<any> {
     return this.request<any>('/autotrading/toggle', {
       method: 'POST',
-      body: JSON.stringify({ enabled })
+      data: { enabled }
+    })
+  }
+
+  // AI分析请求
+  async requestAIAnalysis(symbol: string, params?: any): Promise<AIAnalysis> {
+    return this.request<AIAnalysis>('/ai/analyze', {
+      method: 'POST',
+      data: { symbol, ...params }
     })
   }
 }

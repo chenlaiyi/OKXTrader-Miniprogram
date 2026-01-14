@@ -1,0 +1,444 @@
+/* pages/trading/trading.wxss */
+/* 交易页面 - iOS风格深色主题 */
+
+.container {
+  min-height: 100vh;
+  background: #000000;
+  padding: 16rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================== 盈亏统计卡片 (iOS风格) ==================== */
+.pnl-stats-card {
+  background: #1c1c1e;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.total-pnl {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  padding-bottom: 12rpx;
+}
+
+.pnl-label-row {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.pnl-label {
+  font-size: 18rpx;
+  color: #8e8e93;
+}
+
+.pnl-count {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.pnl-value {
+  font-size: 56rpx;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.pnl-value.green {
+  color: #34c759;
+}
+
+.pnl-value.red {
+  color: #ff3b30;
+}
+
+.pnl-divider {
+  height: 1rpx;
+  background: #38383a;
+  margin-bottom: 12rpx;
+}
+
+.pnl-details {
+  display: flex;
+  align-items: center;
+}
+
+.pnl-detail-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.pnl-detail-divider {
+  width: 1rpx;
+  height: 60rpx;
+  background: #38383a;
+}
+
+.detail-label-row {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.detail-label {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.detail-count {
+  font-size: 18rpx;
+  color: #8e8e93;
+}
+
+.detail-value {
+  font-size: 22rpx;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.detail-value.green {
+  color: #34c759;
+}
+
+.detail-value.red {
+  color: #ff3b30;
+}
+
+/* ==================== Tab切换 (iOS风格分段选择器) ==================== */
+.tab-switcher {
+  display: flex;
+  background: #2c2c2e;
+  border-radius: 8rpx;
+  padding: 4rpx;
+  margin-bottom: 12rpx;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8rpx 0;
+  border-radius: 4rpx;
+  transition: all 0.2s;
+}
+
+.tab-item.active {
+  background: #1c1c1e;
+}
+
+.tab-text {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #8e8e93;
+}
+
+.tab-item.active .tab-text {
+  color: #ffffff;
+}
+
+/* ==================== 内容滚动区 ==================== */
+.content-scroll {
+  flex: 1;
+  margin-bottom: 72rpx;
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 80rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 22rpx;
+  color: #8e8e93;
+}
+
+/* ==================== 成交记录列表 ==================== */
+.trade-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.trade-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx;
+  background: #1c1c1e;
+  border-radius: 8rpx;
+}
+
+.trade-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.trade-header {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.trade-symbol {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.trade-tag {
+  padding: 2rpx 8rpx;
+  border-radius: 4rpx;
+}
+
+.trade-tag.long,
+.trade-tag.buy {
+  background: rgba(52, 199, 89, 0.1);
+}
+
+.trade-tag.short,
+.trade-tag.sell {
+  background: rgba(255, 59, 48, 0.1);
+}
+
+.trade-tag.close-long {
+  background: rgba(255, 149, 0, 0.1);
+}
+
+.trade-tag.close-short {
+  background: rgba(0, 122, 255, 0.15);
+}
+
+.tag-text {
+  font-size: 16rpx;
+}
+
+.trade-tag.long .tag-text,
+.trade-tag.buy .tag-text {
+  color: #34c759;
+}
+
+.trade-tag.short .tag-text,
+.trade-tag.sell .tag-text {
+  color: #ff3b30;
+}
+
+.trade-tag.close-long .tag-text {
+  color: #ff9500;
+}
+
+.trade-tag.close-short .tag-text {
+  color: #007aff;
+}
+
+.trade-source-tag {
+  padding: 2rpx 8rpx;
+  border-radius: 4rpx;
+}
+
+.trade-source-tag.api {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.trade-source-tag.manual {
+  background: rgba(175, 82, 222, 0.1);
+}
+
+.source-text {
+  font-size: 16rpx;
+}
+
+.trade-source-tag.api .source-text {
+  color: #007aff;
+}
+
+.trade-source-tag.manual .source-text {
+  color: #af52de;
+}
+
+.trade-leverage {
+  font-size: 16rpx;
+  color: #ff9500;
+}
+
+.trade-time {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.trade-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4rpx;
+}
+
+.trade-pnl {
+  font-size: 22rpx;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.trade-pnl.profit {
+  color: #34c759;
+}
+
+.trade-pnl.loss {
+  color: #ff3b30;
+}
+
+.trade-size {
+  font-size: 18rpx;
+  font-family: monospace;
+  color: #ffffff;
+}
+
+.trade-fee {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+/* ==================== 持仓列表 ==================== */
+.position-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.position-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx;
+  background: #1c1c1e;
+  border-radius: 8rpx;
+}
+
+.position-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.position-header {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.position-symbol {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.position-direction {
+  padding: 2rpx 12rpx;
+  border-radius: 4rpx;
+}
+
+.position-direction.long {
+  background: rgba(52, 199, 89, 0.1);
+}
+
+.position-direction.short {
+  background: rgba(255, 59, 48, 0.1);
+}
+
+.direction-text {
+  font-size: 16rpx;
+  font-weight: 500;
+}
+
+.position-direction.long .direction-text {
+  color: #34c759;
+}
+
+.position-direction.short .direction-text {
+  color: #ff3b30;
+}
+
+.position-leverage {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.position-details {
+  display: flex;
+  gap: 12rpx;
+}
+
+.position-detail {
+  font-size: 16rpx;
+  color: #8e8e93;
+}
+
+.position-right {
+  display: flex;
+  align-items: center;
+}
+
+.position-pnl {
+  font-size: 24rpx;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.position-pnl.profit {
+  color: #34c759;
+}
+
+.position-pnl.loss {
+  color: #ff3b30;
+}
+
+/* ==================== 刷新按钮 ==================== */
+.refresh-footer {
+  padding: 8rpx 0;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  width: 100%;
+  padding: 12rpx;
+  background: #1c1c1e;
+  border-radius: 8rpx;
+  border: none;
+}
+
+.refresh-btn::after {
+  border: none;
+}
+
+.refresh-btn:active {
+  background: #2c2c2e;
+}
+
+.refresh-icon {
+  font-size: 24rpx;
+  color: #007aff;
+}
+
+.refresh-text {
+  font-size: 22rpx;
+  color: #007aff;
+}

@@ -1,1 +1,4 @@
-{ "navigationBarTitleText": "AI" }
+{
+  "navigationBarTitleText": "AI分析",
+  "enablePullDownRefresh": false
+}

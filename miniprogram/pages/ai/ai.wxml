@@ -1,91 +1,228 @@
 <!--pages/ai/ai.wxml-->
 <view class="container">
-  <!-- 标题栏 -->
-  <view class="header">
-    <view class="header-left">
-      <text class="header-icon">🧠</text>
-      <text class="title">AI 分析</text>
+  <!-- 策略状态栏 (iOS风格) -->
+  <view class="strategy-status-bar">
+    <view class="strategy-left">
+      <text class="strategy-emoji">{{currentStrategy.emoji}}</text>
+      <view class="strategy-info">
+        <text class="strategy-label">当前策略</text>
+        <text class="strategy-name">{{currentStrategy.name}}</text>
+      </view>
     </view>
-    <view class="header-right">
-      <switch checked="{{autoTradeEnabled}}" bindchange="toggleAutoTrade" color="#af52de" class="auto-switch"/>
-      <text class="switch-label">自动交易</text>
-    </view>
-  </view>
-
-  <!-- 策略状态 -->
-  <view class="strategy-section">
-    <view class="strategy-header">
-      <text class="strategy-title">{{strategyName}}</text>
-      <text class="strategy-timeframe">({{strategyTimeframe}})</text>
-    </view>
-    <view class="strategy-status">
-      <text class="status-label">运行状态</text>
-      <text class="status-value {{autoTradeEnabled ? 'enabled' : 'disabled'}}">{{autoTradeEnabled ? '运行中' : '已停止'}}</text>
+    <view class="strategy-right">
+      <view class="style-badge {{tradingStyle === 'aggressive' ? 'aggressive' : 'conservative'}}">
+        <text class="style-icon">{{tradingStyle === 'aggressive' ? '🔥' : '🛡️'}}</text>
+        <text class="style-text">{{tradingStyle === 'aggressive' ? '激进' : '稳健'}}</text>
+      </view>
     </view>
   </view>
 
-  <!-- 最新分析 -->
-  <view class="analysis-section">
-    <view class="section-header">
-      <text class="section-title">最新分析</text>
-      <text class="section-time">{{analysisTime}}</text>
-    </view>
-
-    <view class="analysis-card" wx:if="{{latestAnalysis}}">
-      <view class="analysis-signal">
-        <view class="signal-badge {{latestAnalysis.signal_type}}">
-          <text class="signal-text">{{latestAnalysis.signal_type === 'long' ? '做多信号' : latestAnalysis.signal_type === 'short' ? '做空信号' : '观望信号'}}</text>
-        </view>
-        <view class="confidence-badge">
-          <text class="confidence-value">{{latestAnalysis.confidence}}</text>
-          <text class="confidence-unit">%</text>
+  <!-- 核心参数卡片 (iOS风格) -->
+  <view class="core-params-card">
+    <text class="params-title">📊 核心参数</text>
+    <view class="params-grid">
+      <view class="param-item green">
+        <text class="param-icon">↑</text>
+        <view class="param-content">
+          <text class="param-label">止盈</text>
+          <text class="param-value">{{takeProfitPercent}}%</text>
         </view>
       </view>
+      <view class="param-item red">
+        <text class="param-icon">↓</text>
+        <view class="param-content">
+          <text class="param-label">止损</text>
+          <text class="param-value">{{stopLossPercent}}%</text>
+        </view>
+      </view>
+      <view class="param-item orange">
+        <text class="param-icon">📊</text>
+        <view class="param-content">
+          <text class="param-label">杠杆</text>
+          <text class="param-value">{{leverage}}x</text>
+        </view>
+      </view>
+      <view class="param-item purple">
+        <text class="param-icon">✓</text>
+        <view class="param-content">
+          <text class="param-label">置信度</text>
+          <text class="param-value">{{confidenceThreshold}}%</text>
+        </view>
+      </view>
+    </view>
+    <view class="params-row">
+      <text class="row-icon">🕐</text>
+      <text class="row-label">分析间隔</text>
+      <text class="row-value">{{analysisInterval}}分钟</text>
+    </view>
+  </view>
 
+  <!-- 自动交易开关 -->
+  <view class="auto-trade-card">
+    <view class="auto-trade-info">
+      <text class="auto-icon">⚡</text>
+      <text class="auto-label">自动交易</text>
+    </view>
+    <switch
+      checked="{{autoTradeEnabled}}"
+      bindchange="toggleAutoTrade"
+      color="#af52de"
+    />
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button
+      class="action-btn primary"
+      bindtap="startAnalysis"
+      disabled="{{isAnalyzing}}"
+    >
+      <text class="btn-icon" wx:if="{{!isAnalyzing}}">✨</text>
+      <text class="btn-text">{{isAnalyzing ? '分析中...' : 'AI分析'}}</text>
+    </button>
+    <button
+      class="action-btn {{autoAnalysisEnabled ? 'danger' : 'success'}}"
+      bindtap="toggleAutoAnalysis"
+    >
+      <text class="btn-icon">{{autoAnalysisEnabled ? '⏹' : '▶️'}}</text>
+      <text class="btn-text">{{autoAnalysisEnabled ? '停止' : '自动'}}</text>
+    </button>
+  </view>
+
+  <!-- 滚动内容区 -->
+  <scroll-view class="content-scroll" scroll-y>
+    <!-- 当前分析结果 (双信号显示 - iOS风格) -->
+    <view class="analysis-result" wx:if="{{currentAnalysis}}">
+      <view class="analysis-header">
+        <text class="analysis-title">📊 最新分析</text>
+        <text class="analysis-time">{{analysisTime}}</text>
+      </view>
+      
+      <!-- 双信号显示 -->
+      <view class="dual-signal-section">
+        <view class="signal-card">
+          <text class="signal-label">现货信号</text>
+          <text class="signal-value {{currentAnalysis.spotSignalClass}}">{{currentAnalysis.spotSignalText}}</text>
+        </view>
+        <view class="signal-divider"></view>
+        <view class="signal-card">
+          <text class="signal-label">合约信号</text>
+          <text class="signal-value {{currentAnalysis.contractSignalClass}}">{{currentAnalysis.contractSignalText}}</text>
+        </view>
+      </view>
+      
+      <!-- 置信度 -->
+      <view class="confidence-row">
+        <text class="confidence-label">置信度</text>
+        <text class="confidence-value {{currentAnalysis.confidence >= 70 ? 'high' : 'medium'}}">{{currentAnalysis.confidence}}%</text>
+      </view>
+      
       <view class="divider"></view>
-
-      <view class="analysis-reasoning">
-        <text class="reasoning-label">分析理由</text>
-        <text class="reasoning-text">{{latestAnalysis.reasoning}}</text>
+      
+      <!-- 价格建议 -->
+      <view class="price-suggestions" wx:if="{{currentAnalysis.suggestedPrice || currentAnalysis.stopLoss || currentAnalysis.takeProfit}}">
+        <view class="price-item" wx:if="{{currentAnalysis.suggestedPrice}}">
+          <text class="price-label">入场价</text>
+          <text class="price-value blue">${{currentAnalysis.suggestedPrice}}</text>
+        </view>
+        <view class="price-item" wx:if="{{currentAnalysis.stopLoss}}">
+          <text class="price-label">止损</text>
+          <text class="price-value red">${{currentAnalysis.stopLoss}}</text>
+        </view>
+        <view class="price-item" wx:if="{{currentAnalysis.takeProfit}}">
+          <text class="price-label">止盈</text>
+          <text class="price-value green">${{currentAnalysis.takeProfit}}</text>
+        </view>
       </view>
-
-      <view class="divider" wx:if="{{latestAnalysis.risks && latestAnalysis.risks.length > 0}}"></view>
-
-      <view class="analysis-risks" wx:if="{{latestAnalysis.risks && latestAnalysis.risks.length > 0}}">
-        <text class="risks-label">风险提示</text>
+      
+      <view class="divider" wx:if="{{currentAnalysis.suggestedPrice}}"></view>
+      
+      <!-- 分析理由 -->
+      <view class="reasoning-section">
+        <text class="reasoning-title">分析理由</text>
+        <text class="reasoning-text">{{currentAnalysis.reasoning}}</text>
+      </view>
+      
+      <!-- 风险提示 -->
+      <view class="risks-section" wx:if="{{currentAnalysis.risks.length > 0}}">
+        <view class="divider"></view>
+        <text class="risks-title">⚠️ 风险提示</text>
         <view class="risks-list">
-          <view class="risk-item" wx:for="{{latestAnalysis.risks}}" wx:key="index">
+          <view class="risk-item" wx:for="{{currentAnalysis.risks}}" wx:key="index">
+            <text class="risk-dot">•</text>
             <text class="risk-text">{{item}}</text>
           </view>
         </view>
       </view>
     </view>
 
-    <view class="analysis-empty" wx:else>
-      <text class="empty-text">暂无AI分析</text>
-    </view>
-  </view>
-
-  <!-- 历史分析 -->
-  <view class="history-section">
-    <view class="section-header">
-      <text class="section-title">历史分析</text>
-      <text class="section-count">{{historyCount}}</text>
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{!currentAnalysis}}">
+      <text class="empty-icon">📊</text>
+      <text class="empty-text">点击上方按钮开始 AI 分析</text>
     </view>
 
-    <scroll-view class="history-list" scroll-y>
-      <view class="history-item" wx:for="{{historyList}}" wx:key="id">
-        <view class="history-left">
-          <text class="history-symbol">{{item.symbol}}</text>
-          <text class="history-time">{{item.time}}</text>
-        </view>
-        <view class="history-right">
-          <view class="history-signal {{item.signal_type}}">
-            <text class="signal-mini">{{item.signal_type === 'long' ? '多' : item.signal_type === 'short' ? '空' : '观'}}</text>
+    <!-- 持仓区域 -->
+    <view class="positions-section" wx:if="{{apiPositions.length > 0}}">
+      <view class="section-header">
+        <text class="section-title">📍 当前持仓</text>
+        <button class="mini-btn" bindtap="refreshPositions">
+          <text class="mini-icon">↻</text>
+        </button>
+      </view>
+      <view class="position-list">
+        <view class="position-item" wx:for="{{apiPositions}}" wx:key="instId">
+          <view class="position-direction {{item.side}}">
+            <text class="direction-icon">{{item.side === 'long' ? '📈' : '📉'}}</text>
+            <text class="direction-text">{{item.side === 'long' ? '多' : '空'}}</text>
           </view>
-          <text class="history-confidence">{{item.confidence}}%</text>
+          <view class="position-info">
+            <view class="position-header">
+              <text class="position-symbol">{{item.instId}}</text>
+              <text class="position-leverage">{{item.leverage}}x</text>
+            </view>
+            <view class="position-details">
+              <text class="position-detail">数量: {{item.quantity}}</text>
+              <text class="position-detail">均价: {{item.avgPrice}}</text>
+            </view>
+          </view>
+          <view class="position-pnl {{item.pnl >= 0 ? 'profit' : 'loss'}}">
+            <text class="pnl-amount">{{item.pnl >= 0 ? '+' : ''}}{{item.pnl}}</text>
+            <text class="pnl-percent">({{item.pnlPercent}})</text>
+          </view>
         </view>
       </view>
-    </scroll-view>
-  </view>
+    </view>
+
+    <!-- 分析历史 -->
+    <view class="history-section">
+      <view class="history-header">
+        <text class="history-title">📜 分析历史</text>
+        <text class="history-count">共{{historyList.length}}条</text>
+      </view>
+      <view class="history-stats-bar" wx:if="{{historyList.length > 0}}">
+        <view class="stat-item">
+          <text class="stat-dot green"></text>
+          <text class="stat-text">买{{buyCount}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-dot red"></text>
+          <text class="stat-text">卖{{sellCount}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-dot yellow"></text>
+          <text class="stat-text">观望{{holdCount}}</text>
+        </view>
+      </view>
+      <view class="history-list">
+        <view class="history-item" wx:for="{{historyList}}" wx:key="id" bindtap="viewHistoryDetail" data-item="{{item}}">
+          <text class="history-time">{{item.time}}</text>
+          <text class="history-symbol">{{item.symbol}}</text>
+          <text class="history-signal {{item.signalClass}}">{{item.signalText}}</text>
+          <text class="history-confidence">{{item.confidence}}%</text>
+          <text class="history-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
 </view>

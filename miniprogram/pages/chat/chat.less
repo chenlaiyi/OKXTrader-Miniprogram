@@ -1,3 +1,377 @@
-.container { min-height: 100vh; background: #1a1a1a; padding: 24rpx; }
-.title { font-size: 36rpx; color: #e0e0e0; margin-bottom: 24rpx; }
-.placeholder { text-align: center; color: #666; padding: 40rpx 0; }
+/* pages/chat/chat.less */
+@import "../../styles/design-system.less";
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: @bg-primary;
+  box-sizing: border-box;
+}
+
+/* ==================== 消息滚动区 ==================== */
+
+.message-scroll {
+  flex: 1;
+  padding: @padding-page;
+  overflow-y: auto;
+}
+
+/* ==================== 欢迎卡片 ==================== */
+
+.welcome-card {
+  background: @color-blue-bg;
+  border-radius: @radius-lg;
+  padding: @padding-card;
+  margin-bottom: @spacing-xl;
+}
+
+.welcome-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: @spacing-md;
+}
+
+.welcome-icon {
+  font-size: 48rpx;
+  margin-right: @spacing-sm;
+}
+
+.welcome-title {
+  font-size: @font-size-headline;
+  font-weight: @font-weight-semibold;
+  color: @text-primary;
+}
+
+.welcome-subtitle {
+  font-size: @font-size-subheadline;
+  color: @text-secondary;
+  margin-bottom: @spacing-md;
+  display: block;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-sm;
+  margin-bottom: @spacing-md;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+}
+
+.feature-icon {
+  font-size: @font-size-body;
+  width: 40rpx;
+  text-align: center;
+  margin-right: @spacing-sm;
+
+  &.green {
+    color: @color-green;
+  }
+
+  &.blue {
+    color: @color-blue;
+  }
+
+  &.orange {
+    color: @color-orange;
+  }
+
+  &.red {
+    color: @color-red;
+  }
+
+  &.purple {
+    color: @color-purple;
+  }
+}
+
+.feature-text {
+  font-size: @font-size-callout;
+  color: @text-primary;
+}
+
+.welcome-tip {
+  font-size: @font-size-footnote;
+  color: @text-secondary;
+  display: block;
+  padding-top: @spacing-sm;
+}
+
+/* ==================== 消息列表 ==================== */
+
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-lg;
+}
+
+.message-item {
+  display: flex;
+  width: 100%;
+
+  &.assistant {
+    justify-content: flex-start;
+  }
+
+  &.user {
+    justify-content: flex-end;
+  }
+}
+
+.message-content {
+  display: flex;
+  max-width: 80%;
+  gap: @spacing-sm;
+
+  &.assistant {
+    flex-direction: row;
+  }
+
+  &.user {
+    flex-direction: row-reverse;
+  }
+}
+
+/* ==================== 头像 ==================== */
+
+.avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.assistant-avatar {
+  background: @color-blue-bg;
+}
+
+.user-avatar {
+  background: @color-green-bg;
+}
+
+.avatar-icon {
+  font-size: 32rpx;
+}
+
+/* ==================== 气泡 ==================== */
+
+.bubble-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.bubble {
+  padding: 20rpx;
+  border-radius: @radius-lg;
+  max-width: 100%;
+}
+
+.assistant-bubble {
+  background: @bg-elevated;
+  border-top-left-radius: 4rpx;
+}
+
+.user-bubble {
+  background: @color-blue;
+  border-top-right-radius: 4rpx;
+}
+
+.bubble-text {
+  font-size: @font-size-body;
+  line-height: @line-height-normal;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+
+  .assistant-bubble & {
+    color: @text-primary;
+  }
+
+  .user-bubble & {
+    color: #ffffff;
+  }
+}
+
+/* ==================== 执行结果 ==================== */
+
+.execution-result {
+  background: @color-green-bg;
+  border-radius: @radius-sm;
+  padding: @spacing-sm;
+  margin-top: @spacing-xs;
+}
+
+.result-text {
+  font-size: @font-size-footnote;
+  color: @color-green;
+  line-height: @line-height-normal;
+}
+
+/* ==================== 消息时间 ==================== */
+
+.message-time {
+  font-size: @font-size-caption2;
+  color: @text-tertiary;
+  padding: 0 @spacing-xs;
+
+  .message-content.assistant & {
+    text-align: left;
+  }
+
+  .message-content.user & {
+    text-align: right;
+  }
+}
+
+/* ==================== 输入指示器 ==================== */
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  padding: @spacing-md;
+  gap: @spacing-sm;
+}
+
+.typing-dots {
+  display: flex;
+  gap: 8rpx;
+}
+
+.dot {
+  width: 12rpx;
+  height: 12rpx;
+  background: @text-secondary;
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+}
+
+@keyframes typing {
+
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.typing-text {
+  font-size: @font-size-footnote;
+  color: @text-secondary;
+}
+
+/* ==================== 快捷指令 ==================== */
+
+.quick-commands {
+  background: @bg-secondary;
+  border-top: 1rpx solid @border-color;
+  padding: @spacing-sm @padding-page;
+}
+
+.commands-scroll {
+  white-space: nowrap;
+}
+
+.command-item {
+  display: inline-flex;
+  align-items: center;
+  gap: @spacing-xs;
+  background: @color-blue-bg;
+  padding: 12rpx 20rpx;
+  border-radius: 32rpx;
+  margin-right: @spacing-sm;
+}
+
+.command-icon {
+  font-size: @font-size-caption1;
+}
+
+.command-text {
+  font-size: @font-size-callout;
+  color: @color-blue;
+  white-space: nowrap;
+}
+
+/* ==================== 输入区域 ==================== */
+
+.input-area {
+  background: @bg-secondary;
+  border-top: 1rpx solid @border-color;
+  padding: @spacing-sm @padding-page;
+  padding-bottom: calc(@spacing-sm + env(safe-area-inset-bottom));
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: @spacing-sm;
+  background: @bg-primary;
+  border-radius: 32rpx;
+  padding: @spacing-xs @spacing-sm;
+}
+
+.message-input {
+  flex: 1;
+  font-size: @font-size-body;
+  color: @text-primary;
+  padding: @spacing-sm @spacing-md;
+}
+
+.input-placeholder {
+  color: @text-tertiary;
+}
+
+.send-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: @bg-elevated;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.15s;
+
+  &.active {
+    background: @color-blue;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+  }
+
+  &::after {
+    border: none;
+  }
+}
+
+.send-icon {
+  font-size: 28rpx;
+  color: #ffffff;
+
+  .send-btn:not(.active) & {
+    color: @text-tertiary;
+  }
+}
