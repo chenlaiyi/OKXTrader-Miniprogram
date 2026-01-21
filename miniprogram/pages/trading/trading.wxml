@@ -78,7 +78,10 @@
             </view>
             <text class="trade-leverage" wx:if="{{item.leverage}}">{{item.leverage}}x</text>
           </view>
-          <text class="trade-time">{{item.time}}</text>
+          <view class="trade-info-row">
+            <text class="trade-time">{{item.time}}</text>
+            <text class="trade-price">@{{item.priceDisplay}}</text>
+          </view>
           <text class="trade-reason" wx:if="{{item.exitReason}}">{{item.exitReason}}</text>
         </view>
         <view class="trade-right">

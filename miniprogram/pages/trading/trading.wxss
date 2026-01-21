@@ -324,9 +324,21 @@
   color: #ff9500;
 }
 
+.trade-info-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
 .trade-time {
   font-size: 16rpx;
   color: #8e8e93;
+}
+
+.trade-price {
+  font-size: 16rpx;
+  color: #ffffff;
+  font-family: monospace;
 }
 
 .trade-reason {

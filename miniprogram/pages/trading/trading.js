@@ -228,6 +228,8 @@ Page({
             time: this.formatTime(f.fillTime),
             rawTime: f.fillTime,  // 保留原始时间用于统计计算
             exitReason: f.exitReason || '',
+            price: f.price,  // 成交价格
+            priceDisplay: f.price ? f.price.toFixed(2) : '--',
             pnl: f.pnl,
             pnlDisplay: f.pnl ? f.pnl.toFixed(2) : '0.00',
             size: f.size,
