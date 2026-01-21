@@ -2,41 +2,36 @@
 <view class="container">
   <!-- 净盈亏统计卡片 (iOS风格) -->
   <view class="pnl-stats-card">
-    <!-- 总净盈亏 -->
-    <view class="total-pnl">
-      <view class="pnl-label-row">
-        <text class="pnl-label">总净盈亏</text>
-        <text class="pnl-count">({{totalTradeCount}}笔)</text>
+    <!-- 今日/昨日 主要数据 -->
+    <view class="pnl-main-row">
+      <view class="pnl-main-item">
+        <view class="main-label-row">
+          <text class="main-label">今日</text>
+          <text class="main-count">({{todayTradeCount}}笔)</text>
+        </view>
+        <text class="main-value {{todayPnl >= 0 ? 'green' : 'red'}}">{{todayPnlDisplay}}</text>
       </view>
-      <text class="pnl-value {{totalPnl >= 0 ? 'green' : 'red'}}">{{totalPnlDisplay}}</text>
+      <view class="pnl-main-divider"></view>
+      <view class="pnl-main-item">
+        <view class="main-label-row">
+          <text class="main-label">昨日</text>
+          <text class="main-count">({{yesterdayTradeCount}}笔)</text>
+        </view>
+        <text class="main-value {{yesterdayPnl >= 0 ? 'green' : 'red'}}">{{yesterdayPnlDisplay}}</text>
+      </view>
     </view>
 
     <view class="pnl-divider"></view>
 
-    <!-- 今日/昨日/本周净盈亏 -->
-    <view class="pnl-details">
-      <view class="pnl-detail-item">
-        <view class="detail-label-row">
-          <text class="detail-label">今日</text>
-          <text class="detail-count">({{todayTradeCount}})</text>
-        </view>
-        <text class="detail-value {{todayPnl >= 0 ? 'green' : 'red'}}">{{todayPnlDisplay}}</text>
+    <!-- 总计/本周 次要数据 -->
+    <view class="pnl-secondary-row">
+      <view class="pnl-secondary-item">
+        <text class="secondary-label">总计 ({{totalTradeCount}}笔)</text>
+        <text class="secondary-value {{totalPnl >= 0 ? 'green' : 'red'}}">{{totalPnlDisplay}}</text>
       </view>
-      <view class="pnl-detail-divider"></view>
-      <view class="pnl-detail-item">
-        <view class="detail-label-row">
-          <text class="detail-label">昨日</text>
-          <text class="detail-count">({{yesterdayTradeCount}})</text>
-        </view>
-        <text class="detail-value {{yesterdayPnl >= 0 ? 'green' : 'red'}}">{{yesterdayPnlDisplay}}</text>
-      </view>
-      <view class="pnl-detail-divider"></view>
-      <view class="pnl-detail-item">
-        <view class="detail-label-row">
-          <text class="detail-label">本周</text>
-          <text class="detail-count">({{weekTradeCount}})</text>
-        </view>
-        <text class="detail-value {{weekPnl >= 0 ? 'green' : 'red'}}">{{weekPnlDisplay}}</text>
+      <view class="pnl-secondary-item">
+        <text class="secondary-label">本周 ({{weekTradeCount}}笔)</text>
+        <text class="secondary-value {{weekPnl >= 0 ? 'green' : 'red'}}">{{weekPnlDisplay}}</text>
       </view>
     </view>
   </view>
