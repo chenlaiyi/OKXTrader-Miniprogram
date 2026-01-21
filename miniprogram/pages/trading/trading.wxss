@@ -214,7 +214,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12rpx;
+  padding: 16rpx;
   background: #1c1c1e;
   border-radius: 8rpx;
 }
@@ -222,23 +222,23 @@
 .trade-left {
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
+  gap: 6rpx;
 }
 
 .trade-header {
   display: flex;
   align-items: center;
-  gap: 4rpx;
+  gap: 6rpx;
 }
 
 .trade-symbol {
-  font-size: 22rpx;
+  font-size: 28rpx;
   font-weight: 600;
   color: #ffffff;
 }
 
 .trade-tag {
-  padding: 2rpx 8rpx;
+  padding: 4rpx 10rpx;
   border-radius: 4rpx;
 }
 
@@ -263,7 +263,7 @@
 }
 
 .tag-text {
-  font-size: 16rpx;
+  font-size: 22rpx;
 }
 
 .trade-tag.long .tag-text,
@@ -287,7 +287,7 @@
 }
 
 .trade-source-tag {
-  padding: 2rpx 8rpx;
+  padding: 4rpx 10rpx;
   border-radius: 4rpx;
 }
 
@@ -304,7 +304,7 @@
 }
 
 .source-text {
-  font-size: 16rpx;
+  font-size: 22rpx;
 }
 
 .trade-source-tag.api .source-text {
@@ -320,7 +320,7 @@
 }
 
 .trade-leverage {
-  font-size: 16rpx;
+  font-size: 22rpx;
   color: #ff9500;
 }
 
@@ -331,19 +331,19 @@
 }
 
 .trade-time {
-  font-size: 16rpx;
+  font-size: 22rpx;
   color: #8e8e93;
 }
 
 .trade-price {
-  font-size: 16rpx;
+  font-size: 22rpx;
   color: #ffffff;
   font-family: monospace;
 }
 
 .trade-reason {
   margin-top: 4rpx;
-  font-size: 16rpx;
+  font-size: 22rpx;
   color: #ffd60a;
 }
 
@@ -351,11 +351,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4rpx;
+  gap: 6rpx;
 }
 
 .trade-pnl {
-  font-size: 22rpx;
+  font-size: 28rpx;
   font-weight: 600;
   font-family: monospace;
 }
@@ -369,13 +369,13 @@
 }
 
 .trade-size {
-  font-size: 18rpx;
+  font-size: 24rpx;
   font-family: monospace;
   color: #ffffff;
 }
 
 .trade-fee {
-  font-size: 16rpx;
+  font-size: 20rpx;
   color: #8e8e93;
 }
 
