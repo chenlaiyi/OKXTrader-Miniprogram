@@ -1,7 +1,12 @@
 {
   "description": "小程序项目配置",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "backup_docs"
+      }
+    ],
     "include": []
   },
   "setting": {

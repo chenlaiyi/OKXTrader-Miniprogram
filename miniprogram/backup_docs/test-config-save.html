@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>策略配置保存测试</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #f5f5f7;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 { color: #1d1d1f; margin-bottom: 20px; }
+    h2 { color: #1d1d1f; margin-top: 0; }
+    .button {
+      background: #007aff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    .button:hover { background: #0051d5; }
+    .button.secondary { background: #8e8e93; }
+    .button.secondary:hover { background: #636366; }
+    .log {
+      background: #1e1e1e;
+      color: #00ff00;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .status {
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    .status.success { background: #d4edda; color: #155724; }
+    .status.error { background: #f8d7da; color: #721c24; }
+    .status.info { background: #d1ecf1; color: #0c5460; }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #1d1d1f;
+      font-weight: 500;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d1d6;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .emoji { font-size: 20px; }
+  </style>
+</head>
+<body>
+  <h1>🧪 策略配置保存测试</h1>
+
+  <div class="card">
+    <h2>📝 测试配置</h2>
+    <div class="input-group">
+      <label>交易模式 (tradingMode):</label>
+      <select id="tradingMode">
+        <option value="ai">🤖 AI辅助模式 (ai)</option>
+        <option value="pure">⚡ 纯策略模式 (pure)</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>交易品种 (symbol):</label>
+      <input type="text" id="symbol" value="ETH-USDT-SWAP">
+    </div>
+    <button class="button" onclick="testSave()">💾 保存配置</button>
+    <button class="button secondary" onclick="testLoad()">📥 加载配置</button>
+    <button class="button secondary" onclick="clearLog()">🗑️ 清空日志</button>
+  </div>
+
+  <div class="card">
+    <h2>📊 测试结果</h2>
+    <div id="status"></div>
+    <div class="log" id="log"></div>
+  </div>
+
+  <script>
+    const API_URL = 'https://ly.ddg.org.cn/api/strategy/config';
+    const DEFAULT_USER_ID = 'default';
+
+    function log(message) {
+      const logDiv = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      logDiv.textContent += `[${timestamp}] ${message}\n`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function setStatus(message, type = 'info') {
+      const statusDiv = document.getElementById('status');
+      statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+    }
+
+    function clearLog() {
+      document.getElementById('log').textContent = '';
+      document.getElementById('status').innerHTML = '';
+    }
+
+    async function testSave() {
+      clearLog();
+      log('🧪 开始测试保存配置...');
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+      const tradingMode = document.getElementById('tradingMode').value;
+      const symbol = document.getElementById('symbol').value;
+
+      const config = {
+        basicConfig: {
+          symbol: symbol,
+          strategyType: 'sar_macd',
+          tradingStyle: 'conservative',
+          tradeDirection: 'both',
+          directionTimeframe: 'daily',
+          entryTimeframe: '15m',
+          analysisInterval: 30,
+          cooldownSeconds: 60,
+          tradingMode: tradingMode  // ✅ 测试字段
+        },
+        buyConfig: {
+          logicType: 'and',
+          minConfidence: 70,
+          conditions: [
+            { id: 'sar_daily', name: '日线SAR', enabled: true },
+            { id: 'sar_15m', name: '15分钟SAR', enabled: true },
+            { id: 'macd_15m', name: '15分钟MACD', enabled: true }
+          ]
+        },
+        sellConfig: {
+          logicType: 'or',
+          stopLossEnabled: true,
+          takeProfitEnabled: true,
+          takeProfitPercent: 1.0,
+          stopLossPercent: 0.2
+        },
+        fundConfig: {
+          mode: 'accountBalance',
+          fixedAmount: 100,
+          balancePercent: 40,
+          leverage: 5,
+          marginMode: 'cross',
+          maxPositions: 3
+        }
+      };
+
+      log('📤 准备保存配置:');
+      log(`   tradingMode: "${config.basicConfig.tradingMode}"`);
+      log(`   symbol: "${config.basicConfig.symbol}"`);
+
+      try {
+        log('📡 发送 POST 请求...');
+        log(`   URL: ${API_URL}`);
+        log(`   userId: ${DEFAULT_USER_ID}`);
+
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userId: DEFAULT_USER_ID,
+            config: config
+          })
+        });
+
+        log('📡 收到响应...');
+        const result = await response.json();
+        log('📊 响应数据:');
+        log(JSON.stringify(result, null, 2));
+
+        if (result.success) {
+          setStatus('✅✅✅ 保存成功！tradingMode 已保存 ✅✅✅', 'success');
+          log('✅ 保存成功！');
+          log(`   ✅ tradingMode = "${tradingMode}"`);
+        } else {
+          setStatus(`❌ 保存失败: ${result.error}`, 'error');
+          log(`❌ 保存失败: ${result.error}`);
+        }
+      } catch (error) {
+        setStatus(`❌ 请求异常: ${error.message}`, 'error');
+        log(`❌ 请求异常: ${error.message}`);
+      }
+
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    }
+
+    async function testLoad() {
+      clearLog();
+      log('🧪 开始测试加载配置...');
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+      try {
+        log('📡 发送 GET 请求...');
+        log(`   URL: ${API_URL}?userId=${DEFAULT_USER_ID}`);
+
+        const response = await fetch(`${API_URL}?userId=${DEFAULT_USER_ID}`);
+        const result = await response.json();
+
+        log('📡 收到响应...');
+        log('📊 响应数据:');
+        log(JSON.stringify(result, null, 2));
+
+        if (result.success && result.data) {
+          const tradingMode = result.data.basicConfig?.tradingMode;
+          const symbol = result.data.basicConfig?.symbol;
+
+          log('✅ 加载成功！');
+          log(`   📊 symbol: "${symbol}"`);
+          log(`   📊 tradingMode: "${tradingMode}"`);
+
+          // 更新输入框
+          if (tradingMode) {
+            document.getElementById('tradingMode').value = tradingMode;
+            log(`   ✅ 已更新输入框: tradingMode = "${tradingMode}"`);
+          }
+          if (symbol) {
+            document.getElementById('symbol').value = symbol;
+          }
+
+          setStatus(`✅ 加载成功！tradingMode = "${tradingMode}"`, 'success');
+        } else {
+          setStatus(`❌ 加载失败: ${result.error || '未找到配置'}`, 'error');
+          log(`❌ 加载失败: ${result.error || '未找到配置'}`);
+        }
+      } catch (error) {
+        setStatus(`❌ 请求异常: ${error.message}`, 'error');
+        log(`❌ 请求异常: ${error.message}`);
+      }
+
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    }
+
+    // 页面加载时自动加载一次配置
+    window.addEventListener('load', () => {
+      log('🚀 页面已加载');
+      log('💡 提示: 点击"加载配置"按钮查看当前数据库中的配置');
+      log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    });
+  </script>
+</body>
+</html>

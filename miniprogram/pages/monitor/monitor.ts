@@ -27,7 +27,6 @@ Page({
 
     // 格式化后的显示数据
     formattedWinRate: '0',
-    formattedMinConfidence: '0',
     formattedLatestConfidence: '0',
     formattedHistoryConfidence: [],
     formattedBalance: '0.00'
@@ -81,7 +80,6 @@ Page({
 
       // 格式化数据用于显示
       const formattedWinRate = tradingStats.winRate ? tradingStats.winRate.toFixed(1) : '0'
-      const formattedMinConfidence = tradingConfig.minConfidence ? (tradingConfig.minConfidence * 100).toFixed(0) : '0'
       const formattedLatestConfidence = latestAnalysis.confidence ? (latestAnalysis.confidence * 100).toFixed(0) : '0'
       const formattedHistoryConfidence = analysisHistory.map(item => ({
         ...item,
@@ -107,7 +105,6 @@ Page({
         balance,
 
         formattedWinRate,
-        formattedMinConfidence,
         formattedLatestConfidence,
         formattedHistoryConfidence,
         formattedBalance
@@ -121,33 +118,6 @@ Page({
     }
   },
 
-  // 切换自动交易
-  async toggleAutoTrading() {
-    const { autoTradingEnabled } = this.data
-
-    try {
-      if (autoTradingEnabled) {
-        autoTradingEngine.stop()
-        wx.showToast({
-          title: '已停止自动交易',
-          icon: 'success'
-        })
-      } else {
-        // 检查账号
-        if (accountService.isSimulationMode()) {
-          wx.showModal({
-            title: '提示',
-            content: '模拟账号不支持自动交易，请切换到真实账号',
-            showCancel: false
-          })
-          return
-        }
-
-        const success = autoTradingEngine.start()
-        if (success) {
-          wx.showToast({
-            title: '已启动自动交易',
-            icon: 'success'
           })
         } else {
           wx.showToast({

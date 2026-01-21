@@ -1,115 +1,228 @@
 <!--pages/market/market.wxml-->
 <view class="container">
-  <!-- 当前选中交易对详情卡片 (iOS风格) -->
-  <view class="pair-detail-card" wx:if="{{selectedPair && !loading}}">
-    <view class="pair-header">
-      <view class="pair-info">
-        <text class="pair-name">{{selectedPair.baseCcy || '--'}}</text>
-        <text class="pair-price {{priceChangeClass}}">{{currentPrice}}</text>
-      </view>
-      <view class="pair-change">
-        <text class="change-percent {{priceChangeClass}}">{{priceChangePercentDisplay}}</text>
-        <text class="change-amount {{priceChangeClass}}">{{priceChangeDisplay}}</text>
-      </view>
+  <!-- 科技感刷新动画 -->
+  <view class="tech-refresh-overlay {{refreshing ? 'active' : ''}}" wx:if="{{refreshing}}">
+    <view class="tech-spinner">
+      <view class="tech-ring outer"></view>
+      <view class="tech-ring middle"></view>
+      <view class="tech-ring inner"></view>
+      <view class="tech-core"></view>
     </view>
-    <view class="pair-stats">
-      <view class="stat-item">
-        <text class="stat-label">24h 最高</text>
-        <text class="stat-value">{{high24h}}</text>
+    <text class="refresh-text">数据同步中...</text>
+  </view>
+
+  <!-- 顶部币种Tab切换栏 -->
+  <view class="coin-tabs-wrapper">
+    <scroll-view class="coin-tabs-scroll" scroll-x enable-flex>
+      <view class="coin-tabs">
+        <view
+          class="coin-tab {{selectedPair.baseCcy === item.baseCcy ? 'active' : ''}}"
+          wx:for="{{pairs}}"
+          wx:key="instId"
+          bindtap="selectPair"
+          data-pair="{{item}}"
+        >
+          <text class="coin-name">{{item.baseCcy}}</text>
+          <view class="coin-indicator" wx:if="{{selectedPair.baseCcy === item.baseCcy}}">
+            <view class="indicator-dot"></view>
+          </view>
+        </view>
       </view>
-      <view class="stat-item">
-        <text class="stat-label">24h 最低</text>
-        <text class="stat-value">{{low24h}}</text>
+    </scroll-view>
+  </view>
+
+  <!-- 当前交易对价格卡片 -->
+  <view class="price-card" wx:if="{{selectedPair && !loading}}">
+    <view class="price-header">
+      <view class="price-left">
+        <text class="current-price {{priceChangeClass}}">{{currentPrice}}</text>
+        <view class="price-change-row">
+          <text class="price-change {{priceChangeClass}}">{{priceChangeDisplay}}</text>
+          <text class="price-percent {{priceChangeClass}}">{{priceChangePercentDisplay}}</text>
+        </view>
       </view>
-      <view class="stat-item">
-        <text class="stat-label">成交量</text>
-        <text class="stat-value">{{volume24h}}</text>
+      <view class="price-right">
+        <view class="stat-mini">
+          <text class="stat-mini-label">高</text>
+          <text class="stat-mini-value">{{high24h}}</text>
+        </view>
+        <view class="stat-mini">
+          <text class="stat-mini-label">低</text>
+          <text class="stat-mini-value">{{low24h}}</text>
+        </view>
+        <view class="stat-mini">
+          <text class="stat-mini-label">量</text>
+          <text class="stat-mini-value">{{volume24h}}</text>
+        </view>
       </view>
     </view>
   </view>
 
   <!-- K线图区域 -->
-  <view class="chart-section" wx:if="{{!loading}}">
-    <!-- 时间周期选择器 -->
-    <view class="time-period-selector">
-      <view
-        class="period-item {{timePeriod === '1m' ? 'active' : ''}}"
-        bindtap="switchTimePeriod"
-        data-period="1m"
-      >1m</view>
-      <view
-        class="period-item {{timePeriod === '5m' ? 'active' : ''}}"
-        bindtap="switchTimePeriod"
-        data-period="5m"
-      >5m</view>
-      <view
-        class="period-item {{timePeriod === '15m' ? 'active' : ''}}"
-        bindtap="switchTimePeriod"
-        data-period="15m"
-      >15m</view>
-      <view
-        class="period-item {{timePeriod === '1H' ? 'active' : ''}}"
-        bindtap="switchTimePeriod"
-        data-period="1H"
-      >1H</view>
-      <view
-        class="period-item {{timePeriod === '4H' ? 'active' : ''}}"
-        bindtap="switchTimePeriod"
-        data-period="4H"
-      >4H</view>
-      <view
-        class="period-item {{timePeriod === '1D' ? 'active' : ''}}"
-        bindtap="switchTimePeriod"
-        data-period="1D"
-      >1D</view>
+  <view class="chart-section">
+    <!-- 时间周期选择器和指标开关 -->
+    <view class="chart-controls-row">
+      <!-- 时间周期选择器 -->
+      <view class="time-period-selector">
+        <view
+          class="period-item {{timePeriod === '1m' ? 'active' : ''}}"
+          bindtap="switchTimePeriod"
+          data-period="1m"
+        >1m</view>
+        <view
+          class="period-item {{timePeriod === '5m' ? 'active' : ''}}"
+          bindtap="switchTimePeriod"
+          data-period="5m"
+        >5m</view>
+        <view
+          class="period-item {{timePeriod === '15m' ? 'active' : ''}}"
+          bindtap="switchTimePeriod"
+          data-period="15m"
+        >15m</view>
+        <view
+          class="period-item {{timePeriod === '1H' ? 'active' : ''}}"
+          bindtap="switchTimePeriod"
+          data-period="1H"
+        >1H</view>
+        <view
+          class="period-item {{timePeriod === '4H' ? 'active' : ''}}"
+          bindtap="switchTimePeriod"
+          data-period="4H"
+        >4H</view>
+        <view
+          class="period-item {{timePeriod === '1D' ? 'active' : ''}}"
+          bindtap="switchTimePeriod"
+          data-period="1D"
+        >1D</view>
+      </view>
+
+      <!-- 指标切换按钮 -->
+      <view class="indicator-toggles">
+        <view
+          class="indicator-btn {{enabledIndicators.boll ? 'active' : ''}}"
+          bindtap="toggleIndicator"
+          data-indicator="boll"
+        >BOLL</view>
+        <view
+          class="indicator-btn {{enabledIndicators.ma ? 'active' : ''}}"
+          bindtap="toggleIndicator"
+          data-indicator="ma"
+        >MA</view>
+        <view
+          class="indicator-btn {{enabledIndicators.ema ? 'active' : ''}}"
+          bindtap="toggleIndicator"
+          data-indicator="ema"
+        >EMA</view>
+        <view
+          class="indicator-btn {{enabledIndicators.rsi ? 'active' : ''}}"
+          bindtap="toggleIndicator"
+          data-indicator="rsi"
+        >RSI</view>
+      </view>
     </view>
 
     <!-- K线图组件 -->
     <candlestick-chart
+      id="candlestickChart"
       candles="{{candleData}}"
       sar-data="{{sarData}}"
       macd-data="{{macdData}}"
+      rsi-data="{{rsiData}}"
+      ma-data="{{maData}}"
+      ema-data="{{emaData}}"
+      boll-data="{{bollData}}"
+      trade-signals="{{tradeSignals}}"
       current-price="{{currentPrice}}"
-      height="500"
+      height="580"
+      enabled-indicators="{{enabledIndicators}}"
     />
 
     <!-- 加载提示 -->
     <view class="chart-loading" wx:if="{{loadingCandles}}">
+      <view class="loading-spinner">
+        <view class="spinner-dot"></view>
+        <view class="spinner-dot"></view>
+        <view class="spinner-dot"></view>
+      </view>
       <text>加载K线数据中...</text>
     </view>
+    <view class="chart-empty" wx:if="{{!loadingCandles && candleData.length === 0}}">
+      <text>暂无K线数据</text>
+    </view>
   </view>
 
-  <!-- 分隔线 -->
-  <view class="divider"></view>
-
-  <!-- 行情列表 (iOS风格 - 无表头) -->
-  <view class="market-list" wx:if="{{!loading}}">
-    <view
-      class="market-row {{item.instId === selectedPair.instId ? 'selected' : ''}}"
-      wx:for="{{filteredMarkets}}"
-      wx:key="instId"
-      bindtap="selectPair"
-      data-pair="{{item}}"
-    >
-      <view class="pair-column">
-        <text class="pair-ccy">{{item.baseCcy}}</text>
-        <text class="quote-ccy">{{item.quoteCcy}}</text>
+  <!-- 热点新闻区域 -->
+  <view class="news-section">
+    <!-- 新闻标题栏 -->
+    <view class="news-header" bindtap="toggleNewsExpand">
+      <view class="news-title-row">
+        <view class="news-icon">
+          <text class="news-icon-text">📰</text>
+        </view>
+        <text class="news-title">加密货币快讯</text>
+        <view class="news-badge" wx:if="{{newsList.length > 0}}">
+          <text>{{newsList.length}}</text>
+        </view>
       </view>
-      <view class="pair-column-right">
-        <text class="price-text">{{item.last}}</text>
-        <text class="change-percent {{item.changeClass}}">{{item.changeDisplay}}</text>
+      <view class="news-expand-icon {{newsExpanded ? 'expanded' : ''}}">
+        <text>▼</text>
+      </view>
+    </view>
+
+    <!-- 新闻列表 -->
+    <view class="news-list {{newsExpanded ? 'expanded' : ''}}">
+      <!-- 加载中 -->
+      <view class="news-loading" wx:if="{{newsLoading}}">
+        <view class="loading-dots">
+          <view class="dot"></view>
+          <view class="dot"></view>
+          <view class="dot"></view>
+        </view>
+        <text>加载中...</text>
+      </view>
+
+      <!-- 加载失败 -->
+      <view class="news-error" wx:elif="{{newsError}}">
+        <text>加载失败</text>
+        <view class="retry-btn" bindtap="refreshNews">重试</view>
+      </view>
+
+      <!-- 新闻列表 -->
+      <block wx:elif="{{newsList.length > 0}}">
+        <view
+          class="news-item"
+          wx:for="{{newsList}}"
+          wx:key="id"
+          bindtap="onNewsTap"
+          data-news="{{item}}"
+        >
+          <view class="news-item-left">
+            <view class="news-type-tag {{item.isNew ? 'new' : ''}}">
+              {{item.typeName || '公告'}}
+            </view>
+            <text class="news-item-title">{{item.title}}</text>
+          </view>
+          <view class="news-item-right">
+            <text class="news-time">{{item.publishTimeFormatted}}</text>
+            <text class="news-arrow">›</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态 -->
+      <view class="news-empty" wx:else>
+        <text>暂无新闻</text>
       </view>
     </view>
   </view>
 
-  <!-- 空状态 -->
-  <view class="empty-state" wx:if="{{filteredMarkets.length === 0 && !loading}}">
-    <text class="empty-icon">📊</text>
-    <text class="empty-text">暂无行情数据</text>
-  </view>
-
-  <!-- 加载中 -->
-  <view class="empty-state" wx:if="{{loading}}">
+  <!-- 加载中状态 -->
+  <view class="empty-state" wx:if="{{loading && filteredMarkets.length === 0}}">
+    <view class="tech-loader">
+      <view class="loader-ring"></view>
+      <view class="loader-ring"></view>
+      <view class="loader-ring"></view>
+    </view>
     <text class="empty-text">加载行情数据中...</text>
   </view>
 </view>

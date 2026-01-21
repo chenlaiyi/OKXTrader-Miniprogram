@@ -81,7 +81,7 @@ export interface StrategyConfig {
     marginMode: string
   }
   buy_strategy: {
-    conditions: any[]
+    conditions: BuyCondition[]
     logicType: 'and' | 'or'
   }
   sell_strategy: {
@@ -95,6 +95,24 @@ export interface StrategyConfig {
   is_enabled: boolean
   is_default: boolean
 }
+
+// ✅ v0.0.154新增：买入条件类型
+export interface BuyCondition {
+  id: string
+  name: string
+  desc: string
+  enabled?: boolean
+  isEnabled?: boolean
+  required?: boolean
+  indicator: 'sar' | 'macd' | 'rsi' | 'boll'
+  timeframe: '1D' | '15m' | '5m' | '3m'
+  operator?: string
+  reversal?: boolean
+  direction?: 'long' | 'short' | 'both'
+  macdSignal?: 'goldenCross' | 'deathCross' | 'bullishAlignment' | 'bearishAlignment' | 'cross'
+  sarSignal?: 'long' | 'short'
+}
+
 
 // 账号信息
 export interface Account {

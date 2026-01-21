@@ -43,10 +43,6 @@
           <text class="config-value">{{tradingConfig.symbol}}</text>
         </view>
         <view class="config-item">
-          <text class="config-label">最小置信度</text>
-          <text class="config-value">{{formattedMinConfidence}}%</text>
-        </view>
-        <view class="config-item">
           <text class="config-label">最大持仓</text>
           <text class="config-value">{{tradingConfig.maxPositions}}</text>
         </view>

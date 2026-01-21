@@ -4,7 +4,16 @@
     "pages/trading/trading",
     "pages/ai/ai",
     "pages/chat/chat",
-    "pages/account/account"
+    "pages/account/account",
+    "pages/strategy/strategy",
+    "pages/strategy-edit/strategy-edit",
+    "pages/strategy-list/strategy-list",
+    "pages/history-detail/history-detail",
+    "pages/strategy-config-test/strategy-config-test",
+    "pages/auth/login/login",
+    "pages/account-list/account-list",
+    "pages/account-add/account-add",
+    "pages/news-detail/news-detail"
   ],
   "tabBar": {
     "color": "#8e8e93",

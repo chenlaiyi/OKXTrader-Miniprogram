@@ -1,9 +1,11 @@
 <!--components/candlestick-chart/candlestick-chart.wxml-->
-<view class="chart-container">
+<view class="chart-container" id="chartContainer">
   <canvas
     canvas-id="candlestickCanvas"
     id="candlestickCanvas"
     class="chart-canvas"
+    width="{{canvasWidth}}"
+    height="{{canvasHeight}}"
     style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;"
     bindtouchstart="handleTouchStart"
     bindtouchmove="handleTouchMove"

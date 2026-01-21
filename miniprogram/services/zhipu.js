@@ -1,14 +1,14 @@
 // services/zhipu.js
-// 智谱AI GLM模型服务
+// 智谱AI GLM模型服务（Coding Plan 套餐）
 
 const BASE_URL = 'https://ly.ddg.org.cn/api';
 
 /**
  * 调用GLM聊天API（通过服务器代理）
  * @param {Array} messages - 消息数组 [{role, content}]
- * @param {String} model - 模型名称，默认 'glm-4-flash'
+ * @param {String} model - 模型名称，默认 'glm-4.5-air' (Coding Plan)
  */
-async function chat(messages, model = 'glm-4-flash') {
+async function chat(messages, model = 'glm-4.5-air') {
   try {
     console.log('🤖 调用GLM模型:', model);
 

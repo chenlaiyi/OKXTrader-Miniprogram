@@ -1,0 +1,100 @@
+<!-- 登录页面 -->
+<view class="login-container">
+  <!-- 顶部Logo -->
+  <view class="logo-section">
+    <image class="logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzY2N2VlYSIgcng9IjEwIi8+CiAgPHRleHQgeD0iNTAiIHk9IjYwIiBmb250LXNpemU9IjQwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIj5PS2x5PC90ZXh0Pgo8L3N2Zz4=" mode="aspectFit"></image>
+    <text class="app-name">OKly</text>
+    <text class="app-desc">智能合约交易系统</text>
+  </view>
+
+  <!-- 登录区域 -->
+  <view class="login-section">
+    <view class="login-card">
+      <!-- 未登录状态 -->
+      <view wx:if="{{!userInfo}}">
+        <view class="welcome-text">
+          <text class="title">欢迎使用</text>
+          <text class="subtitle">请先授权登录</text>
+        </view>
+
+        <!-- 用户信息表单 -->
+        <view class="user-form">
+          <!-- 头像选择按钮 -->
+          <button
+            class="avatar-btn"
+            open-type="chooseAvatar"
+            bindchooseavatar="onChooseAvatar"
+          >
+            <image
+              class="avatar-preview"
+              src="{{tempAvatarUrl || '/images/default-avatar.png'}}"
+              mode="aspectFill"
+            ></image>
+            <text class="avatar-hint">点击选择头像</text>
+          </button>
+
+          <!-- 昵称输入 -->
+          <view class="input-group">
+            <input
+              class="nickname-input"
+              type="nickname"
+              placeholder="请输入昵称"
+              value="{{tempNickname}}"
+              bindinput="onNicknameInput"
+              placeholder-style="color: #8e8e93;"
+            />
+          </view>
+
+          <!-- 登录按钮 -->
+          <button
+            class="login-btn"
+            bindtap="handleLogin"
+            loading="{{loading}}"
+            disabled="{{loading || !tempNickname}}"
+          >
+            <text class="btn-icon" wx:if="{{!loading}}">👋</text>
+            <text class="btn-text">{{loading ? '登录中...' : '微信授权登录'}}</text>
+          </button>
+
+          <view class="tips">
+            <text class="tip-icon">💡</text>
+            <text class="tip-text">登录后可使用完整功能</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 已登录状态 -->
+      <view wx:else class="user-info">
+        <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+        <text class="nickname">{{userInfo.nickname}}</text>
+
+        <view class="stats">
+          <view class="stat-item">
+            <text class="stat-value">{{accountCount}}</text>
+            <text class="stat-label">OKX账号</text>
+          </view>
+        </view>
+
+        <button class="logout-btn" bindtap="handleLogout">
+          退出登录
+        </button>
+      </view>
+    </view>
+
+    <!-- 功能介绍 -->
+    <view class="features">
+      <view class="feature-item">
+        <text class="feature-icon">📊</text>
+        <text class="feature-text">智能交易策略</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">🤖</text>
+        <text class="feature-text">AI辅助分析</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">⚡</text>
+        <text class="feature-text">多账号管理</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,218 @@
+/* pages/strategy/strategy.wxss */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1c1c1e 0%, #000000 100%);
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+/* 页面标题 */
+.page-header {
+  padding: 30rpx 10rpx;
+  margin-bottom: 20rpx;
+}
+
+.page-title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 10rpx;
+}
+
+.page-subtitle {
+  font-size: 28rpx;
+  color: #8e8e93;
+}
+
+/* 区块卡片 */
+.section-card {
+  background: rgba(28, 28, 30, 0.9);
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin-bottom: 24rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.1);
+}
+
+.section-header {
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* 开关行 */
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.switch-info {
+  flex: 1;
+}
+
+.switch-label {
+  display: block;
+  font-size: 32rpx;
+  color: #ffffff;
+  margin-bottom: 8rpx;
+}
+
+.switch-desc {
+  font-size: 24rpx;
+  color: #8e8e93;
+}
+
+/* 统计行 */
+.stats-row {
+  display: flex;
+  justify-content: space-around;
+  padding: 24rpx 0;
+  margin-top: 20rpx;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 8rpx;
+}
+
+.stat-item.green .stat-value {
+  color: #34c759;
+}
+
+.stat-item.red .stat-value {
+  color: #ff3b30;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #8e8e93;
+}
+
+/* 选择器行 */
+.picker-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.picker-label {
+  font-size: 30rpx;
+  color: #ffffff;
+}
+
+.picker-value-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.picker-value {
+  font-size: 30rpx;
+  color: #af52de;
+  margin-right: 8rpx;
+}
+
+.picker-arrow {
+  font-size: 32rpx;
+  color: #8e8e93;
+}
+
+/* 滑块行 */
+.slider-row {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.05);
+}
+
+.slider-row:last-child {
+  border-bottom: none;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.slider-label {
+  font-size: 30rpx;
+  color: #ffffff;
+}
+
+.slider-value {
+  font-size: 30rpx;
+  color: #af52de;
+  font-weight: 600;
+}
+
+.green-text {
+  color: #34c759 !important;
+}
+
+.red-text {
+  color: #ff3b30 !important;
+}
+
+.slider-hint {
+  display: block;
+  font-size: 24rpx;
+  color: #8e8e93;
+  margin-top: 12rpx;
+}
+
+/* 保存区域 */
+.save-section {
+  padding: 40rpx 0;
+}
+
+.save-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100rpx;
+  background: linear-gradient(135deg, #af52de 0%, #5856d6 100%);
+  border-radius: 20rpx;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(175, 82, 222, 0.3);
+}
+
+.save-btn::after {
+  border: none;
+}
+
+.save-icon {
+  font-size: 36rpx;
+  margin-right: 12rpx;
+}
+
+.save-text {
+  font-size: 32rpx;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* 底部安全区 */
+.safe-bottom {
+  height: 100rpx;
+}
+
+/* Slider 组件样式 */
+slider {
+  margin: 0 -20rpx;
+}

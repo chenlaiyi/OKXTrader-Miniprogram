@@ -1,1 +1,6 @@
-{ "navigationBarTitleText": "编辑策略" }
+{
+    "navigationBarTitleText": "策略配置",
+    "navigationBarBackgroundColor": "#000000",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#000000"
+}

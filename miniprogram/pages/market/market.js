@@ -1,13 +1,21 @@
 // pages/market/market.js
 const API = require('../../services/api.js');
 
+const FALLBACK_USER_ID = 'default';
+
+function getCurrentUserId() {
+  const userInfo = wx.getStorageSync('userInfo');
+  return (userInfo && userInfo.id) ? userInfo.id : FALLBACK_USER_ID;
+}
+
 Page({
   data: {
     loading: true,
+    refreshing: false,
     isConnected: false,
     // 当前选中交易对（默认ETH，与iOS保持一致）
     selectedPair: {
-      instId: 'ETH-USDT',
+      instId: 'ETH-USDT-SWAP',
       baseCcy: 'ETH',
       quoteCcy: 'USDT',
       displayName: 'ETH/USDT'
@@ -16,14 +24,14 @@ Page({
     currentTicker: null,
     // 交易对列表（与iOS保持一致）
     pairs: [
-      { instId: 'BTC-USDT', baseCcy: 'BTC', quoteCcy: 'USDT', displayName: 'BTC/USDT' },
-      { instId: 'ETH-USDT', baseCcy: 'ETH', quoteCcy: 'USDT', displayName: 'ETH/USDT' },
-      { instId: 'SOL-USDT', baseCcy: 'SOL', quoteCcy: 'USDT', displayName: 'SOL/USDT' },
-      { instId: 'XRP-USDT', baseCcy: 'XRP', quoteCcy: 'USDT', displayName: 'XRP/USDT' },
-      { instId: 'DOGE-USDT', baseCcy: 'DOGE', quoteCcy: 'USDT', displayName: 'DOGE/USDT' },
-      { instId: 'ADA-USDT', baseCcy: 'ADA', quoteCcy: 'USDT', displayName: 'ADA/USDT' },
-      { instId: 'AVAX-USDT', baseCcy: 'AVAX', quoteCcy: 'USDT', displayName: 'AVAX/USDT' },
-      { instId: 'LINK-USDT', baseCcy: 'LINK', quoteCcy: 'USDT', displayName: 'LINK/USDT' }
+      { instId: 'BTC-USDT-SWAP', baseCcy: 'BTC', quoteCcy: 'USDT', displayName: 'BTC/USDT' },
+      { instId: 'ETH-USDT-SWAP', baseCcy: 'ETH', quoteCcy: 'USDT', displayName: 'ETH/USDT' },
+      { instId: 'SOL-USDT-SWAP', baseCcy: 'SOL', quoteCcy: 'USDT', displayName: 'SOL/USDT' },
+      { instId: 'XRP-USDT-SWAP', baseCcy: 'XRP', quoteCcy: 'USDT', displayName: 'XRP/USDT' },
+      { instId: 'DOGE-USDT-SWAP', baseCcy: 'DOGE', quoteCcy: 'USDT', displayName: 'DOGE/USDT' },
+      { instId: 'ADA-USDT-SWAP', baseCcy: 'ADA', quoteCcy: 'USDT', displayName: 'ADA/USDT' },
+      { instId: 'AVAX-USDT-SWAP', baseCcy: 'AVAX', quoteCcy: 'USDT', displayName: 'AVAX/USDT' },
+      { instId: 'LINK-USDT-SWAP', baseCcy: 'LINK', quoteCcy: 'USDT', displayName: 'LINK/USDT' }
     ],
     // 行情数据字典
     tickers: {},
@@ -32,6 +40,23 @@ Page({
     // 指标数据
     sarData: [],
     macdData: [],
+    rsiData: [],
+    maData: { ma5: [], ma10: [], ma20: [], ma30: [] },
+    emaData: { ema12: [], ema26: [] },
+    bollData: [],
+    // 当前显示的指标（新指标默认不显示）
+    enabledIndicators: {
+      sar: true,
+      macd: true,
+      rsi: false,
+      ma: false,
+      ema: false,
+      boll: false
+    },
+    // 策略信号开关
+    requireDailyTrend: true,
+    enableSarReversal: true,
+    tradeSignals: [],
     // K线时间周期
     timePeriod: '15m',
     loadingCandles: false,
@@ -44,11 +69,127 @@ Page({
     low24h: '--',
     volume24h: '--',
     // 市场列表（带格式化数据）
-    filteredMarkets: []
+    filteredMarkets: [],
+    // 新闻相关
+    newsList: [],
+    newsLoading: false,
+    newsError: false,
+    newsExpanded: true
   },
 
   onLoad() {
     this.connect();
+    this.loadDefaultStrategy();
+    this.loadNews();
+  },
+
+  onReady() {
+    console.log('📱 页面onReady,确保K线图已渲染');
+    // 确保K线图组件已渲染后再加载数据
+    var that = this;
+    setTimeout(function() {
+      that.ensureCandles();
+    }, 100);
+  },
+
+  onShow() {
+    console.log('📱 页面onShow');
+    this.startAutoRefresh();
+    // 重新拉取策略开关，保证买卖点与策略联动
+    this.loadDefaultStrategy();
+
+    if (!this.data.loading) {
+      this.ensureCandles();
+    }
+
+    if (!this.data.isConnected || !this.data.filteredMarkets || this.data.filteredMarkets.length === 0) {
+      this.connect();
+      return;
+    }
+
+    // 如果已有K线数据,强制刷新图表
+    if (this.data.candleData && this.data.candleData.length > 0) {
+      console.log('📊 已有K线数据,强制刷新图表');
+      this.forceRefreshChart();
+    }
+  },
+
+  /**
+   * 加载默认策略配置，用于信号标记
+   */
+  loadDefaultStrategy: function() {
+    var that = this;
+    const userId = getCurrentUserId();
+
+    API.getStrategyList(userId).then(function(res) {
+      if (!(res && res.success && Array.isArray(res.data) && res.data.length > 0)) {
+        return;
+      }
+
+      var defaultStrategy = res.data.find(function(s) { return s.is_default; }) || res.data[0];
+      if (!defaultStrategy || !defaultStrategy.id) return;
+
+      API.getStrategyDetail(defaultStrategy.id).then(function(detailRes) {
+        if (!detailRes || !detailRes.success || !detailRes.data) return;
+
+        var conditions = (detailRes.data.buy_strategy && detailRes.data.buy_strategy.conditions) || [];
+        var flags = that.parseStrategySignalFlags(conditions);
+
+        that.setData({
+          requireDailyTrend: flags.requireDailyTrend,
+          enableSarReversal: flags.enableSarReversal
+        }, function() {
+          if (that.data.candleData && that.data.candleData.length > 0) {
+            var tradeSignals = that.generateTradeSignals(
+              that.data.candleData,
+              that.data.sarData
+            );
+            console.log('📌 策略开关更新后信号数:', tradeSignals.length);
+            that.setData({ tradeSignals: tradeSignals });
+            that.forceRefreshChart();
+          }
+        });
+      });
+    }).catch(function(err) {
+      console.warn('⚠️ 加载默认策略失败:', err);
+    });
+  },
+
+  /**
+   * 解析策略信号开关
+   */
+  parseStrategySignalFlags: function(conditions) {
+    var requireDailyTrend = false;
+    var enableSarReversal = false;
+
+    (conditions || []).forEach(function(cond) {
+      if (!cond) return;
+      var enabled = (cond.enabled !== undefined) ? cond.enabled : cond.isEnabled;
+      if (enabled === false) return;
+      if (cond.indicator === 'sar' && (cond.timeframe === '1D' || cond.timeframe === 'daily')) {
+        requireDailyTrend = true;
+      }
+      if (cond.indicator === 'sar' && cond.timeframe === '15m' && (cond.operator === 'reversal' || cond.reversal)) {
+        enableSarReversal = true;
+      }
+    });
+
+    if (!enableSarReversal) {
+      enableSarReversal = true;
+    }
+
+    return {
+      requireDailyTrend: requireDailyTrend,
+      enableSarReversal: enableSarReversal
+    };
+  },
+
+  onHide() {
+    this.stopAutoRefresh();
+  },
+
+  onUnload() {
+    this.stopAutoRefresh();
   },
 
   /**
@@ -56,34 +197,44 @@ Page({
    */
   connect: function() {
     console.log('🚀 开始加载行情数据...');
-    this.setData({ loading: true });
+    this.loadMarkets({ silent: false, skipCandles: false });
+  },
 
+  /**
+   * 加载市场行情
+   */
+  loadMarkets: function(options) {
     var that = this;
+    var opts = options || {};
+    var silent = !!opts.silent;
 
-    wx.request({
-      url: 'https://ly.ddg.org.cn/api/markets?instType=SPOT',
-      method: 'GET',
-      dataType: 'json',
-      header: {
-        'content-type': 'application/json'
-      },
-      success: function(res) {
-        console.log('✅ 行情数据获取成功');
+    if (!silent) {
+      this.setData({ loading: true });
+    }
+
+    API.getMarkets('SWAP').then(function(res) {
+      if (!silent) {
         that.setData({ loading: false });
+      }
 
-        if (res.statusCode === 200 && res.data && res.data.success) {
-          console.log('📊 收到 ' + res.data.data.length + ' 个交易对数据');
-          that.processMarketData(res.data.data);
-        } else {
-          console.error('❌ 数据格式错误:', res);
+      if (res && res.success && Array.isArray(res.data)) {
+        console.log('✅ 行情数据获取成功, 数量:', res.data.length);
+        that.processMarketData(res.data, { skipCandles: !!opts.skipCandles });
+      } else {
+        console.error('❌ 数据格式错误:', res);
+        if (!silent) {
           wx.showToast({
             title: '数据格式错误',
             icon: 'none'
           });
         }
-      },
-      fail: function(err) {
-        console.error('❌ 行情数据获取失败:', err);
+        if (!opts.skipCandles) {
+          that.loadCandles();
+        }
+      }
+    }).catch(function(err) {
+      console.error('❌ 行情数据获取失败:', err);
+      if (!silent) {
         that.setData({
           loading: false,
           isConnected: false
@@ -93,13 +244,46 @@ Page({
           icon: 'none'
         });
       }
+      if (!opts.skipCandles) {
+        that.loadCandles();
+      }
     });
+  },
+
+  /**
+   * 自动刷新
+   */
+  startAutoRefresh: function() {
+    this.stopAutoRefresh();
+    var that = this;
+
+    this._marketTimer = setInterval(function() {
+      if (that.data.loading) return;
+      that.loadMarkets({ silent: true, skipCandles: true });
+    }, 5000);
+
+    this._candleTimer = setInterval(function() {
+      if (that.data.loadingCandles) return;
+      that.loadCandles();
+    }, 30000);
+  },
+
+  stopAutoRefresh: function() {
+    if (this._marketTimer) {
+      clearInterval(this._marketTimer);
+      this._marketTimer = null;
+    }
+    if (this._candleTimer) {
+      clearInterval(this._candleTimer);
+      this._candleTimer = null;
+    }
   },
 
   /**
    * 处理市场数据
    */
-  processMarketData: function(markets) {
+  processMarketData: function(markets, options) {
+    var opts = options || {};
     console.log('📊 开始处理市场数据，数量:', markets.length);
 
     // 收集所有ticker更新
@@ -151,26 +335,35 @@ Page({
       isConnected: true
     });
 
-    // 使用tickerUpdates设置ETH
-    var ethTicker = tickerUpdates['ETH-USDT'];
-    console.log('🔍 检查ETH ticker:', {
-      hasTicker: !!ethTicker,
+    var selectedInstId = (this.data.selectedPair && this.data.selectedPair.instId) ? this.data.selectedPair.instId : 'ETH-USDT-SWAP';
+    var selectedTicker = tickerUpdates[selectedInstId] || this.data.currentTicker;
+
+    console.log('🔍 检查当前交易对 ticker:', {
+      instId: selectedInstId,
+      hasTicker: !!selectedTicker,
       tickerKeys: Object.keys(tickerUpdates)
     });
 
-    if (ethTicker) {
-      console.log('✅ 找到ETH ticker，准备更新显示');
+    if (selectedTicker) {
       this.setData({
-        currentTicker: ethTicker
+        currentTicker: selectedTicker
       }, function() {
         console.log('🔄 setData回调执行，开始更新显示数据');
         this.updateDisplayData();
-        // 加载K线数据
-        console.log('🔄 准备调用loadCandles');
-        this.loadCandles();
+        if (!opts.skipCandles) {
+          console.log('🔄 准备调用loadCandles');
+          if (wx.nextTick) {
+            wx.nextTick(() => this.loadCandles());
+          } else {
+            setTimeout(() => this.loadCandles(), 0);
+          }
+        }
       });
     } else {
-      console.warn('⚠️ 未找到ETH ticker，无法加载K线');
+      console.warn('⚠️ 未找到当前交易对ticker');
+      if (!opts.skipCandles) {
+        this.loadCandles();
+      }
     }
   },
 
@@ -256,6 +449,18 @@ Page({
       volume24h: this.formatVolume(ticker.volCcy24h),
       filteredMarkets: filteredMarkets
     });
+    this.ensureCandles();
+  },
+
+  ensureCandles: function() {
+    if (this.data.loadingCandles) return;
+    if (!this.data.candleData || this.data.candleData.length === 0) {
+      if (wx.nextTick) {
+        wx.nextTick(() => this.loadCandles());
+      } else {
+        setTimeout(() => this.loadCandles(), 0);
+      }
+    }
   },
 
   /**
@@ -263,6 +468,11 @@ Page({
    */
   loadCandles: function() {
     var that = this;
+    if (this.data.loadingCandles) return;
+    if (!this.data.selectedPair || !this.data.selectedPair.instId) {
+      console.warn('⚠️ 未设置交易对，无法加载K线');
+      return;
+    }
     var instId = this.data.selectedPair.instId;
     var period = this.data.timePeriod;
 
@@ -332,21 +542,62 @@ Page({
         console.log('📈 开始计算技术指标...');
         var sarData = that.calculateSAR(candles);
         var macdData = that.calculateMACD(candles);
+        var rsiData = that.calculateRSI(candles);
+        var maData = {
+          ma5: that.calculateMA(candles, 5),
+          ma10: that.calculateMA(candles, 10),
+          ma20: that.calculateMA(candles, 20),
+          ma30: that.calculateMA(candles, 30)
+        };
+        var emaData = {
+          ema12: that.calculateEMAFull(candles, 12),
+          ema26: that.calculateEMAFull(candles, 26)
+        };
+        var bollData = that.calculateBOLL(candles);
+
         console.log('✅ 指标计算完成:', {
           sarCount: sarData.length,
-          macdCount: macdData.length
+          macdCount: macdData.length,
+          rsiCount: rsiData.length,
+          ma5Count: maData.ma5.length,
+          bollCount: bollData.length
         });
 
         // 输出第一条数据用于调试
         console.log('📊 第一条K线数据:', candles[0]);
         console.log('📊 最后一条K线数据:', candles[candles.length - 1]);
 
+        // 仅显示最近N根K线，提升宽度观感
+        var displayLimit = 60;
+        var displayStart = Math.max(0, candles.length - displayLimit);
+        var displayCandles = candles.slice(displayStart);
+        var displaySar = sarData.slice(displayStart);
+        var displayMacd = macdData.slice(displayStart);
+
+        var tradeSignals = that.generateTradeSignals(displayCandles, displaySar);
+        console.log('📌 K线信号数:', tradeSignals.length);
+
         that.setData({
-          candleData: candles,
-          sarData: sarData,
-          macdData: macdData,
+          candleData: displayCandles,
+          sarData: displaySar,
+          macdData: displayMacd,
+          rsiData: rsiData.slice(displayStart),
+          maData: {
+            ma5: maData.ma5.slice(displayStart),
+            ma10: maData.ma10.slice(displayStart),
+            ma20: maData.ma20.slice(displayStart),
+            ma30: maData.ma30.slice(displayStart)
+          },
+          emaData: {
+            ema12: emaData.ema12.slice(displayStart),
+            ema26: emaData.ema26.slice(displayStart)
+          },
+          bollData: bollData.slice(displayStart),
+          tradeSignals: tradeSignals,
           loadingCandles: false
         });
+
+        that.forceRefreshChart();
 
         console.log('✅ ========== K线数据处理完成 ==========');
       } else {
@@ -368,6 +619,26 @@ Page({
     });
   },
 
+  forceRefreshChart: function(retry) {
+    var attempt = typeof retry === 'number' ? retry : 0;
+    var chart = this.selectComponent('#candlestickChart');
+
+    console.log('🔄 尝试刷新K线图组件, 尝试次数:', attempt);
+
+    if (chart && chart.refresh) {
+      console.log('✅ K线图组件找到,执行刷新');
+      chart.refresh();
+      return;
+    }
+
+    if (attempt < 15) {
+      console.log('⏳ K线图组件未就绪,200ms后重试...');
+      setTimeout(() => this.forceRefreshChart(attempt + 1), 200);
+    } else {
+      console.error('❌ K线图组件初始化超时');
+    }
+  },
+
   /**
    * 切换时间周期
    */
@@ -384,11 +655,42 @@ Page({
   },
 
   /**
-   * 刷新数据
+   * 切换指标显示
+   */
+  toggleIndicator: function(e) {
+    var indicator = e.currentTarget.dataset.indicator;
+    console.log('🔄 切换指标:', indicator);
+
+    var enabledIndicators = this.data.enabledIndicators;
+    enabledIndicators[indicator] = !enabledIndicators[indicator];
+
+    this.setData({
+      enabledIndicators: enabledIndicators
+    });
+
+    // 刷新K线图
+    this.forceRefreshChart();
+  },
+
+  /**
+   * 刷新数据（带科技感动画）
    */
   refresh: function() {
+    var that = this;
     console.log('🔄 刷新数据...');
-    this.connect();
+
+    // 显示科技感刷新动画
+    this.setData({ refreshing: true });
+
+    // 加载数据
+    setTimeout(function() {
+      that.connect();
+
+      // 1.5秒后隐藏动画
+      setTimeout(function() {
+        that.setData({ refreshing: false });
+      }, 1500);
+    }, 100);
   },
 
   /**
@@ -396,7 +698,9 @@ Page({
    */
   onPullDownRefresh: function() {
     this.refresh();
-    wx.stopPullDownRefresh();
+    setTimeout(function() {
+      wx.stopPullDownRefresh();
+    }, 1500);
   },
 
   /**
@@ -538,70 +842,415 @@ Page({
   },
 
   /**
-   * 计算MACD指标
+   * 生成买卖信号（纯SAR策略）
+   * - 日线方向可开关
+   * - 仅使用SAR反转白点
+   * - 回看一根K线避免闪烁
+   */
+  generateTradeSignals: function(candles, sarData) {
+    var signals = [];
+    if (!candles || !sarData) return signals;
+
+    var length = Math.min(candles.length, sarData.length);
+    if (length < 2) return signals;
+
+    var requireDailyTrend = this.data.requireDailyTrend;
+    var enableSarReversal = this.data.enableSarReversal;
+    var dailySarMap = requireDailyTrend ? this.buildDailySarMap(candles) : null;
+
+    // 回看一根K线：使用上一根信号
+    for (var i = 1; i < length; i++) {
+      var idx = i - 1;
+      var sar = sarData[idx];
+      if (!sar) continue;
+
+      var signalType = null;
+
+      // SAR反转（白点）
+      if (enableSarReversal && sar.isReversal) {
+        signalType = sar.trend === 'up' ? 'buy' : 'sell';
+      }
+
+      if (!signalType) continue;
+
+      // 日线方向过滤（冲突时忽略）
+      if (requireDailyTrend && dailySarMap) {
+        var dayKey = this.getDateKey(candles[idx].timestamp);
+        var dailyTrend = dailySarMap[dayKey];
+        if (dailyTrend) {
+          var allowed = dailyTrend === 'up' ? 'buy' : 'sell';
+          if (signalType !== allowed) {
+            continue;
+          }
+        }
+      }
+
+      signals.push({ index: idx, type: signalType });
+    }
+
+    return signals;
+  },
+
+  /**
+   * 构建日线SAR方向映射（按日期）
+   */
+  buildDailySarMap: function(candles) {
+    var dailyCandles = [];
+    var dailyKeys = [];
+
+    for (var i = 0; i < candles.length; i++) {
+      var candle = candles[i];
+      var ts = this.normalizeTimestamp(candle.timestamp);
+      var dateKey = this.getDateKey(ts);
+
+      if (dailyKeys.length === 0 || dailyKeys[dailyKeys.length - 1] !== dateKey) {
+        dailyKeys.push(dateKey);
+        dailyCandles.push({
+          timestamp: ts,
+          open: parseFloat(candle.open),
+          high: parseFloat(candle.high),
+          low: parseFloat(candle.low),
+          close: parseFloat(candle.close)
+        });
+      } else {
+        var last = dailyCandles[dailyCandles.length - 1];
+        last.high = Math.max(last.high, parseFloat(candle.high));
+        last.low = Math.min(last.low, parseFloat(candle.low));
+        last.close = parseFloat(candle.close);
+      }
+    }
+
+    var dailySar = this.calculateSAR(dailyCandles);
+    var map = {};
+    for (var j = 0; j < dailyCandles.length; j++) {
+      var key = dailyKeys[j];
+      var sarPoint = dailySar[j];
+      if (sarPoint) {
+        map[key] = sarPoint.trend;
+      }
+    }
+
+    return map;
+  },
+
+  normalizeTimestamp: function(ts) {
+    var num = parseInt(ts, 10);
+    if (isNaN(num)) return 0;
+    if (num < 10000000000) {
+      return num * 1000;
+    }
+    return num;
+  },
+
+  getDateKey: function(ts) {
+    var num = this.normalizeTimestamp(ts);
+    if (!num) return '';
+    var date = new Date(num);
+    var month = (date.getMonth() + 1).toString().padStart(2, '0');
+    var day = date.getDate().toString().padStart(2, '0');
+    return date.getFullYear() + '-' + month + '-' + day;
+  },
+
+  /**
+   * 计算MACD指标（专业版）
+   * 参数：快线12，慢线26，信号线9
    */
   calculateMACD: function(candles) {
     if (candles.length < 26) return [];
 
-    var closes = candles.map(function(c) { return parseFloat(c.close); });
-
-    // 计算EMA12和EMA26
-    var ema12 = this.calculateEMA(closes, 12);
-    var ema26 = this.calculateEMA(closes, 26);
-
-    // 计算MACD线 (DIF)
-    var macdLine = [];
-    var startIndex = 26 - 12; // 对齐数组
-
-    for (var i = 0; i < ema26.length; i++) {
-      macdLine.push(ema12[i + startIndex] - ema26[i]);
-    }
-
-    // 计算信号线 (DEA) - MACD的9日EMA
-    var deaLine = this.calculateEMA(macdLine, 9);
-
-    // 计算MACD柱状图 (MACD - DEA)
-    var histogram = [];
-    for (var i = 0; i < deaLine.length; i++) {
-      histogram.push(macdLine[i + 8] - deaLine[i]); // 对齐数组
-    }
-
-    // 补齐数据，返回与candles长度相同的数组
-    var result = [];
+    // 提取收盘价数组
+    var closes = [];
     for (var i = 0; i < candles.length; i++) {
-      var histIndex = i - 34; // 26 + 9 - 1 = 34
-      if (histIndex >= 0 && histIndex < histogram.length) {
-        var currentMACD = macdLine[histIndex + 8] || 0;
-        var currentSignal = deaLine[histIndex] || 0;
+      closes.push(parseFloat(candles[i].close));
+    }
 
-        // 检测金叉和死叉
-        var crossType = null; // 'golden' (金叉) 或 'death' (死叉)
+    // 计算EMA(12) - 快线
+    var ema12 = this.calculateEMAArray(closes, 12);
 
-        if (histIndex > 0) {
-          var prevMACD = macdLine[histIndex + 7] || 0;
-          var prevSignal = deaLine[histIndex - 1] || 0;
+    // 计算EMA(26) - 慢线
+    var ema26 = this.calculateEMAArray(closes, 26);
 
-          // 金叉：MACD线从下向上穿越信号线
-          if (prevMACD <= prevSignal && currentMACD > currentSignal) {
-            crossType = 'golden';
-          }
-          // 死叉：MACD线从上向下穿越信号线
-          else if (prevMACD >= prevSignal && currentMACD < currentSignal) {
-            crossType = 'death';
-          }
-        }
+    // 计算DIF = EMA(12) - EMA(26)
+    var dif = [];
+    for (var i = 0; i < ema12.length && i < ema26.length; i++) {
+      dif.push(ema12[i] - ema26[i]);
+    }
 
-        result.push({
-          macd: currentMACD,
-          signal: currentSignal,
-          histogram: histogram[histIndex] || 0,
-          crossType: crossType
-        });
-      } else {
+    // 计算DEA = EMA(DIF, 9) - 信号线
+    var dea = this.calculateEMAArray(dif, 9);
+
+    // 计算MACD柱 = (DIF - DEA) * 2
+    var macd = [];
+    for (var i = 0; i < dif.length && i < dea.length; i++) {
+      macd.push({
+        macd: dif[i],
+        signal: dea[i],
+        histogram: (dif[i] - dea[i]) * 2,
+        crossType: null // 用于标记金叉/死叉
+      });
+    }
+
+    // 检测金叉和死叉
+    for (var j = 1; j < macd.length; j++) {
+      var prev = macd[j - 1];
+      var curr = macd[j];
+
+      // 金叉：DIF从下方穿越DEA
+      if (prev.macd <= prev.signal && curr.macd > curr.signal) {
+        curr.crossType = 'golden';
+      }
+      // 死叉：DIF从上方穿越DEA
+      else if (prev.macd >= prev.signal && curr.macd < curr.signal) {
+        curr.crossType = 'death';
+      }
+    }
+
+    // 前置填充，使MACD数组长度与K线数组长度一致
+    var result = [];
+    var startIndex = candles.length - macd.length;
+    for (var k = 0; k < candles.length; k++) {
+      if (k < startIndex) {
         result.push({ macd: 0, signal: 0, histogram: 0, crossType: null });
+      } else {
+        result.push(macd[k - startIndex]);
       }
     }
 
     return result;
+  },
+
+  /**
+   * 计算EMA数组（优化版）
+   */
+  calculateEMAArray: function(data, period) {
+    if (data.length < period) return [];
+
+    var ema = [];
+    var multiplier = 2 / (period + 1);
+
+    // 第一个EMA使用SMA
+    var sum = 0;
+    for (var i = 0; i < period; i++) {
+      sum += data[i];
+    }
+    ema.push(sum / period);
+
+    // 后续使用EMA公式
+    for (var i = period; i < data.length; i++) {
+      var currentEMA = (data[i] - ema[ema.length - 1]) * multiplier + ema[ema.length - 1];
+      ema.push(currentEMA);
+    }
+
+    return ema;
+  },
+
+  /**
+   * 计算RSI指标（相对强弱指标）
+   * period: 14
+   */
+  calculateRSI: function(candles, period) {
+    if (!period) period = 14;
+    if (candles.length < period + 1) return [];
+
+    var rsi = [];
+    var gains = [];
+    var losses = [];
+
+    // 计算价格变化
+    for (var i = 1; i < candles.length; i++) {
+      var change = parseFloat(candles[i].close) - parseFloat(candles[i - 1].close);
+      gains.push(change > 0 ? change : 0);
+      losses.push(change < 0 ? Math.abs(change) : 0);
+    }
+
+    // 初始平均增益和损失
+    var avgGain = 0;
+    var avgLoss = 0;
+    for (var i = 0; i < period; i++) {
+      avgGain += gains[i];
+      avgLoss += losses[i];
+    }
+    avgGain = avgGain / period;
+    avgLoss = avgLoss / period;
+
+    // 前置填充，使RSI数组长度与K线数组一致
+    for (var k = 0; k < period; k++) {
+      rsi.push(null);
+    }
+
+    // 计算第一个RSI值
+    var rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+    rsi.push(100 - (100 / (1 + rs)));
+
+    // 后续使用平滑方法
+    for (var j = period; j < gains.length; j++) {
+      avgGain = (avgGain * (period - 1) + gains[j]) / period;
+      avgLoss = (avgLoss * (period - 1) + losses[j]) / period;
+
+      rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+      rsi.push(100 - (100 / (1 + rs)));
+    }
+
+    // 添加最后一个null以保持长度一致
+    rsi.push(null);
+
+    return rsi;
+  },
+
+  /**
+   * 计算MA（简单移动平均线）
+   */
+  calculateMA: function(candles, period) {
+    if (candles.length < period) return [];
+
+    var ma = [];
+
+    // 前置填充null
+    for (var i = 0; i < period - 1; i++) {
+      ma.push(null);
+    }
+
+    // 计算MA
+    for (var j = period - 1; j < candles.length; j++) {
+      var sum = 0;
+      for (var k = 0; k < period; k++) {
+        sum += parseFloat(candles[j - k].close);
+      }
+      ma.push(sum / period);
+    }
+
+    return ma;
+  },
+
+  /**
+   * 计算完整的EMA数组（与K线长度一致）
+   */
+  calculateEMAFull: function(candles, period) {
+    if (candles.length < period) return [];
+
+    var closes = [];
+    for (var i = 0; i < candles.length; i++) {
+      closes.push(parseFloat(candles[i].close));
+    }
+
+    var emaValues = this.calculateEMAArray(closes, period);
+    var ema = [];
+
+    // 前置填充null
+    for (var i = 0; i < period - 1; i++) {
+      ema.push(null);
+    }
+
+    // 添加EMA值
+    for (var j = 0; j < emaValues.length; j++) {
+      ema.push(emaValues[j]);
+    }
+
+    return ema;
+  },
+
+  /**
+   * 计算BOLL（布林带）
+   * period: 20, multiplier: 2
+   */
+  calculateBOLL: function(candles, period, multiplier) {
+    if (!period) period = 20;
+    if (!multiplier) multiplier = 2;
+
+    if (candles.length < period) return [];
+
+    var boll = [];
+
+    // 前置填充null
+    for (var i = 0; i < period - 1; i++) {
+      boll.push(null);
+    }
+
+    // 计算布林带
+    for (var j = period - 1; j < candles.length; j++) {
+      var sum = 0;
+      var sumSquared = 0;
+
+      for (var k = 0; k < period; k++) {
+        var close = parseFloat(candles[j - k].close);
+        sum += close;
+        sumSquared += close * close;
+      }
+
+      var ma = sum / period;
+      var variance = (sumSquared / period) - (ma * ma);
+      var stdDev = Math.sqrt(Math.max(0, variance));
+
+      boll.push({
+        upper: ma + multiplier * stdDev,
+        middle: ma,
+        lower: ma - multiplier * stdDev
+      });
+    }
+
+    return boll;
+  },
+
+  // ==================== 新闻相关方法 ====================
+
+  /**
+   * 加载新闻列表
+   */
+  loadNews: function() {
+    var that = this;
+    if (this.data.newsLoading) return;
+
+    this.setData({ newsLoading: true, newsError: false });
+
+    API.getNews(null, 1, 5).then(function(res) {
+      if (res && res.success && Array.isArray(res.data)) {
+        that.setData({
+          newsList: res.data,
+          newsLoading: false
+        });
+        console.log('📰 新闻加载成功，数量:', res.data.length);
+      } else {
+        that.setData({
+          newsLoading: false,
+          newsError: true
+        });
+        console.warn('⚠️ 新闻数据格式错误:', res);
+      }
+    }).catch(function(err) {
+      console.error('❌ 加载新闻失败:', err);
+      that.setData({
+        newsLoading: false,
+        newsError: true
+      });
+    });
+  },
+
+  /**
+   * 刷新新闻
+   */
+  refreshNews: function() {
+    this.loadNews();
+  },
+
+  /**
+   * 展开/收起新闻列表
+   */
+  toggleNewsExpand: function() {
+    this.setData({
+      newsExpanded: !this.data.newsExpanded
+    });
+  },
+
+  /**
+   * 点击新闻项
+   */
+  onNewsTap: function(e) {
+    var news = e.currentTarget.dataset.news;
+    if (news && news.id) {
+      // 跳转到新闻详情页
+      wx.navigateTo({
+        url: '/pages/news-detail/news-detail?id=' + news.id
+      });
+    }
   }
 });

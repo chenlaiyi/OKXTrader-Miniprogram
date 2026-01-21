@@ -1,19 +1,19 @@
 <!--pages/trading/trading.wxml-->
 <view class="container">
-  <!-- 盈亏统计卡片 (iOS风格) -->
+  <!-- 净盈亏统计卡片 (iOS风格) -->
   <view class="pnl-stats-card">
-    <!-- 总盈亏 -->
+    <!-- 总净盈亏 -->
     <view class="total-pnl">
       <view class="pnl-label-row">
-        <text class="pnl-label">总盈亏</text>
+        <text class="pnl-label">总净盈亏</text>
         <text class="pnl-count">({{totalTradeCount}}笔)</text>
       </view>
       <text class="pnl-value {{totalPnl >= 0 ? 'green' : 'red'}}">{{totalPnlDisplay}}</text>
     </view>
-    
+
     <view class="pnl-divider"></view>
-    
-    <!-- 今日/昨日/本周盈亏 -->
+
+    <!-- 今日/昨日/本周净盈亏 -->
     <view class="pnl-details">
       <view class="pnl-detail-item">
         <view class="detail-label-row">
@@ -51,6 +51,13 @@
     </view>
   </view>
 
+  <!-- 自动刷新状态提示 -->
+  <view class="auto-refresh-status">
+    <text class="refresh-icon">🔄</text>
+    <text class="refresh-text">自动刷新中</text>
+    <text class="refresh-interval">(10秒)</text>
+  </view>
+
   <!-- 内容区域 -->
   <scroll-view class="content-scroll" scroll-y refresher-enabled refresher-triggered="{{refreshing}}" bindrefresherrefresh="onRefresh">
     <!-- 成交记录列表 -->
@@ -72,6 +79,7 @@
             <text class="trade-leverage" wx:if="{{item.leverage}}">{{item.leverage}}x</text>
           </view>
           <text class="trade-time">{{item.time}}</text>
+          <text class="trade-reason" wx:if="{{item.exitReason}}">{{item.exitReason}}</text>
         </view>
         <view class="trade-right">
           <text class="trade-pnl {{item.pnl >= 0 ? 'profit' : 'loss'}}" wx:if="{{item.pnl !== 0}}">
@@ -104,9 +112,13 @@
           </view>
         </view>
         <view class="position-right">
+          <view class="pnl-label">净盈亏</view>
           <text class="position-pnl {{item.uplNum >= 0 ? 'profit' : 'loss'}}">
-            {{item.uplNum >= 0 ? '+' : ''}}{{item.uplDisplay}}
+            {{item.uplNum >= 0 ? '+' : ''}}{{item.uplDisplay}} USDT
           </text>
+          <view class="pnl-ratio-badge {{item.uplNum >= 0 ? 'profit-bg' : 'loss-bg'}}">
+            <text class="pnl-ratio-text">{{item.uplNum >= 0 ? '+' : ''}}{{item.uplRatioDisplay}}%</text>
+          </view>
         </view>
       </view>
     </view>

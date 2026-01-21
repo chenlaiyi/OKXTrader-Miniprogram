@@ -1,0 +1,116 @@
+<!-- OKX账号列表页面 -->
+<view class="container">
+  <!-- 顶部导航栏 -->
+  <view class="nav-bar">
+    <text class="title">账号管理</text>
+  </view>
+
+  <!-- 账号列表 -->
+  <scroll-view class="account-list" scroll-y refresher-enabled refresher-triggered="{{refreshing}}" bindrefresherrefresh="onRefresh">
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{accounts.length === 0}}">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无账号</text>
+      <text class="empty-desc">请添加您的OKX API账号</text>
+    </view>
+
+    <!-- 账号卡片列表 -->
+    <view class="account-cards" wx:if="{{accounts.length > 0}}">
+      <view
+        class="account-card {{item.isActive ? '' : 'inactive'}} {{item.isDefault ? 'default' : ''}}"
+        wx:for="{{accounts}}"
+        wx:key="id"
+      >
+        <!-- 账号头部 -->
+        <view class="card-header">
+          <view class="account-info">
+            <image class="account-icon" src="/images/okx-icon.png" mode="aspectFit"></image>
+            <view class="account-details">
+              <view class="account-name-row">
+                <text class="account-name">{{item.accountName}}</text>
+                <view class="badge default" wx:if="{{item.isDefault}}">
+                  <text class="badge-text">默认</text>
+                </view>
+              </view>
+              <view class="account-label" wx:if="{{item.label}}">
+                <text>{{item.label}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 状态指示器 -->
+          <view class="status-indicator {{item.isActive ? 'active' : 'inactive'}}">
+            <text class="status-dot"></text>
+          </view>
+        </view>
+
+        <!-- 账号统计 -->
+        <view class="card-stats">
+          <view class="stat-item">
+            <text class="stat-value stat-number">{{item.balance || '0.00'}}</text>
+            <text class="stat-label">余额(USDT)</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value stat-number">{{item.totalTrades || 0}}</text>
+            <text class="stat-label">交易次数</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value stat-number {{item.totalPnl >= 0 ? 'profit' : 'loss'}}">
+              {{item.totalPnl >= 0 ? '+' : ''}}{{item.totalPnl || '0.00'}}
+            </text>
+            <text class="stat-label">总盈亏</text>
+          </view>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="card-actions">
+          <button
+            class="action-btn default"
+            wx:if="{{!item.isDefault}}"
+            catchtap="onSetDefault"
+            data-id="{{item.id}}"
+            disabled="{{settingDefault}}"
+          >
+            {{settingDefault ? '设置中...' : '设为默认'}}
+          </button>
+
+          <button
+            class="action-btn edit"
+            catchtap="onEditAccount"
+            data-account="{{item}}"
+          >
+            编辑
+          </button>
+
+          <button
+            class="action-btn {{item.isActive ? 'disable' : 'enable'}}"
+            catchtap="onToggleActive"
+            data-id="{{item.id}}"
+            data-active="{{item.isActive}}"
+          >
+            {{item.isActive ? '禁用' : '启用'}}
+          </button>
+
+          <button
+            class="action-btn delete"
+            catchtap="onDelete"
+            data-id="{{item.id}}"
+            wx:if="{{!item.isDefault}}"
+          >
+            删除
+          </button>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 添加账号按钮 -->
+  <view class="add-account-section">
+    <button class="add-account-btn" bindtap="onAddAccount">
+      <text class="add-icon">+</text>
+      <text class="add-text">添加账号</text>
+    </button>
+  </view>
+</view>

@@ -1,0 +1,276 @@
+/* 添加账号页面样式 */
+
+.container {
+  min-height: 100vh;
+  background: #f5f5f7;
+}
+
+/* 顶部导航栏 */
+.nav-bar {
+  background: white;
+  padding: 80rpx 30rpx 20rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1rpx solid #e5e5ea;
+}
+
+.cancel-btn, .save-btn {
+  font-size: 28rpx;
+  color: #007aff;
+}
+
+.save-btn {
+  font-weight: 600;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1d1d1f;
+}
+
+/* 快捷操作按钮 */
+.quick-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 40rpx;
+}
+
+.quick-btn {
+  flex: 1;
+  height: 100rpx;
+  border-radius: 16rpx;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.quick-btn.scan {
+  background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+  color: white;
+}
+
+.quick-btn.paste {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-icon {
+  font-size: 40rpx;
+}
+
+.btn-text {
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+/* 表单区域 */
+.form-scroll {
+  height: calc(100vh - 140rpx);
+  padding: 20rpx;
+}
+
+.form-section {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+}
+
+/* 标签行 */
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.paste-link {
+  font-size: 26rpx;
+  color: #007aff;
+  text-decoration: underline;
+}
+
+/* 表单项 */
+.form-item {
+  margin-bottom: 40rpx;
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
+}
+
+.edit-tip {
+  background: #f0f9ff;
+  border: 1rpx solid #bae6fd;
+  padding: 16rpx;
+  border-radius: 12rpx;
+  margin-bottom: 32rpx;
+}
+
+.edit-tip-text {
+  font-size: 24rpx;
+  color: #0369a1;
+  line-height: 1.5;
+}
+
+.label {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 15rpx;
+}
+
+.input {
+  width: 100%;
+  height: 80rpx;
+  background: #f5f5f7;
+  border-radius: 12rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: #1d1d1f;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  background: white;
+  border: 2rpx solid #667eea;
+}
+
+/* 单选按钮组 */
+.radio-group {
+  display: flex;
+  gap: 30rpx;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  padding: 15rpx 25rpx;
+  background: #f5f5f7;
+  border-radius: 12rpx;
+}
+
+.radio-item.checked {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.radio-item.checked .radio-text {
+  color: white;
+}
+
+.radio-text {
+  font-size: 28rpx;
+  color: #1d1d1f;
+  margin-left: 10rpx;
+}
+
+/* 说明区域 */
+.tips-section {
+  background: #fff9e6;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-top: 40rpx;
+}
+
+.tip-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #ff9500;
+  margin-bottom: 15rpx;
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10rpx;
+  line-height: 1.5;
+}
+
+.dot {
+  font-size: 20rpx;
+  color: #ff9500;
+  margin-right: 8rpx;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #8e8e93;
+}
+
+/* 指南区域 */
+.guide-section {
+  background: #eef5ff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-top: 20rpx;
+}
+
+.guide-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.guide-title text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #007aff;
+}
+
+.toggle-icon {
+  font-size: 24rpx;
+  color: #007aff;
+}
+
+.guide-content {
+  line-height: 1.8;
+}
+
+.guide-step {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15rpx;
+}
+
+.step-number {
+  width: 40rpx;
+  height: 40rpx;
+  background: #007aff;
+  color: white;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-right: 15rpx;
+}
+
+.step-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #1d1d1f;
+  line-height: 1.6;
+}
+
+.guide-step.highlight {
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  padding: 15rpx;
+  border-radius: 12rpx;
+  border: 2rpx solid #667eea;
+}
+
+.guide-step.highlight .step-number {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}

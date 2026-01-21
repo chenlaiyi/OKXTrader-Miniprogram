@@ -1,104 +1,190 @@
 <!--pages/chat/chat.wxml-->
-<view class="chat-container">
-  <!-- 聊天消息列表 -->
+<view class="chat-page">
+  <!-- 导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-left">
+      <text class="nav-icon">🧠</text>
+      <view class="nav-info">
+        <text class="nav-title">AI 交易助手</text>
+        <text class="nav-subtitle">在线 · 随时为您服务</text>
+      </view>
+    </view>
+    <view class="nav-right">
+      <view class="nav-btn balance-btn" bindtap="manualQueryBalance">
+        <text class="nav-btn-text">余额</text>
+      </view>
+      <view class="nav-btn" bindtap="clearChat">
+        <text class="nav-btn-text">清空</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 消息列表 -->
   <scroll-view
-    class="message-scroll"
+    class="message-container"
     scroll-y
     scroll-into-view="{{toView}}"
     scroll-with-animation
+    scroll-top="{{scrollTop}}"
   >
-    <!-- 空状态提示 -->
-    <view class="empty-state" wx:if="{{messages.length === 0}}">
-      <text class="empty-icon">🧠</text>
-      <text class="empty-title">AI 交易助手</text>
-      <text class="empty-subtitle">我可以帮您查询余额、分析行情、执行交易</text>
+    <!-- 空状态 -->
+    <view class="empty-container" wx:if="{{messages.length === 0 && !isProcessing}}">
+      <view class="empty-avatar">
+        <text class="empty-emoji">🧠</text>
+      </view>
+      <text class="empty-title">您好！我是AI交易助手</text>
+      <text class="empty-desc">我可以帮您查询余额、分析行情、执行交易</text>
+
+      <view class="quick-cards">
+        <view class="quick-card" bindtap="useQuickCommand" data-command="查询余额">
+          <text class="quick-card-icon">💰</text>
+          <view class="quick-card-content">
+            <text class="quick-card-title">查询余额</text>
+            <text class="quick-card-desc">查看账户资金</text>
+          </view>
+        </view>
+        <view class="quick-card" bindtap="useQuickCommand" data-command="持仓信息">
+          <text class="quick-card-icon">📊</text>
+          <view class="quick-card-content">
+            <text class="quick-card-title">持仓信息</text>
+            <text class="quick-card-desc">当前持仓概览</text>
+          </view>
+        </view>
+        <view class="quick-card" bindtap="useQuickCommand" data-command="分析ETH">
+          <text class="quick-card-icon">📈</text>
+          <view class="quick-card-content">
+            <text class="quick-card-title">行情分析</text>
+            <text class="quick-card-desc">AI智能分析</text>
+          </view>
+        </view>
+        <view class="quick-card" bindtap="useQuickCommand" data-command="买入0.01 ETH">
+          <text class="quick-card-icon">🛒</text>
+          <view class="quick-card-content">
+            <text class="quick-card-title">快速交易</text>
+            <text class="quick-card-desc">一键下单</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 重要交易操作 -->
+      <view class="trading-actions">
+        <text class="actions-title">⚡ 重要操作</text>
+        <view class="action-buttons-row">
+          <view class="action-btn long-btn" bindtap="useQuickCommand" data-command="市价买入做多ETH 10% 10倍杠杆">
+            <text class="action-btn-icon">📈</text>
+            <view class="action-btn-content">
+              <text class="action-btn-title">买入做多</text>
+              <text class="action-btn-desc">ETH 10% 10倍杠杆</text>
+            </view>
+          </view>
+          <view class="action-btn short-btn" bindtap="useQuickCommand" data-command="市价买入做空ETH 10% 10倍杠杆">
+            <text class="action-btn-icon">📉</text>
+            <view class="action-btn-content">
+              <text class="action-btn-title">买入做空</text>
+              <text class="action-btn-desc">ETH 10% 10倍杠杆</text>
+            </view>
+          </view>
+        </view>
+        <view class="action-buttons-row" style="margin-top: 16rpx;">
+          <view class="action-btn close-all-btn" bindtap="useQuickCommand" data-command="全部平仓">
+            <text class="action-btn-icon">🔄</text>
+            <view class="action-btn-content">
+              <text class="action-btn-title">全部平仓</text>
+              <text class="action-btn-desc">关闭所有持仓</text>
+            </view>
+          </view>
+        </view>
+      </view>
     </view>
 
-    <!-- 消息列表 -->
-    <view class="message-list">
-      <view
-        class="message-item {{item.role}}"
-        id="msg-{{index}}"
-        wx:for="{{messages}}"
-        wx:key="id"
-      >
-        <!-- AI 消息 -->
-        <view class="message-content assistant" wx:if="{{item.role === 'assistant'}}">
-          <view class="avatar assistant-avatar">
-            <text class="avatar-icon">🧠</text>
+    <!-- 消息内容 -->
+    <view class="message-list" wx:if="{{messages.length > 0 || isProcessing}}">
+      <block wx:for="{{messages}}" wx:key="id">
+        <!-- 时间分隔符 -->
+        <view class="time-divider" wx:if="{{item.showTime}}">
+          <text class="time-text">{{item.time}}</text>
+        </view>
+
+        <!-- AI消息 -->
+        <view class="message-item ai-message" id="msg-{{item.id}}" wx:if="{{item.role === 'assistant'}}">
+          <view class="message-avatar ai-avatar">
+            <text class="avatar-emoji">🧠</text>
           </view>
-          <view class="message-right">
-            <view class="bubble assistant-bubble">
-              <text class="bubble-text">{{item.content}}</text>
+          <view class="message-content-wrapper">
+            <view class="message-content ai-content">
+              <text class="message-text">{{item.content}}</text>
             </view>
+
             <!-- 执行结果卡片 -->
-            <view class="execution-card" wx:if="{{item.executionResult}}">
-              <view class="execution-header">
-                <text class="execution-icon">✓</text>
-                <text class="execution-title">执行结果</text>
+            <view class="result-card" wx:if="{{item.executionResult}}">
+              <view class="result-header">
+                <view class="result-indicator"></view>
+                <text class="result-title">执行结果</text>
               </view>
-              <text class="result-content">{{item.executionResult}}</text>
+              <text class="result-text">{{item.executionResult}}</text>
             </view>
+
             <text class="message-time">{{item.time}}</text>
           </view>
         </view>
 
         <!-- 用户消息 -->
-        <view class="message-content user" wx:else>
-          <view class="message-left">
-            <text class="message-time">{{item.time}}</text>
-            <view class="bubble user-bubble">
-              <text class="bubble-text">{{item.content}}</text>
+        <view class="message-item user-message" id="msg-{{item.id}}" wx:else>
+          <view class="message-avatar user-avatar">
+            <image class="avatar-img" wx:if="{{userInfo && userInfo.avatarUrl}}" src="{{userInfo.avatarUrl}}" mode="aspectFill" />
+            <text class="avatar-emoji" wx:else>👤</text>
+          </view>
+          <view class="message-content-wrapper">
+            <view class="message-content user-content">
+              <text class="message-text">{{item.content}}</text>
             </view>
-          </view>
-          <view class="avatar user-avatar">
-            <text class="avatar-icon">👤</text>
+            <text class="message-time">{{item.time}}</text>
           </view>
         </view>
-      </view>
+      </block>
 
-      <!-- 处理中指示器 -->
-      <view class="typing-indicator" wx:if="{{isProcessing}}">
-        <view class="typing-dots">
-          <view class="dot"></view>
-          <view class="dot"></view>
-          <view class="dot"></view>
+      <!-- 输入指示器 -->
+      <view class="message-item ai-message" wx:if="{{isProcessing}}">
+        <view class="message-avatar ai-avatar">
+          <text class="avatar-emoji">🧠</text>
         </view>
-        <text class="typing-text">AI 正在思考...</text>
+        <view class="typing-indicator">
+          <view class="typing-dot"></view>
+          <view class="typing-dot"></view>
+          <view class="typing-dot"></view>
+        </view>
       </view>
     </view>
+
+    <!-- 底部占位 -->
+    <view class="bottom-placeholder"></view>
   </scroll-view>
 
-  <!-- 快捷指令栏 -->
-  <view class="quick-commands">
-    <scroll-view class="commands-scroll" scroll-x show-scrollbar="{{false}}">
-      <view class="command-chip" wx:for="{{quickCommands}}" wx:key="text" bindtap="useQuickCommand" data-command="{{item.text}}">
-        <text class="chip-icon">{{item.icon}}</text>
-        <text class="chip-text">{{item.text}}</text>
-      </view>
-    </scroll-view>
-  </view>
-
   <!-- 输入区域 -->
-  <view class="input-area">
+  <view class="input-container">
     <view class="input-wrapper">
+      <view class="quick-btn" bindtap="showQuickMenu">
+        <text class="quick-icon">+</text>
+      </view>
       <input
-        class="message-input"
+        class="chat-input"
         type="text"
-        placeholder="输入指令，如：买入 0.01 个 ETH..."
+        placeholder="输入消息..."
         placeholder-class="input-placeholder"
         value="{{inputText}}"
         bindinput="onInputChange"
         bindconfirm="sendMessage"
+        confirm-type="send"
         disabled="{{isProcessing}}"
+        adjust-position="{{true}}"
       />
-      <button
-        class="send-btn {{inputText && !isProcessing ? 'active' : ''}}"
+      <view
+        class="send-btn {{inputText.trim() && !isProcessing ? 'active' : ''}}"
         bindtap="sendMessage"
-        disabled="{{!inputText || isProcessing}}"
       >
-        <text class="send-icon">{{isProcessing ? '⏳' : '➤'}}</text>
-      </button>
+        <text class="send-icon">↑</text>
+      </view>
     </view>
+    <view class="safe-area-bottom"></view>
   </view>
 </view>

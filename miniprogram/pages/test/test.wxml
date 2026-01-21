@@ -1,17 +1,17 @@
 <view class="container">
   <view class="header">
     <text class="title">🧪 API测试页面</text>
-    <text class="subtitle">验证所有API接口是否正常</text>
+    <text class="subtitle">验证GLM和OKX API对接状态</text>
   </view>
 
   <view class="info">
     <text class="info-text">API地址: https://ly.ddg.org.cn/api</text>
-    <text class="info-text">合法域名: ✅ 已配置</text>
+    <text class="info-text">状态: {{isTesting ? '测试中...' : '就绪'}}</text>
   </view>
 
   <view class="actions">
     <button class="btn-test" bindtap="runAllTests" disabled="{{loading}}">
-      {{loading ? '测试中...' : '🔄 重新测试'}}
+      {{loading ? '测试中...' : '🔄 开始测试'}}
     </button>
   </view>
 
@@ -28,9 +28,6 @@
 
       <view class="test-details" wx:if="{{item.status === 'success'}}">
         <text class="test-duration">{{item.duration}}</text>
-        <text class="test-data" wx:if="{{item.data}}">
-          数据: {{item.data ? (item.data.length + '条') : '成功'}}
-        </text>
       </view>
 
       <view class="test-error" wx:else>
@@ -49,8 +46,20 @@
 
   <view class="tips">
     <view class="tip-title">💡 提示</view>
-    <text class="tip-text">• 下拉可刷新测试</text>
-    <text class="tip-text">• 查看Console查看详细日志</text>
-    <text class="tip-text">• 所有测试应在2秒内完成</text>
+    <text class="tip-text">• 服务器连接: 测试后端服务器是否在线</text>
+    <text class="tip-text">• GLM Chat API: 测试智谱AI对话接口</text>
+    <text class="tip-text">• OKX余额API: 测试账户余额查询</text>
+    <text class="tip-text">• OKX持仓API: 测试持仓信息查询</text>
+    <text class="tip-text">• AI分析API: 测试市场分析接口</text>
+  </view>
+
+  <view class="log-section" wx:if="{{logs.length > 0}}">
+    <view class="section-title">测试日志</view>
+    <view class="log-list">
+      <view class="log-item {{item.type}}" wx:for="{{logs}}" wx:key="time" wx:for-item="log">
+        <text class="log-time">[{{log.time}}]</text>
+        <text class="log-message">{{log.message}}</text>
+      </view>
+    </view>
   </view>
 </view>

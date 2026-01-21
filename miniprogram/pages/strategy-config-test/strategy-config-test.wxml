@@ -1,0 +1,124 @@
+<!-- 策略配置保存测试页面 -->
+<view class="container">
+  <view class="card">
+    <text class="title">🧪 策略配置保存测试</text>
+
+    <view class="section">
+      <text class="label">当前 tradingMode:</text>
+      <text class="value {{tradingMode}}">{{tradingMode}}</text>
+    </view>
+
+    <view class="section">
+      <text class="label">切换到:</text>
+      <button bindtap="switchToPure" class="btn pure">⚡ 纯策略模式</button>
+      <button bindtap="switchToAI" class="btn ai">🤖 AI辅助模式</button>
+    </view>
+
+    <view class="section">
+      <button bindtap="loadConfig" class="btn load">📥 加载配置</button>
+      <button bindtap="saveConfig" class="btn save">💾 保存配置</button>
+      <button bindtap="verifyConfig" class="btn verify">✅ 验证配置</button>
+    </view>
+
+    <view class="log-section">
+      <text class="log-title">日志:</text>
+      <textarea class="log" value="{{logText}}" disabled></textarea>
+    </view>
+  </view>
+</view>
+
+<wxss>
+.container {
+  padding: 20rpx;
+}
+
+.card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 30rpx;
+}
+
+.section {
+  margin-bottom: 30rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 10rpx;
+}
+
+.value {
+  font-size: 32rpx;
+  font-weight: bold;
+  padding: 10rpx 20rpx;
+  border-radius: 8rpx;
+}
+
+.value.pure {
+  background: linear-gradient(135deg, #ff9500 0%, #ff6b6b 100%);
+  color: white;
+}
+
+.value.ai {
+  background: linear-gradient(135deg, #af52de 0%, #8a2be2 100%);
+  color: white;
+}
+
+.btn {
+  margin: 10rpx;
+  padding: 20rpx 30rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: white;
+}
+
+.btn.pure {
+  background: linear-gradient(135deg, #ff9500 0%, #ff6b6b 100%);
+}
+
+.btn.ai {
+  background: linear-gradient(135deg, #af52de 0%, #8a2be2 100%);
+}
+
+.btn.load {
+  background: #007aff;
+}
+
+.btn.save {
+  background: #34c759;
+}
+
+.btn.verify {
+  background: #ff9500;
+}
+
+.log-section {
+  margin-top: 30rpx;
+}
+
+.log-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10rpx;
+}
+
+.log {
+  width: 100%;
+  height: 400rpx;
+  background: #f5f5f7;
+  border-radius: 8rpx;
+  padding: 15rpx;
+  font-size: 24rpx;
+  font-family: monospace;
+}
+</wxss>

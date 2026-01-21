@@ -2,6 +2,7 @@
 import { AIAnalysis, Position, StrategyConfig } from '../models/index'
 import { apiService } from './api'
 import { accountService } from './account'
+import { strategyValidator } from './strategy-validator'
 
 export interface AutoTradingConfig {
   enabled: boolean
@@ -29,6 +30,7 @@ class AutoTradingEngine {
   private config: AutoTradingConfig = {
     enabled: false,
     symbol: 'ETH-USDT-SWAP',
+    strategy: undefined,  // ✅ v0.0.154新增：策略配置
     minConfidence: 0.7,
     maxPositions: 3,
     stopLossPercent: 0.2,
@@ -96,19 +98,49 @@ class AutoTradingEngine {
     return true
   }
 
-  // 分析并交易
+  // 分析并交易（✅ v0.0.154: 添加本地策略验证）
   private async analyzeAndTrade() {
     try {
+      console.log('🔄 开始新的交易分析...')
+
       // 获取AI分析
       const analysis = await apiService.getAIAnalysis(this.config.symbol)
+      console.log(`📊 AI分析结果: ${analysis.signal_type}, 置信度: ${(analysis.confidence * 100).toFixed(0)}%`)
 
       // 更新最后分析时间
       this.state.lastAnalysisTime = Date.now()
 
       // 检查置信度
       if (analysis.confidence < this.config.minConfidence) {
-        console.log(`⚠️ 置信度过低: ${analysis.confidence}`)
+        console.log(`⚠️ 置信度过低: ${(analysis.confidence * 100).toFixed(0)}% < ${this.config.minConfidence * 100}%`)
         return
+      }
+
+      // ✅ v0.0.154新增：本地策略验证
+      if (this.config.strategy) {
+        console.log('🔍 执行本地策略验证...')
+
+        const validationResult = await strategyValidator.validateStrategy(
+          this.config.strategy,
+          analysis,
+          this.config.symbol
+        )
+
+        if (!validationResult.passed) {
+          console.log(`❌ 本地策略验证失败: ${validationResult.reason}`)
+          console.log('   详细信息:', validationResult.details)
+
+          // 发送通知
+          this.sendNotification(
+            '策略验证失败',
+            validationResult.reason,
+            `AI建议: ${analysis.signal_type}`
+          )
+
+          return // 验证失败，不执行交易
+        }
+
+        console.log(`✅ 本地策略验证通过`)
       }
 
       // 获取当前持仓
@@ -124,7 +156,8 @@ class AutoTradingEngine {
       // 检查冷却时间
       const timeSinceLastTrade = Date.now() - this.state.lastTradeTime
       if (timeSinceLastTrade < this.config.cooldownSeconds * 1000) {
-        console.log('⏳ 冷却中...')
+        const remaining = Math.ceil((this.config.cooldownSeconds * 1000 - timeSinceLastTrade) / 1000)
+        console.log(`⏳ 冷却中... 剩余 ${remaining} 秒`)
         return
       }
 
@@ -135,6 +168,8 @@ class AutoTradingEngine {
       if (signalType === 'sell' || signalType === 'short') {
         side = 'short'
       }
+
+      console.log(`✅ 所有检查通过，准备执行交易: ${side}`)
 
       // 执行交易
       await this.executeTrade(side, analysis)
@@ -232,6 +267,13 @@ class AutoTradingEngine {
   // 更新配置
   updateConfig(updates: Partial<AutoTradingConfig>): void {
     this.config = { ...this.config, ...updates }
+    this.saveConfig()
+  }
+
+  // ✅ v0.0.154新增：设置策略配置
+  setStrategyConfig(strategy: StrategyConfig): void {
+    this.config.strategy = strategy
+    console.log('✅ 策略配置已更新:', strategy.name)
     this.saveConfig()
   }
 

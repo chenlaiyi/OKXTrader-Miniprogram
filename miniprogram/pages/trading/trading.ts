@@ -141,6 +141,7 @@ Page({
       source,
       sourceClass,
       leverage: fill.instType === 'SWAP' ? fill.lever : null,
+      exitReason: (fill as any).exitReason || '',
       pnl,
       pnlDisplay,
       sizeDisplay,
@@ -246,7 +247,7 @@ Page({
     ]
   },
 
-  // 计算盈亏统计
+  // 计算盈亏统计（净盈亏 = 已实现盈亏 + 手续费）
   calculatePnlStats() {
     const fills = this.data.fillHistory
     const now = new Date()
@@ -260,54 +261,68 @@ Page({
     const weekStart = todayStart - (dayOfWeek - 1) * 86400
 
     let totalPnl = 0
+    let totalFee = 0
     let totalTradeCount = 0
     let todayPnl = 0
+    let todayFee = 0
     let todayTradeCount = 0
     let yesterdayPnl = 0
+    let yesterdayFee = 0
     let yesterdayTradeCount = 0
     let weekPnl = 0
+    let weekFee = 0
     let weekTradeCount = 0
 
     fills.forEach((fill: any) => {
       const ts = fill.timestamp
       const pnl = fill.pnl || 0
+      // 手续费是负数，直接累加即可
+      const fee = parseFloat(fill.feeDisplay) ? -Math.abs(parseFloat(fill.feeDisplay)) : 0
 
-      // 总计
-      if (pnl !== 0) {
-        totalPnl += pnl
-      }
+      // 总计（累加所有交易的盈亏和手续费）
+      totalPnl += pnl
+      totalFee += fee
       totalTradeCount++
 
       // 今日
       if (ts >= todayStart) {
-        if (pnl !== 0) todayPnl += pnl
+        todayPnl += pnl
+        todayFee += fee
         todayTradeCount++
       }
       // 昨日
       else if (ts >= yesterdayStart && ts < todayStart) {
-        if (pnl !== 0) yesterdayPnl += pnl
+        yesterdayPnl += pnl
+        yesterdayFee += fee
         yesterdayTradeCount++
       }
 
       // 本周
       if (ts >= weekStart) {
-        if (pnl !== 0) weekPnl += pnl
+        weekPnl += pnl
+        weekFee += fee
         weekTradeCount++
       }
     })
 
+    // 计算净盈亏（已实现盈亏 + 手续费）
+    const totalNetPnl = totalPnl + totalFee
+    const todayNetPnl = todayPnl + todayFee
+    const yesterdayNetPnl = yesterdayPnl + yesterdayFee
+    const weekNetPnl = weekPnl + weekFee
+
     this.setData({
-      totalPnl,
-      totalPnlDisplay: totalPnl.toFixed(2),
+      totalPnl: totalNetPnl,
+      totalPnlDisplay: totalNetPnl.toFixed(2),
       totalTradeCount,
-      todayPnl,
-      todayPnlDisplay: todayPnl.toFixed(2),
+      todayPnl: todayNetPnl,
+      todayPnlDisplay: todayNetPnl.toFixed(2),
       todayTradeCount,
-      yesterdayPnl,
-      yesterdayPnlDisplay: yesterdayPnl.toFixed(2),
+      yesterdayPnl: yesterdayNetPnl,
+      yesterdayPnlDisplay: yesterdayNetPnl.toFixed(2),
       yesterdayTradeCount,
-      weekPnl,
-      weekPnlDisplay: weekPnl.toFixed(2),
+      weekPnl: weekNetPnl,
+      weekPnlDisplay: weekNetPnl.toFixed(2),
       weekTradeCount
     })
   },

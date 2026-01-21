@@ -1,41 +1,59 @@
 <!--pages/account/account.wxml-->
 <view class="container">
-  <scroll-view class="content-scroll" scroll-y>
-    <!-- 账号选择卡片 (iOS风格) -->
-    <view class="account-select-card">
-      <view class="card-header">
-        <text class="card-title">当前账号</text>
-      </view>
-      <picker mode="selector" range="{{accountNames}}" value="{{currentAccountIndex}}" bindchange="onAccountChange">
-        <view class="account-picker">
-          <view class="picker-content">
-            <text class="account-name">{{currentAccount.name || '未选择'}}</text>
-            <text class="account-badge {{currentAccount.isSimulation ? 'simulation' : 'real'}}">
-              {{currentAccount.isSimulation ? '模拟盘' : '实盘'}}
-            </text>
-          </view>
-          <text class="picker-arrow">›</text>
-        </view>
-      </picker>
-    </view>
+  <!-- 未登录提示 -->
+  <view class="login-prompt" wx:if="{{!userInfo}}">
+    <text class="prompt-icon">👋</text>
+    <text class="prompt-title">欢迎使用OKXTrader</text>
+    <text class="prompt-desc">请先登录以使用完整功能</text>
+    <button class="login-btn" bindtap="goToLogin">
+      微信授权登录
+    </button>
+  </view>
 
-    <!-- 账户信息卡片 (iOS风格) -->
-    <view class="info-card">
-      <view class="info-row">
-        <text class="info-label">UID</text>
-        <text class="info-value">{{accountInfo.uid || '--'}}</text>
+  <!-- 用户信息卡片 -->
+  <view class="account-hero" wx:if="{{userInfo}}">
+    <view class="hero-header">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <view class="hero-main">
+        <text class="nickname">{{userInfo.nickname}}</text>
+        <view class="account-line">
+          <text class="account-name">{{currentAccount.name || '未选择'}}</text>
+        </view>
+        <text class="meta-text">用户ID: {{userInfo.userIdDisplay || userInfo.dbUserId || '--'}}</text>
       </view>
-      <view class="info-divider"></view>
-      <view class="info-row">
-        <text class="info-label">等级</text>
-        <text class="info-value">{{accountInfo.level || '--'}}</text>
-      </view>
-      <view class="info-divider"></view>
-      <view class="info-row highlight">
-        <text class="info-label">总资产</text>
-        <text class="info-value large">${{accountInfo.totalEquity || '0.00'}}</text>
+      <button class="icon-btn" bindtap="goToAccountList">
+        <text class="icon-btn-text">管理</text>
+      </button>
+    </view>
+    <view class="equity-block">
+      <text class="equity-label">账户总资产</text>
+      <view class="equity-row">
+        <text class="equity-value">{{accountInfo.totalEquity || '0.00'}}</text>
+        <text class="equity-unit">USDT</text>
       </view>
     </view>
+    <view class="stats-row">
+      <view class="stat-item">
+        <text class="stat-label">账号数</text>
+        <text class="stat-value">{{accountCount}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">资产币种</text>
+        <text class="stat-value">{{balances.length}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">账号状态</text>
+        <text class="stat-value">{{currentAccount.name ? '已绑定' : '--'}}</text>
+      </view>
+    </view>
+    <view class="hero-actions">
+      <button class="primary-btn" bindtap="showAccountActionSheet">切换账号</button>
+      <button class="ghost-btn" bindtap="goToAddAccount">添加账号</button>
+      <button class="ghost-btn logout-btn" bindtap="handleLogout">退出</button>
+    </view>
+  </view>
+
+  <scroll-view class="content-scroll" scroll-y wx:if="{{userInfo}}">
 
     <!-- 资产明细卡片 (iOS风格) -->
     <view class="section-card">
@@ -64,72 +82,6 @@
       </view>
     </view>
 
-    <!-- 合约持仓卡片 (iOS风格) -->
-    <view class="section-card">
-      <view class="section-header">
-        <text class="section-title">📊 合约持仓</text>
-        <button class="refresh-mini-btn" bindtap="refreshPositions">
-          <text class="refresh-icon">↻</text>
-        </button>
-      </view>
-      <view wx:if="{{contractPositions.length === 0}}" class="empty-row">
-        <text class="empty-text">暂无合约持仓</text>
-      </view>
-      <view wx:else class="position-list">
-        <view class="position-card" wx:for="{{contractPositions}}" wx:key="posId">
-          <view class="position-main">
-            <view class="position-header">
-              <text class="position-symbol">{{item.instId}}</text>
-              <view class="position-tags">
-                <view class="direction-tag {{item.posSide}}">
-                  <text class="tag-text">{{item.posSide === 'long' ? '多' : '空'}}</text>
-                </view>
-                <text class="leverage-text">{{item.lever}}x</text>
-              </view>
-            </view>
-            <view class="position-details">
-              <text class="detail-text">数量: {{item.pos}}</text>
-              <text class="detail-text">均价: {{item.avgPxDisplay}}</text>
-            </view>
-          </view>
-          <view class="position-pnl {{item.uplNum >= 0 ? 'profit' : 'loss'}}">
-            <text class="pnl-value">{{item.uplNum >= 0 ? '+' : ''}}{{item.uplDisplay}}</text>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <!-- 最近交易卡片 (iOS风格) -->
-    <view class="section-card">
-      <view class="section-header">
-        <text class="section-title">📜 最近交易</text>
-        <button class="view-more-btn" bindtap="goToHistory">
-          <text class="view-more-text">查看更多</text>
-          <text class="view-more-arrow">›</text>
-        </button>
-      </view>
-      <view wx:if="{{recentTrades.length === 0}}" class="empty-row">
-        <text class="empty-text">暂无交易记录</text>
-      </view>
-      <view wx:else class="trade-list">
-        <view class="trade-item" wx:for="{{recentTrades}}" wx:key="id">
-          <view class="trade-main">
-            <view class="trade-header">
-              <text class="trade-symbol">{{item.symbol}}</text>
-              <view class="trade-tag {{item.operationClass}}">
-                <text class="trade-tag-text">{{item.operationLabel}}</text>
-              </view>
-            </view>
-            <text class="trade-time">{{item.time}}</text>
-          </view>
-          <view class="trade-pnl {{item.pnl >= 0 ? 'profit' : 'loss'}}" wx:if="{{item.pnl !== 0}}">
-            <text class="pnl-text">{{item.pnl >= 0 ? '+' : ''}}{{item.pnlDisplay}}</text>
-          </view>
-          <text class="trade-size" wx:else>{{item.sizeDisplay}}</text>
-        </view>
-      </view>
-    </view>
-
     <!-- 功能入口 -->
     <view class="features-grid">
       <button class="feature-btn" bindtap="goToMonitor">
@@ -150,75 +102,4 @@
       </button>
     </view>
   </scroll-view>
-</view>
-
-<!-- 账号管理模态框 -->
-<view class="modal-mask" wx:if="{{showModal}}" bindtap="closeModal">
-  <view class="modal-content" catchtap="">
-    <view class="modal-header">
-      <text class="modal-title">{{modalMode === 'add' ? '添加账号' : '编辑账号'}}</text>
-      <text class="modal-close" bindtap="closeModal">✕</text>
-    </view>
-
-    <view class="modal-body">
-      <view class="form-item">
-        <text class="form-label">账号名称 *</text>
-        <input class="form-input"
-               placeholder="请输入账号名称"
-               value="{{formData.name}}"
-               bindinput="onInputChange"
-               data-field="name"/>
-      </view>
-
-      <view class="form-item">
-        <view class="form-row">
-          <view class="form-row-left">
-            <text class="form-label">模拟账号</text>
-            <switch checked="{{formData.isSimulation}}"
-                    bindchange="onSimulationChange"
-                    color="#667eea"/>
-          </view>
-          <text class="form-hint">模拟账号无需API密钥</text>
-        </view>
-      </view>
-
-      <view class="form-group" wx:if="{{!formData.isSimulation}}">
-        <text class="form-group-title">API配置</text>
-
-        <view class="form-item">
-          <text class="form-label">API Key *</text>
-          <input class="form-input"
-                 placeholder="请输入API Key"
-                 value="{{formData.apiKey}}"
-                 bindinput="onInputChange"
-                 data-field="apiKey"/>
-        </view>
-
-        <view class="form-item">
-          <text class="form-label">Secret Key *</text>
-          <input class="form-input"
-                 placeholder="请输入Secret Key"
-                 value="{{formData.secretKey}}"
-                 bindinput="onInputChange"
-                 data-field="secretKey"
-                 password="true"/>
-        </view>
-
-        <view class="form-item">
-          <text class="form-label">Passphrase *</text>
-          <input class="form-input"
-                 placeholder="请输入Passphrase"
-                 value="{{formData.passphrase}}"
-                 bindinput="onInputChange"
-                 data-field="passphrase"
-                 password="true"/>
-        </view>
-      </view>
-    </view>
-
-    <view class="modal-footer">
-      <button class="modal-btn cancel" bindtap="closeModal">取消</button>
-      <button class="modal-btn confirm" bindtap="saveAccount">保存</button>
-    </view>
-  </view>
 </view>

@@ -1,1 +1,6 @@
-{ "navigationBarTitleText": "策略管理" }
+{
+    "navigationBarTitleText": "自动交易配置",
+    "navigationBarBackgroundColor": "#000000",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#000000"
+}

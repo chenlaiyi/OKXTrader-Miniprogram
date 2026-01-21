@@ -1,0 +1,88 @@
+<!--pages/history-detail/history-detail.wxml-->
+<view class="container">
+  <!-- 导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-left" bindtap="goBack">
+      <text class="nav-icon">‹</text>
+      <text class="nav-title">分析详情</text>
+    </view>
+    <view class="nav-right">
+      <text class="nav-btn" bindtap="copyContent">复制</text>
+    </view>
+  </view>
+
+  <!-- 滚动内容 -->
+  <scroll-view class="content-scroll" scroll-y>
+    <!-- 信号卡片 -->
+    <view class="signal-card">
+      <view class="signal-header">
+        <text class="signal-label">交易信号</text>
+        <view class="signal-badge {{signalClass}}">
+          <text class="signal-badge-text">{{signalText}}</text>
+        </view>
+      </view>
+      <view class="signal-info">
+        <view class="info-row">
+          <text class="info-label">品种</text>
+          <text class="info-value">{{symbol}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">策略</text>
+          <text class="info-value">{{strategyLabel || '未知'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">置信度</text>
+          <text class="info-value confidence-{{signalClass}}">{{confidence}}%</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">分析时间</text>
+          <text class="info-value">{{time}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 价格建议卡片 -->
+    <view class="price-card" wx:if="{{suggestedPrice !== '--' || stopLoss !== '--' || takeProfit !== '--'}}">
+      <view class="card-title">
+        <text class="title-icon">💰</text>
+        <text class="title-text">价格建议</text>
+      </view>
+      <view class="price-items">
+        <view class="price-item" wx:if="{{suggestedPrice !== '--'}}">
+          <text class="price-label">入场价</text>
+          <text class="price-value blue">{{suggestedPrice}}</text>
+        </view>
+        <view class="price-item" wx:if="{{stopLoss !== '--'}}">
+          <text class="price-label">止损价</text>
+          <text class="price-value red">{{stopLoss}}</text>
+        </view>
+        <view class="price-item" wx:if="{{takeProfit !== '--'}}">
+          <text class="price-label">止盈价</text>
+          <text class="price-value green">{{takeProfit}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分析理由卡片 -->
+    <view class="reasoning-card">
+      <view class="card-title">
+        <text class="title-icon">💡</text>
+        <text class="title-text">分析理由</text>
+      </view>
+      <view class="card-content">
+        <text class="content-text">{{reasoning}}</text>
+      </view>
+    </view>
+
+    <!-- 持仓分析卡片 -->
+    <view class="position-card">
+      <view class="card-title">
+        <text class="title-icon">📍</text>
+        <text class="title-text">持仓分析</text>
+      </view>
+      <view class="card-content">
+        <text class="content-text">{{positionAnalysis}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</view>

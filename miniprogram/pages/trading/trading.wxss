@@ -143,6 +143,41 @@
   color: #ffffff;
 }
 
+/* 自动刷新状态提示 */
+.auto-refresh-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+  padding: 8rpx 0;
+  margin-bottom: 8rpx;
+}
+
+.refresh-icon {
+  font-size: 18rpx;
+  animation: rotate 2s linear infinite;
+}
+
+.refresh-text {
+  font-size: 14rpx;
+  color: #34c759;
+  font-weight: 500;
+}
+
+.refresh-interval {
+  font-size: 12rpx;
+  color: #8e8e93;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ==================== 内容滚动区 ==================== */
 .content-scroll {
   flex: 1;
@@ -208,12 +243,14 @@
 }
 
 .trade-tag.long,
-.trade-tag.buy {
+.trade-tag.buy,
+.trade-tag.open-long {
   background: rgba(52, 199, 89, 0.1);
 }
 
 .trade-tag.short,
-.trade-tag.sell {
+.trade-tag.sell,
+.trade-tag.open-short {
   background: rgba(255, 59, 48, 0.1);
 }
 
@@ -230,12 +267,14 @@
 }
 
 .trade-tag.long .tag-text,
-.trade-tag.buy .tag-text {
+.trade-tag.buy .tag-text,
+.trade-tag.open-long .tag-text {
   color: #34c759;
 }
 
 .trade-tag.short .tag-text,
-.trade-tag.sell .tag-text {
+.trade-tag.sell .tag-text,
+.trade-tag.open-short .tag-text {
   color: #ff3b30;
 }
 
@@ -256,8 +295,12 @@
   background: rgba(0, 122, 255, 0.1);
 }
 
+.trade-source-tag.ai {
+  background: rgba(175, 82, 222, 0.15);
+}
+
 .trade-source-tag.manual {
-  background: rgba(175, 82, 222, 0.1);
+  background: rgba(142, 142, 147, 0.1);
 }
 
 .source-text {
@@ -268,8 +311,12 @@
   color: #007aff;
 }
 
-.trade-source-tag.manual .source-text {
+.trade-source-tag.ai .source-text {
   color: #af52de;
+}
+
+.trade-source-tag.manual .source-text {
+  color: #8e8e93;
 }
 
 .trade-leverage {
@@ -280,6 +327,12 @@
 .trade-time {
   font-size: 16rpx;
   color: #8e8e93;
+}
+
+.trade-reason {
+  margin-top: 4rpx;
+  font-size: 16rpx;
+  color: #ffd60a;
 }
 
 .trade-right {
@@ -391,7 +444,15 @@
 
 .position-right {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4rpx;
+}
+
+.pnl-label {
+  font-size: 18rpx;
+  color: #8e8e93;
+  margin-bottom: 2rpx;
 }
 
 .position-pnl {
@@ -406,6 +467,26 @@
 
 .position-pnl.loss {
   color: #ff3b30;
+}
+
+.pnl-ratio-badge {
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  margin-top: 2rpx;
+}
+
+.pnl-ratio-badge.profit-bg {
+  background: #34c759;
+}
+
+.pnl-ratio-badge.loss-bg {
+  background: #ff3b30;
+}
+
+.pnl-ratio-text {
+  font-size: 18rpx;
+  font-weight: 600;
+  color: #ffffff;
 }
 
 /* ==================== 刷新按钮 ==================== */

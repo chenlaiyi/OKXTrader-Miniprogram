@@ -34,10 +34,10 @@ Page({
         const duration = Date.now() - startTime;
         console.log('✅ wx.request成功，耗时:' + duration + 'ms');
         console.log('✅ 状态码:', res.statusCode);
-        console.log('✅ 数据条数:', res.data?.data?.length || 0);
+        console.log('✅ 数据条数:', (res.data && res.data.data && res.data.data.length) || 0);
         that.setData({
           loading: false,
-          result: '请求成功！\n状态码: ' + res.statusCode + '\n数据条数: ' + (res.data?.data?.length || 0) + '\n耗时: ' + duration + 'ms'
+          result: '请求成功！\n状态码: ' + res.statusCode + '\n数据条数: ' + ((res.data && res.data.data && res.data.data.length) || 0) + '\n耗时: ' + duration + 'ms'
         });
       },
       fail: (err) => {

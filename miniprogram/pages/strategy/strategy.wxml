@@ -1,7 +1,145 @@
+<!--pages/strategy/strategy.wxml-->
+<!-- WXS 工具函数 -->
+<wxs module="utils">
+module.exports = {
+  round: function(num) {
+    return Math.round(num);
+  },
+  toFixed: function(num, digits) {
+    return num.toFixed(digits);
+  },
+  multiply: function(a, b) {
+    return a * b;
+  }
+}
+</wxs>
+
 <view class="container">
-  <view class="strategy-item" wx:for="{{strategies}}" wx:key="id">
-    <text class="name">{{item.name}}</text>
-    <text class="desc">{{item.description}}</text>
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">⚙️ 自动交易配置</text>
+    <text class="page-subtitle">设置AI分析和自动交易参数</text>
   </view>
-  <view wx:if="{{strategies.length === 0}}" class="empty">暂无策略</view>
+
+  <!-- 自动交易开关 -->
+  <view class="section-card">
+    <view class="section-header">
+      <text class="section-title">🤖 自动交易</text>
+    </view>
+    <view class="switch-row">
+      <view class="switch-info">
+        <text class="switch-label">启用自动交易</text>
+        <text class="switch-desc">AI将自动分析并执行交易</text>
+      </view>
+      <switch checked="{{autoTradeEnabled}}" bindchange="toggleAutoTrade" color="#af52de"/>
+    </view>
+    
+    <!-- 交易统计 -->
+    <view class="stats-row" wx:if="{{autoTradeEnabled}}">
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalTrades}}</text>
+        <text class="stat-label">总交易</text>
+      </view>
+      <view class="stat-item green">
+        <text class="stat-value">{{stats.winTrades}}</text>
+        <text class="stat-label">盈利</text>
+      </view>
+      <view class="stat-item red">
+        <text class="stat-value">{{stats.lossTrades}}</text>
+        <text class="stat-label">亏损</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.winRate}}%</text>
+        <text class="stat-label">胜率</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 交易对选择 -->
+  <view class="section-card">
+    <view class="section-header">
+      <text class="section-title">📊 交易对</text>
+    </view>
+    <picker mode="selector" range="{{symbolList}}" value="{{symbolIndex}}" bindchange="onSymbolChange">
+      <view class="picker-row">
+        <text class="picker-label">当前交易对</text>
+        <view class="picker-value-wrap">
+          <text class="picker-value">{{config.symbol}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 分析参数 -->
+  <view class="section-card">
+    <view class="section-header">
+      <text class="section-title">🎯 分析参数</text>
+    </view>
+    
+    <!-- 分析冷却时间 -->
+    <view class="slider-row">
+      <view class="slider-header">
+        <text class="slider-label">冷却时间</text>
+        <text class="slider-value">{{config.cooldownSeconds}}秒</text>
+      </view>
+      <slider min="30" max="300" step="10" value="{{config.cooldownSeconds}}" bindchange="onCooldownChange" activeColor="#af52de" block-size="20"/>
+      <text class="slider-hint">两次交易之间的最小间隔</text>
+    </view>
+  </view>
+
+  <!-- 风控参数 -->
+  <view class="section-card">
+    <view class="section-header">
+      <text class="section-title">🛡️ 风控参数</text>
+    </view>
+    
+    <!-- 止盈 -->
+    <view class="slider-row">
+      <view class="slider-header">
+        <text class="slider-label green-text">止盈比例</text>
+        <text class="slider-value green-text">{{utils.toFixed(utils.multiply(config.takeProfitPercent, 100), 1)}}%</text>
+      </view>
+      <slider min="5" max="1000" step="5" value="{{utils.multiply(config.takeProfitPercent, 100)}}" bindchange="onTakeProfitChange" activeColor="#34c759" block-size="20"/>
+    </view>
+    
+    <!-- 止损 -->
+    <view class="slider-row">
+      <view class="slider-header">
+        <text class="slider-label red-text">止损比例</text>
+        <text class="slider-value red-text">{{utils.toFixed(utils.multiply(config.stopLossPercent, 100), 1)}}%</text>
+      </view>
+      <slider min="2" max="500" step="2" value="{{utils.multiply(config.stopLossPercent, 100)}}" bindchange="onStopLossChange" activeColor="#ff3b30" block-size="20"/>
+    </view>
+
+    <!-- 仓位比例 -->
+    <view class="slider-row">
+      <view class="slider-header">
+        <text class="slider-label">仓位比例</text>
+        <text class="slider-value">{{utils.round(utils.multiply(config.positionSize, 100))}}%</text>
+      </view>
+      <slider min="10" max="100" step="5" value="{{utils.multiply(config.positionSize, 100)}}" bindchange="onPositionSizeChange" activeColor="#af52de" block-size="20"/>
+      <text class="slider-hint">每次交易使用的账户余额比例</text>
+    </view>
+
+    <!-- 最大持仓数 -->
+    <view class="slider-row">
+      <view class="slider-header">
+        <text class="slider-label">最大持仓数</text>
+        <text class="slider-value">{{config.maxPositions}}</text>
+      </view>
+      <slider min="1" max="10" step="1" value="{{config.maxPositions}}" bindchange="onMaxPositionsChange" activeColor="#af52de" block-size="20"/>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="save-section">
+    <button class="save-btn" bindtap="saveConfig" loading="{{saving}}">
+      <text class="save-icon" wx:if="{{!saving}}">💾</text>
+      <text class="save-text">{{saving ? '保存中...' : '保存配置'}}</text>
+    </button>
+  </view>
+
+  <!-- 底部安全区 -->
+  <view class="safe-bottom"></view>
 </view>

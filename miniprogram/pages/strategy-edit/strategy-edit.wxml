@@ -1,4 +1,392 @@
+<!--pages/strategy-edit/strategy-edit.wxml-->
+<!-- WXS 工具函数 -->
+<wxs module="utils">
+module.exports = {
+  findIndex: function(arr, val, key) {
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i][key] === val) return i;
+    }
+    return 0;
+  },
+  indexOf: function(arr, val) {
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i] === val) return i;
+    }
+    return 0;
+  }
+}
+</wxs>
+
 <view class="container">
-  <view class="title">策略编辑</view>
-  <view class="placeholder">策略编辑功能开发中...</view>
+  <!-- 标签页导航 -->
+  <view class="tab-nav">
+    <view 
+      wx:for="{{tabs}}" 
+      wx:key="index" 
+      class="tab-item {{currentTab === index ? 'active' : ''}}"
+      data-index="{{index}}"
+      bindtap="switchTab"
+    >
+      <text class="tab-text">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 内容区域 -->
+  <scroll-view class="content-scroll" scroll-y>
+    <!-- ==================== 基础设置 ==================== -->
+    <view class="tab-content" wx:if="{{currentTab === 0}}">
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">📝 策略名称</text>
+        </view>
+        <view class="input-row">
+          <input
+            class="text-input"
+            value="{{basicConfig.strategyName}}"
+            placeholder="请输入策略名称"
+            placeholder-class="input-placeholder"
+            maxlength="30"
+            bindinput="onStrategyNameInput"
+          />
+        </view>
+        <text class="section-hint">自定义名称，便于区分不同策略配置</text>
+      </view>
+
+      <view class="section-card" wx:if="{{templateOptions.length > 0}}">
+        <view class="section-header">
+          <text class="section-title">🧩 策略模板</text>
+        </view>
+        <picker
+          mode="selector"
+          range="{{templateOptions}}"
+          range-key="name"
+          value="{{utils.findIndex(templateOptions, basicConfig.strategyType, 'value')}}"
+          bindchange="onStrategyTypeChange"
+        >
+          <view class="picker-row">
+            <text class="picker-label">模板选择</text>
+            <view class="picker-value-wrap">
+              <text class="picker-value">{{templateOptions[utils.findIndex(templateOptions, basicConfig.strategyType, 'value')].name}}</text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </view>
+        </picker>
+        <text class="section-hint">{{templateOptions[utils.findIndex(templateOptions, basicConfig.strategyType, 'value')].desc}}</text>
+      </view>
+
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">📊 交易对</text>
+        </view>
+        <picker mode="selector" range="{{symbolList}}" value="{{utils.indexOf(symbolList, basicConfig.symbol)}}" bindchange="onSymbolChange">
+          <view class="picker-row">
+            <text class="picker-label">当前交易对</text>
+            <view class="picker-value-wrap">
+              <text class="picker-value">{{basicConfig.symbol}}</text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </view>
+        </picker>
+      </view>
+
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">📈 交易方向</text>
+        </view>
+        <picker mode="selector" range="{{directionList}}" range-key="name" value="{{utils.findIndex(directionList, basicConfig.tradeDirection, 'value')}}" bindchange="onDirectionChange">
+          <view class="picker-row">
+            <text class="picker-label">方向限制</text>
+            <view class="picker-value-wrap">
+              <text class="picker-value">{{directionList[utils.findIndex(directionList, basicConfig.tradeDirection, 'value')].name}}</text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </view>
+        </picker>
+        <text class="section-hint">{{directionList[utils.findIndex(directionList, basicConfig.tradeDirection, 'value')].desc}}</text>
+      </view>
+
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">🕐 时间间隔</text>
+        </view>
+        <view class="slider-row">
+          <view class="slider-header">
+            <text class="slider-label">分析间隔</text>
+            <text class="slider-value">{{basicConfig.analysisInterval}}秒</text>
+          </view>
+          <slider min="10" max="120" step="5" value="{{basicConfig.analysisInterval}}" bindchange="onAnalysisIntervalChange" activeColor="#af52de"/>
+        </view>
+        <view class="slider-row">
+          <view class="slider-header">
+            <text class="slider-label">最短持仓</text>
+            <text class="slider-value">{{basicConfig.minHoldSeconds}}秒</text>
+          </view>
+          <slider min="30" max="300" step="10" value="{{basicConfig.minHoldSeconds}}" bindchange="onMinHoldSecondsChange" activeColor="#ff9500"/>
+          <text class="slider-hint">开仓后至少持有该时间才允许平仓</text>
+        </view>
+      </view>
+
+      <!-- ✅ 升级：交易模式选择 -->
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">🎯 交易模式</text>
+        </view>
+        <view class="mode-toggle">
+          <view class="mode-card {{basicConfig.tradingMode === 'ai' ? 'active' : ''}}" data-mode="ai" bindtap="onTradingModeSelect">
+            <view class="mode-card-header">
+              <text class="mode-title">AI 辅助</text>
+              <text class="mode-badge ai">AI</text>
+            </view>
+            <text class="mode-sub">智能分析，综合多指标</text>
+            <view class="mode-points">
+              <text class="mode-point">适合策略验证</text>
+              <text class="mode-point">含AI成本</text>
+            </view>
+          </view>
+          <view class="mode-card {{basicConfig.tradingMode === 'pure' ? 'active' : ''}}" data-mode="pure" bindtap="onTradingModeSelect">
+            <view class="mode-card-header">
+              <text class="mode-title">纯策略</text>
+              <text class="mode-badge pure">PURE</text>
+            </view>
+            <text class="mode-sub">直接执行SAR信号</text>
+            <view class="mode-points">
+              <text class="mode-point">极速响应</text>
+              <text class="mode-point">零AI成本</text>
+            </view>
+          </view>
+        </view>
+        <view class="mode-footer">
+          <text class="mode-tip">当前选择：{{basicConfig.tradingMode === 'pure' ? '纯策略模式' : 'AI辅助模式'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ==================== 开仓条件 ==================== -->
+    <view class="tab-content" wx:if="{{currentTab === 1}}">
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">🔗 条件逻辑</text>
+        </view>
+        <view class="switch-row">
+          <view class="switch-info">
+            <text class="switch-label">{{buyConfig.logicType === 'and' ? 'AND (全部满足)' : 'OR (任一满足)'}}</text>
+            <text class="switch-desc">{{buyConfig.logicType === 'and' ? '所有启用条件同时满足才开仓' : '任一条件满足即可开仓'}}</text>
+          </view>
+          <switch checked="{{buyConfig.logicType === 'and'}}" bindchange="onBuyLogicChange" color="#af52de"/>
+        </view>
+      </view>
+
+      <!-- 开仓条件 -->
+      <view class="section-card long-conditions">
+        <view class="section-header">
+          <text class="section-title">📈 开仓条件 ({{buyConfig.logicType === 'and' ? 'AND' : 'OR'}}逻辑)</text>
+        </view>
+        <text class="section-hint green-text">
+          {{buyConfig.logicType === 'and' ? '以下所有条件同时满足时允许开仓' : '以下任一条件满足时允许开仓'}}
+        </text>
+        <view class="condition-list">
+          <view
+            wx:for="{{buyConfig.conditions}}"
+            wx:key="id"
+            class="condition-item {{item.enabled ? 'enabled' : 'disabled'}}"
+            data-index="{{index}}"
+            bindtap="onBuyConditionToggle"
+          >
+            <view class="condition-left">
+              <view class="condition-checkbox {{item.enabled ? 'checked' : ''}}">
+                <text wx:if="{{item.enabled}}">✓</text>
+              </view>
+              <view class="condition-info">
+                <text class="condition-name">{{item.name}}</text>
+                <text class="condition-desc">{{item.desc}}</text>
+              </view>
+            </view>
+            <text class="condition-timeframe">{{item.timeframe}}</text>
+          </view>
+        </view>
+      </view>
+
+
+    </view>
+
+    <!-- ==================== 平仓条件 ==================== -->
+    <view class="tab-content" wx:if="{{currentTab === 2}}">
+      <!-- 条件逻辑说明 -->
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">🔗 条件逻辑</text>
+        </view>
+        <view class="logic-info-row">
+          <view class="logic-badge or">OR</view>
+          <view class="logic-info">
+            <text class="logic-label">满足任一即可平仓</text>
+            <text class="logic-desc">以下任一条件满足时会触发平仓</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">🛡️ 止盈止损</text>
+        </view>
+        <view class="compact-row">
+          <text class="compact-label red-text">止损</text>
+          <view class="compact-right">
+            <text class="compact-value {{sellConfig.stopLossEnabled ? 'red-text' : 'muted-text'}}">
+              {{sellConfig.stopLossEnabled ? (sellConfig.stopLossPercent + '%') : '已关闭'}}
+            </text>
+            <switch checked="{{sellConfig.stopLossEnabled}}" bindchange="onStopLossEnabledChange" color="#ff3b30"/>
+          </view>
+        </view>
+        <view class="slider-row compact-slider" wx:if="{{sellConfig.stopLossEnabled}}">
+          <slider min="0.5" max="10" step="0.5" value="{{sellConfig.stopLossPercent}}" bindchange="onStopLossPercentChange" activeColor="#ff3b30"/>
+        </view>
+
+        <view class="compact-row">
+          <text class="compact-label green-text">止盈</text>
+          <view class="compact-right">
+            <text class="compact-value {{sellConfig.takeProfitEnabled ? 'green-text' : 'muted-text'}}">
+              {{sellConfig.takeProfitEnabled ? (sellConfig.takeProfitPercent + '%') : '已关闭'}}
+            </text>
+            <switch checked="{{sellConfig.takeProfitEnabled}}" bindchange="onTakeProfitEnabledChange" color="#34c759"/>
+          </view>
+        </view>
+        <view class="slider-row compact-slider" wx:if="{{sellConfig.takeProfitEnabled}}">
+          <slider min="1" max="50" step="1" value="{{sellConfig.takeProfitPercent}}" bindchange="onTakeProfitPercentChange" activeColor="#34c759"/>
+        </view>
+      </view>
+
+      <!-- 平仓条件 -->
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">📤 平仓条件 (OR逻辑)</text>
+        </view>
+        <text class="section-hint">以下任一条件满足时平仓</text>
+        <view class="condition-list">
+          <view
+            wx:for="{{sellConfig.conditions}}"
+            wx:key="id"
+            wx:if="{{item.indicator}}"
+            class="condition-item {{item.enabled ? 'enabled' : 'disabled'}}"
+            data-id="{{item.id}}"
+            bindtap="toggleSellCondition"
+          >
+            <view class="condition-left">
+              <view class="condition-checkbox {{item.enabled ? 'checked' : ''}}">
+                <text wx:if="{{item.enabled}}">✓</text>
+              </view>
+              <view class="condition-info">
+                <text class="condition-name">{{item.name}}</text>
+                <text class="condition-desc">{{item.desc}}</text>
+              </view>
+            </view>
+            <text class="condition-timeframe">{{item.timeframe}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ==================== 资金管理 ==================== -->
+    <view class="tab-content" wx:if="{{currentTab === 3}}">
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">💵 资金模式</text>
+        </view>
+        <picker mode="selector" range="{{modeList}}" range-key="name" value="{{utils.findIndex(modeList, fundConfig.mode, 'value')}}" bindchange="onFundModeChange">
+          <view class="picker-row">
+            <text class="picker-label">资金模式</text>
+            <view class="picker-value-wrap">
+              <text class="picker-value">{{modeList[utils.findIndex(modeList, fundConfig.mode, 'value')].name}}</text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </view>
+        </picker>
+        <text class="section-hint">{{modeList[utils.findIndex(modeList, fundConfig.mode, 'value')].desc}}</text>
+      </view>
+
+      <view class="section-card" wx:if="{{fundConfig.mode === 'fixed'}}">
+        <view class="section-header">
+          <text class="section-title">💰 固定金额</text>
+        </view>
+        <view class="slider-row">
+          <view class="slider-header">
+            <text class="slider-label">每次交易金额</text>
+            <text class="slider-value">{{fundConfig.fixedAmount}} USDT</text>
+          </view>
+          <slider min="10" max="500" step="10" value="{{fundConfig.fixedAmount}}" bindchange="onFixedAmountChange" activeColor="#af52de"/>
+        </view>
+      </view>
+
+      <view class="section-card" wx:if="{{fundConfig.mode === 'balance'}}">
+        <view class="section-header">
+          <text class="section-title">📊 账户比例</text>
+        </view>
+        <view class="slider-row">
+          <view class="slider-header">
+            <text class="slider-label">余额使用比例</text>
+            <text class="slider-value">{{fundConfig.balancePercent}}%</text>
+          </view>
+          <slider min="5" max="100" step="5" value="{{fundConfig.balancePercent}}" bindchange="onBalancePercentChange" activeColor="#af52de"/>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">📈 杠杆设置</text>
+        </view>
+        <view class="slider-row">
+          <view class="slider-header">
+            <text class="slider-label">杠杆倍数</text>
+            <text class="slider-value orange">{{fundConfig.leverage}}x</text>
+          </view>
+          <slider min="1" max="20" step="1" value="{{fundConfig.leverage}}" bindchange="onLeverageChange" activeColor="#ff9500"/>
+          <text class="slider-hint">高杠杆 = 高风险，建议新手使用 5x 以下</text>
+        </view>
+      </view>
+
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">🏦 保证金模式</text>
+        </view>
+        <picker mode="selector" range="{{marginModeList}}" range-key="name" value="{{utils.findIndex(marginModeList, fundConfig.marginMode, 'value')}}" bindchange="onMarginModeChange">
+          <view class="picker-row">
+            <text class="picker-label">模式选择</text>
+            <view class="picker-value-wrap">
+              <text class="picker-value">{{marginModeList[utils.findIndex(marginModeList, fundConfig.marginMode, 'value')].name}}</text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </view>
+        </picker>
+        <text class="section-hint">{{marginModeList[utils.findIndex(marginModeList, fundConfig.marginMode, 'value')].desc}}</text>
+      </view>
+
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">📦 持仓限制</text>
+        </view>
+        <view class="slider-row">
+          <view class="slider-header">
+            <text class="slider-label">最大持仓数</text>
+            <text class="slider-value">{{fundConfig.maxPositions}}</text>
+          </view>
+          <slider min="1" max="10" step="1" value="{{fundConfig.maxPositions}}" bindchange="onMaxPositionsChange" activeColor="#af52de"/>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作按钮 -->
+    <view class="bottom-actions">
+      <button class="action-btn reset" bindtap="resetToDefault">
+        <text class="btn-icon">↺</text>
+        <text class="btn-text">恢复默认</text>
+      </button>
+      <button class="action-btn save" bindtap="handleSaveTap" loading="{{saving}}">
+        <text class="btn-icon" wx:if="{{!saving}}">💾</text>
+        <text class="btn-text">{{saving ? '保存中...' : '保存策略'}}</text>
+      </button>
+    </view>
+
+    <!-- 安全区 -->
+    <view class="safe-bottom"></view>
+  </scroll-view>
 </view>

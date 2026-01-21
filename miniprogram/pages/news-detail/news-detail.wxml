@@ -1,0 +1,61 @@
+<!--pages/news-detail/news-detail.wxml-->
+<view class="container">
+  <!-- 加载中 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <view class="loading-spinner">
+      <view class="spinner-ring"></view>
+    </view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- 加载失败 -->
+  <view class="error-state" wx:elif="{{error}}">
+    <text class="error-icon">⚠️</text>
+    <text class="error-text">加载失败</text>
+    <view class="retry-btn" bindtap="onRetry">重试</view>
+  </view>
+
+  <!-- 新闻内容 -->
+  <view class="news-content" wx:elif="{{news}}">
+    <!-- 头部信息 -->
+    <view class="news-header">
+      <view class="news-meta">
+        <view class="news-type-tag {{news.isNew ? 'new' : ''}}">
+          {{news.typeName || '快讯'}}
+        </view>
+        <text class="news-time">{{news.publishTimeFormatted}}</text>
+        <text class="news-source">{{news.newsSite || news.author}}</text>
+      </view>
+      <text class="news-title">{{news.title}}</text>
+    </view>
+
+    <!-- 缩略图 -->
+    <view class="news-thumbnail" wx:if="{{news.thumbnail}}">
+      <image src="{{news.thumbnail}}" mode="aspectFill" class="thumbnail-img"></image>
+    </view>
+
+    <!-- 正文内容 -->
+    <view class="news-body">
+      <text class="news-summary" wx:if="{{news.summary}}">{{news.summary}}</text>
+      <text class="news-empty" wx:else>暂无详细内容</text>
+    </view>
+
+    <!-- 原文信息 -->
+    <view class="original-info" wx:if="{{news.originalTitle && news.originalTitle !== news.title}}">
+      <text class="original-label">原文标题</text>
+      <text class="original-title">{{news.originalTitle}}</text>
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="news-footer">
+      <view class="footer-btn" bindtap="onCopyLink">
+        <text class="btn-icon">🔗</text>
+        <text class="btn-text">复制原文链接</text>
+      </view>
+      <button class="footer-btn share-btn" open-type="share">
+        <text class="btn-icon">📤</text>
+        <text class="btn-text">分享</text>
+      </button>
+    </view>
+  </view>
+</view>

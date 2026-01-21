@@ -1,0 +1,81 @@
+<view class="container">
+  <view class="header">
+    <text class="title">策略管理</text>
+    <text class="subtitle">只能启用一个策略</text>
+  </view>
+
+  <scroll-view class="content" scroll-y>
+    <view class="create-strategy-btn" bindtap="createNewStrategy">
+      <text class="create-icon">+</text>
+      <text class="create-text">创建新策略</text>
+    </view>
+
+    <view wx:if="{{loading}}" class="loading-row">
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <view wx:if="{{!loading && strategyList.length === 0}}" class="empty-state">
+      <text class="empty-icon">📄</text>
+      <text class="empty-text">还没有策略，先创建一个吧</text>
+    </view>
+
+    <view class="strategy-list" wx:if="{{!loading && strategyList.length > 0}}">
+      <view
+        class="strategy-item {{item.isEnabled ? 'active' : ''}}"
+        wx:for="{{strategyList}}"
+        wx:key="id"
+      >
+        <view class="strategy-main">
+          <view class="strategy-left">
+            <view class="strategy-badge {{item.isEnabled ? 'active' : ''}}">
+              <text class="badge-icon">{{item.isEnabled ? '✓' : '○'}}</text>
+            </view>
+            <view class="strategy-info">
+              <view class="strategy-title-row">
+                <text class="strategy-name">{{item.name}}</text>
+                <text class="strategy-type-tag">{{item.strategyTypeLabel}}</text>
+              </view>
+              <text class="strategy-desc">{{item.description}}</text>
+            </view>
+          </view>
+
+          <view class="strategy-stats" wx:if="{{item.performance.totalTrades > 0}}">
+            <view class="stat-tag">
+              <text class="stat-label">交易</text>
+              <text class="stat-value">{{item.performance.totalTrades}}</text>
+            </view>
+            <view class="stat-tag {{item.performance.winRate >= 50 ? 'green' : 'red'}}">
+              <text class="stat-label">胜率</text>
+              <text class="stat-value">{{item.performance.winRate}}%</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="strategy-actions">
+          <button
+            class="action-btn edit"
+            catchtap="editStrategy"
+            data-strategy="{{item}}"
+          >
+            编辑
+          </button>
+          <button
+            class="action-btn delete"
+            catchtap="deleteStrategy"
+            data-strategy="{{item}}"
+            wx:if="{{!item.isDefault}}"
+          >
+            删除
+          </button>
+          <button
+            class="action-btn toggle {{item.isEnabled ? 'active' : ''}}"
+            catchtap="toggleStrategyEnabled"
+            data-strategy="{{item}}"
+          >
+            {{item.isEnabled ? '禁用' : '启用'}}
+          </button>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>
