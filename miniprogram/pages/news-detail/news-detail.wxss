@@ -41,7 +41,7 @@
 }
 
 .error-icon {
-  font-size: 60rpx;
+  font-size: 80rpx;
 }
 
 .error-text {
@@ -49,8 +49,22 @@
   color: #8e8e93;
 }
 
-.retry-btn {
+.error-actions {
+  display: flex;
+  gap: 24rpx;
   margin-top: 20rpx;
+}
+
+.back-btn {
+  padding: 16rpx 48rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.retry-btn {
   padding: 16rpx 48rpx;
   background: linear-gradient(135deg, #007aff 0%, #0051d5 100%);
   border-radius: 8rpx;

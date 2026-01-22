@@ -5,6 +5,7 @@ Page({
   data: {
     loading: true,
     error: false,
+    errorMsg: '',
     news: null
   },
 
@@ -14,14 +15,15 @@ Page({
     } else {
       this.setData({
         loading: false,
-        error: true
+        error: true,
+        errorMsg: '缺少新闻ID'
       });
     }
   },
 
   loadNewsDetail(id) {
     var that = this;
-    this.setData({ loading: true, error: false });
+    this.setData({ loading: true, error: false, errorMsg: '' });
 
     API.getNewsDetail(id).then(function(res) {
       if (res && res.success && res.data) {
@@ -36,14 +38,24 @@ Page({
       } else {
         that.setData({
           loading: false,
-          error: true
+          error: true,
+          errorMsg: '新闻不存在或已过期'
         });
       }
     }).catch(function(err) {
       console.error('加载新闻详情失败:', err);
+      var msg = '加载失败';
+      if (err && err.message) {
+        if (err.message.indexOf('不存在') >= 0) {
+          msg = '新闻不存在或已过期';
+        } else {
+          msg = err.message;
+        }
+      }
       that.setData({
         loading: false,
-        error: true
+        error: true,
+        errorMsg: msg
       });
     });
   },
@@ -53,6 +65,17 @@ Page({
     if (options.id) {
       this.loadNewsDetail(options.id);
     }
+  },
+
+  onGoBack() {
+    wx.navigateBack({
+      fail: function() {
+        // 如果无法返回，跳转到行情页
+        wx.switchTab({
+          url: '/pages/market/market'
+        });
+      }
+    });
   },
 
   onCopyLink() {

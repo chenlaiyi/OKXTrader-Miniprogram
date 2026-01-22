@@ -10,9 +10,12 @@
 
   <!-- 加载失败 -->
   <view class="error-state" wx:elif="{{error}}">
-    <text class="error-icon">⚠️</text>
-    <text class="error-text">加载失败</text>
-    <view class="retry-btn" bindtap="onRetry">重试</view>
+    <text class="error-icon">📰</text>
+    <text class="error-text">{{errorMsg || '加载失败'}}</text>
+    <view class="error-actions">
+      <view class="back-btn" bindtap="onGoBack">返回</view>
+      <view class="retry-btn" bindtap="onRetry">重试</view>
+    </view>
   </view>
 
   <!-- 新闻内容 -->
